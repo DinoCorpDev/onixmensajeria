@@ -32,4 +32,7 @@ Route::group(['middleware' => ['auth']], function () {
 
     //Ruta de crud de eventos
     Route::resource('events', 'App\Http\Controllers\EventsController');
+
+    //Ruta de crud de eventos a los que el usuario se postuló
+    Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');
 });
