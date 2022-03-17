@@ -21,6 +21,7 @@ class Events extends Model
         'place',
         'total_budget',
         'daily_budget',
+        'status',
         'qr_code',
     ];
 }
