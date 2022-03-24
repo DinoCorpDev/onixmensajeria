@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\UsersRoles;
+use Auth;
 
 class ProfileUserController extends Controller
 {
@@ -15,7 +16,41 @@ class ProfileUserController extends Controller
      */
     public function index()
     {
+        try {
+            $user_id = Auth::user()->id;
+            $user = User::findOrFail($user_id);
 
+            $data=[
+                "id"=>$user->id,
+                "name" => $user->name,
+                "lastname" => $user->lastname,
+                "contact" => json_decode($user->contact),
+                "email" => $user->email,
+                "nickname" => $user->nickname,
+                "birthday" => $user->birthday,
+                "gender" => $user->gender,            
+                "sectors" =>json_decode($user->sectors),
+                "aptitud" =>json_decode($user->aptitud),
+                "pyshical" =>json_decode($user->pyshical),
+                "competences" =>json_decode($user->competences),
+                "education" =>json_decode($user->education),
+                "experience" =>json_decode($user->experience),
+                "identification" => $user->identification,
+                "address" => $user->address,
+                "city" => $user->city,
+                
+                "profile" => $user->profile,
+                "photos" => $user->photos,
+                "video" =>$user->video,
+                    
+                "autorization" => $user->autorization,
+                "terms_conditions" =>$user->terms_conditions,
+                "rol" =>json_decode($user->rol)
+            ];
+            return response()->json($data);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->errorInfo[2]],400);
+        }        
     }
 
     /**
@@ -37,55 +72,54 @@ class ProfileUserController extends Controller
      */
     public function show($id)
     {
-        $user = User::findOrFail($id)->first();
-        return response()->json($user);
+        
     }
 
-    public function updateUser(Request $request, $id){
-        $user = User::findOrFail($id);
-        $user->name = $request->name;        
-        $user->last_name = $request->last_name;
-        $user->artistic_name = $request->artistic_name;
-        $user->date_birthday = $request->date_birthday;
-        $user->gender = $request->gender;
-        $user->height = $request->height;
-        $user->shirt_size = $request->shirt_size;
-        $user->pant_size = $request->pant_size;
-        $user->shoes_size = $request->shoes_size;
-        $user->hair_color = $request->hair_color;
-        $user->eyes_color = $request->eyes_color;
-        $user->weight = $request->weight;
-        $user->attitudes = $request->attitudes;
-        $user->technical_professional = $request->technical_professional;
-        $user->events_participed = $request->events_participed;
-        $user->description_professional_short = $request->description_professional_short;
-        $user->description_professional_long = $request->description_professional_long;
-        $user->phone = $request->phone;
-        $user->id_number = $request->id_number;
-        $user->address = $request->address;
-        $user->city = $request->city;
-        $user->instagram = $request->instagram;
-        $user->facebook = $request->facebook;
-        $user->twitter = $request->twitter;
-        $user->snapchat = $request->snapchat;
-        $user->youtube_url = $request->youtube_url;
-        $user->spotify = $request->spotify;
-        $user->deezer = $request->deezer;
-        $user->autorization = $request->autorization === 'true' ? true : false;
-        $user->photographic_register = $request->photographic_register;
-        $user->pictures = $request->pictures;
-        $user->video = $request->video;
-        $user->terms_conditions = $request->terms_conditions  === 'true' ? true : false;
-        $user->save();
+    public function updateUser(Request $request, $id){        
+        try {
+            $user = User::findOrFail($id);
 
-        return response()->json('User Updated');
+            $user->name = $request->name;
+            $user->lastname = $request->lastname;
+            $user->contact = json_encode($request->contact);        
+            $user->nickname = $request->nickname;
+            $user->birthday = $request->birthday;
+            $user->gender = $request->gender;            
+            $user->sectors = json_encode($request->sectors);
+            $user->aptitud = json_encode($request->aptitud);
+            $user->pyshical = json_encode($request->pyshical);
+            $user->competences = json_encode($request->competences);
+            $user->education = json_encode($request->education);
+            $user->experience = json_encode($request->experience);
+            $user->identification = $request->identification;
+            $user->address = $request->address;
+            $user->city = $request->city;           
+            $user->profile = $request->profile;
+            $user->photos = $request->photos;
+            $user->video = $request->video;        
+            $user->autorization = $request->autorization;
+            $user->terms_conditions = $request->terms_conditions;
+            $user->rol = json_encode($request->rol);
+            $user->update();
+            return response()->json(['message'=>'Usuario Actualizado'],200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th->errorInfo[2]],400);
+        }        
     }
 
     public function disableUser(Request $request, $id){
-        $user = User::where('id',$id)->first();
-        $user->state = $request->state;
-        $user->save();
-
-        return response()->json('User Updated');
+        try {
+            $user = User::findOrFail($id);
+            $user->status = $request->status;
+            $user->update();
+            
+            if($request->status === true){
+                return response()->json(['message'=>'Usuario Activado'],200);
+            }else{
+                return response()->json(['message'=>'Usuario Desactivado'],200);
+            }
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th->errorInfo[2]],400);
+        }        
     }
 }

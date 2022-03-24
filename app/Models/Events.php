@@ -14,7 +14,7 @@ class Events extends Model
         'number',
         'required_personal',
         'personal_type',
-        'personla_quantity',
+        'personal_quantity',
         'date_initial',
         'date_final',
         'hourly',

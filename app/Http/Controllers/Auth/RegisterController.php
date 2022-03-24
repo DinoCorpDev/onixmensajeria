@@ -5,12 +5,13 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Providers\RouteServiceProvider;
-use App\Models\User;
-use App\Models\UsersRoles;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Auth;
+
+use App\Models\User;
+use App\Models\UsersRoles;
 
 class RegisterController extends Controller
 {
@@ -65,56 +66,40 @@ class RegisterController extends Controller
      * @param  array  $data
      * @return \App\Models\User
      */
-    protected function register(Request $data)
-    {     
-        $user = User::create([
-            'name' => $data['name'],
-            'email' => $data['email'],
-            'password' => Hash::make($data['password']),            
-            'last_name' => $data['last_name'],
-            'artistic_name' => $data['artistic_name'],
-            'date_birthday' => $data['date_birthday'],
-            'gender' => $data['gender'],
-            'height' => $data['height'],
-            'shirt_size' => $data['shirt_size'],
-            'pant_size' => $data['pant_size'],
-            'shoes_size' => $data['shoes_size'],
-            'hair_color' => $data['hair_color'],
-            'eyes_color' => $data['eyes_color'],
-            'weight' => $data['weight'],
-            'attitudes' => $data['attitudes'],
-            'technical_professional' => $data['technical_professional'],
-            'events_participed' => $data['events_participed'],
-            'description_professional_short' => $data['description_professional_short'],
-            'description_professional_long' => $data['description_professional_long'],
-            'phone' => $data['phone'],
-            'id_number' => $data['id_number'],
-            'address' => $data['address'],
-            'city' => $data['city'],
-            'instagram' => $data['instagram'],
-            'facebook' => $data['facebook'],
-            'twitter' => $data['twitter'],
-            'snapchat' => $data['snapchat'],
-            'youtube_url' => $data['youtube_url'],
-            'spotify' => $data['spotify'],
-            'deezer' => $data['deezer'],
-            'autorization' => $data['autorization'] === 'true' ? true : false,
-            'photographic_register' => $data['photographic_register'],
-            'pictures' => $data['pictures'],
-            'video' => $data['video'],
-            'terms_conditions' => $data['terms_conditions'] === 'true' ? true : false,
-        ]);
-
-        $roles = json_decode($data['roles']);
-        $roles_length = count($roles);
-
-        for ($i=0; $i < $roles_length ; $i++) { 
-            UsersRoles::create([
-                'id_rol' => $roles[$i],
-                'id_user' => $user->id,
-            ]);   
+    protected function register(Request $request)
+    {
+        try {
+            $user = User::create([
+                "name" => $request->name,
+                "lastname" => $request->lastname,
+                "contact" => json_encode($request->contact),
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                "nickname" => $request->nickname,
+                "birthday" => $request->birthday,
+                "gender" => $request->gender,            
+                "sectors" =>json_encode($request->sectors),
+                "aptitud" =>json_encode($request->aptitud),
+                "pyshical" =>json_encode($request->pyshical),
+                "competences" =>json_encode($request->competences),
+                "education" =>json_encode($request->education),
+                "experience" =>json_encode($request->experience),
+                "identification" => $request->identification,
+                "address" => $request->address,
+                "city" => $request->city,
+               
+                "profile" => $request->profile,
+                "photos" => $request->photos,
+                "video" =>$request->video,
+                
+                "autorization" => $request->autorization,
+                "terms_conditions" =>$request->terms_conditions,
+                "rol" =>json_encode($request->rol)
+            ]);
+            
+            return response()->json(['message' => 'Usuario Creado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->errorInfo[2]], 400);
         }        
-
-        return 'User Created';
     }
 }

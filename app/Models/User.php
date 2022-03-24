@@ -18,42 +18,30 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [        
-        'email',
-        'password',
-        'name', 
-        'last_name',
-        'artistic_name',
-        'date_birthday',
-        'gender',
-        'height',
-        'shirt_size',
-        'pant_size',
-        'shoes_size',
-        'hair_color',
-        'eyes_color',
-        'weight',
-        'attitudes',
-        'technical_professional',
-        'events_participed',
-        'description_professional_short',
-        'description_professional_long',
-        'phone',
-        'id_number',
-        'address',
-        'city',
-        'instagram',
-        'facebook',
-        'twitter',
-        'snapchat',
-        'youtube_url',
-        'spotify',
-        'deezer',
-        'autorization',
-        'photographic_register',
-        'pictures',
-        'video',
-        'state',
-        'terms_conditions',
+        "name",
+        "lastname",
+        "contact",
+        "email",
+        "password",
+        "nickname",
+        "birthday",
+        "gender",
+        "aptitud",
+        "sectors",
+        "pyshical",
+        "competences",
+        "education",
+        "experience",
+        "identification",
+        "address",
+        "city",
+        "profile",
+        "photos",
+        "video",
+        "autorization",
+        "terms_conditions",
+        "rol",
+        "status",
     ];
 
     /**
@@ -75,7 +63,39 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function usersRoles(){
-        return $this->hasMany(UsersRoles::class, 'id','id_user');
+    public function gender(){
+        return $this->hasMany(Genders::class,'id','id_user');
     }
+
+    public function contacts(){
+        return $this->hasMany(Contacts::class,'id','id_user');
+    }
+
+    public function pyshical(){
+        return $this->hasOne(Pyshicals::class,'id','id_user');
+    }
+
+    public function competences(){
+        return $this->hasMany(Competences::class, 'id','id_user');
+    }
+
+    public function educations(){
+        return $this->hasMany(Educations::class,'id','id_user');
+    }
+
+    public function experiences(){
+        return $this->hasMany(Experiences::class, 'id','id_user');
+    }
+
+    public function aptitudes(){
+        return $this->hasMany(Aptitudes::class, 'id','id_user');
+    }
+
+    public function sectors(){
+        return $this->hasMany(Sectors::class, 'id','id_user');
+    }
+
+    public function roles(){
+        return $this->hasMany(UsersRoles::class, 'id','id_user');
+    }    
 }

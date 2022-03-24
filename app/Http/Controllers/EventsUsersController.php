@@ -26,6 +26,16 @@ class EventsUsersController extends Controller
                 $dataEvent = Events::where('id',$event->id_event)->first();
                 
                 $dataToPush = new stdClass;
+                /**
+                 * [
+                 *       {
+                 *               idItalentt: string,
+                 *               idEvent: number,
+                 *               status: 'accepted' | 'rejected' | 'omitted' ,
+                 *               idUser: number,
+                 *       }
+                 *   ]
+                 */
                 $dataToPush->event_id = $dataEvent->id;
                 $dataToPush->name_event = $dataEvent->name;
                 $dataToPush->number_event = $dataEvent->number;
@@ -37,8 +47,7 @@ class EventsUsersController extends Controller
                 $dataToPush->event_hourly = $dataEvent->hourly;
                 $dataToPush->event_place = $dataEvent->place;
                 $dataToPush->event_total_budget = $dataEvent->total_budget;
-                $dataToPush->event_daily_budget = $dataEvent->daily_budget;
-                $dataToPush->event_qr_code = $dataEvent->qr_code;
+                $dataToPush->event_daily_budget = $dataEvent->daily_budget;                
                 $dataToPush->event_state = $dataEvent->state;
                 $dataToPush->id_event_user = $event->id;
                 $dataToPush->status_event_user = $event->status;
@@ -58,9 +67,10 @@ class EventsUsersController extends Controller
      */
     public function store(Request $request)
     {
+        $user_id = Auth::user()->id;
         $eventUsers = new EventsUsers();
         $eventUsers->id_event = $request->id_event;
-        $eventUsers->id_user = $request->id_user;
+        $eventUsers->id_user = $user_id;
         $eventUsers->status = $request->status;
         $eventUsers->save();
         return response()->json('Postulación Guardada');

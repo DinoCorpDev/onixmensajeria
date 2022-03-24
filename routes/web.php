@@ -25,7 +25,7 @@ Route::group(['middleware' => ['auth']], function () {
     //Ruta de usuarios, actualizacion, muestra y deshabilitacion
     Route::put('disableUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'disableUser']);
     Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
-    Route::get('showUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'show']);
+    Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
 
     //Ruta de crud de roles
     Route::resource('roles', 'App\Http\Controllers\RolesController');

@@ -14,6 +14,9 @@ class EventsController extends Controller
      */
     public function index()
     {
+        /**
+         * Validar mediante fecha
+         */
         $events = Events::where('state','1')->get();
         return response()->json($events);
     }
@@ -26,19 +29,54 @@ class EventsController extends Controller
      */
     public function store(Request $request)
     {
+        /**
+         * crear tabla personal_type = [{label, value}]
+        */
+
+        /**
+         * idItalentt, 
+         * name,
+         * banner,
+         * aboutPersonal: {
+         *      type:string,
+         *      quantity: number,
+         *      description: string
+         * },
+         * initialDate: Date,
+         * endDate: Date,
+         * houry: {
+         *       'day-1': {
+         *           initial: number,
+         *           end: number
+         *       }
+         * },
+         * city: string,
+         * location: string guardar latitud y longitud,
+         * address: {
+         *       name: string,
+         *       image: base64, not null
+         *       position: {
+         *           lat: number,
+         *           lng: number
+         *       }
+         *   },
+         *  totalBudget: number,
+         *  dailyBudget: number,         
+         *  status: open o close // validar mediante endDate
+         */
+
         $newEvent = new Events();
         $newEvent->name = $request->name;
         $newEvent->number = $request->number;
         $newEvent->required_personal = $request->required_personal;
         $newEvent->personal_type = $request->personal_type;
-        $newEvent->personla_quantity = $request->personla_quantity;
+        $newEvent->personal_quantity = $request->personal_quantity;
         $newEvent->date_initial = $request->date_initial;
         $newEvent->date_final = $request->date_final;
         $newEvent->hourly = $request->hourly;
         $newEvent->place = $request->place;
         $newEvent->total_budget = $request->total_budget;
-        $newEvent->daily_budget = $request->daily_budget;
-        $newEvent->qr_code = $request->qr_code;
+        $newEvent->daily_budget = $request->daily_budget;        
         $newEvent->save();
 
         return response()->json('Event saved');

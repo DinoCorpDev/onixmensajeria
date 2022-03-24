@@ -15,19 +15,19 @@ return new class extends Migration
     {
         Schema::create('events', function (Blueprint $table) {
             $table->id();
+            $table->string('idItalentt');
             $table->string('name');
-            $table->bigInteger('number');
-            $table->string('required_personal');
-            $table->string('personal_type');
-            $table->string('personla_quantity');
-            $table->date('date_initial');
-            $table->date('date_final');
-            $table->time('hourly');
-            $table->string('place');
-            $table->string('total_budget');
-            $table->string('daily_budget');
-            $table->string('qr_code');
-            $table->string('state')->default(1);
+            $table->string('banner');
+            $table->string('typePersonal');
+            $table->date('initialDate');
+            $table->date('endDate');
+            $table->json('houry');
+            $table->string('city');
+            $table->string('location');
+            $table->unsignedBigInteger('id_address');
+            $table->bigInteger('totalBudget');
+            $table->bigInteger('dailyBudget');
+            $table->string('status');
             $table->timestamps();
         });
     }
