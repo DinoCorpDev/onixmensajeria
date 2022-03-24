@@ -26,4 +26,8 @@ class Events extends Model
         'dailyBudget',
         'status',
     ];
+
+    public function eventsOfUsers(){
+        return $this->belongsTo(EventsUsers::class);
+    }
 }

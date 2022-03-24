@@ -7,7 +7,6 @@ use App\Models\Events;
 use App\Models\Users;
 use Illuminate\Http\Request;
 use Auth;
-use \stdClass;
 
 class EventsUsersController extends Controller
 {
@@ -18,44 +17,35 @@ class EventsUsersController extends Controller
      */
     public function index()
     {
-        $user_id = Auth::user()->id;
         $data=[];
-        $events = EventsUsers::where('id_user', $user_id)->get();
-        if($events){
-            foreach ($events as &$event) {
-                $dataEvent = Events::where('id',$event->id_event)->first();
-                
-                $dataToPush = new stdClass;
-                /**
-                 * [
-                 *       {
-                 *               idItalentt: string,
-                 *               idEvent: number,
-                 *               status: 'accepted' | 'rejected' | 'omitted' ,
-                 *               idUser: number,
-                 *       }
-                 *   ]
-                 */
-                $dataToPush->event_id = $dataEvent->id;
-                $dataToPush->name_event = $dataEvent->name;
-                $dataToPush->number_event = $dataEvent->number;
-                $dataToPush->event_required_personal = $dataEvent->required_personal;
-                $dataToPush->event_personal_type = $dataEvent->personal_type;
-                $dataToPush->event_personal_quantity= $dataEvent->personla_quantity;
-                $dataToPush->event_date_initial = $dataEvent->date_initial;
-                $dataToPush->event_date_final = $dataEvent->date_final;
-                $dataToPush->event_hourly = $dataEvent->hourly;
-                $dataToPush->event_place = $dataEvent->place;
-                $dataToPush->event_total_budget = $dataEvent->total_budget;
-                $dataToPush->event_daily_budget = $dataEvent->daily_budget;                
-                $dataToPush->event_state = $dataEvent->state;
-                $dataToPush->id_event_user = $event->id;
-                $dataToPush->status_event_user = $event->status;
+        $user_id = Auth::user()->id;
+        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();
 
-                array_push($data,$dataToPush);
-            }
-        }        
-
+        foreach ($eventsUsers as $key => $eventsUser) {
+            $data[$key]=[
+                "id"=>$eventsUser->id,
+                "idTalent"=>$eventsUser->idTalent,
+                "status"=>$eventsUser->status,
+                "id_event"=>$eventsUser->id_event,
+                "id_user"=>$eventsUser->id_user,
+                "events"=>[
+                    "id"=>$eventsUser->events->id,
+                    "idItalentt"=>$eventsUser->events->idItalentt,
+                    "name"=>$eventsUser->events->name,
+                    "banner"=>$eventsUser->events->banner,
+                    "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
+                    "initialDate"=>$eventsUser->events->initialDate,
+                    "endDate"=>$eventsUser->events->endDate,
+                    "houry"=>json_decode($eventsUser->events->houry),
+                    "city"=>$eventsUser->events->city,
+                    "location"=>$eventsUser->events->location,
+                    "address"=>json_decode($eventsUser->events->address),
+                    "totalBudget"=>$eventsUser->events->totalBudget,
+                    "dailyBudget"=>$eventsUser->events->dailyBudget,
+                    "status"=>$eventsUser->events->status
+                ]
+            ];
+        }
         return response()->json($data);
     }
 
@@ -66,14 +56,20 @@ class EventsUsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
-        $user_id = Auth::user()->id;
-        $eventUsers = new EventsUsers();
-        $eventUsers->id_event = $request->id_event;
-        $eventUsers->id_user = $user_id;
-        $eventUsers->status = $request->status;
-        $eventUsers->save();
-        return response()->json('Postulación Guardada');
+    {        
+        try {
+            $user_id = Auth::user()->id;
+            $eventUsers = new EventsUsers();
+            $eventUsers->idTalent = $request->idTalent;
+            $eventUsers->id_event = $request->id_event;
+            $eventUsers->id_user = $user_id;
+            $eventUsers->status = $request->status;
+            $eventUsers->save();
+            return response()->json(['message'=>'Registro Creado'],200);
+
+        } catch (\Throwable $th) {            
+            return response()->json(['message' => $th->errorInfo[2]],400);
+        }        
 
     }
 
@@ -85,8 +81,7 @@ class EventsUsersController extends Controller
      */
     public function show($name_event)
     {
-        $event = Events::where('name',$name_event)->get();
-        return response()->json($event);
+
     }
     
     /**
@@ -99,12 +94,17 @@ class EventsUsersController extends Controller
     public function update(Request $request, $id)
     {
         $user_id = Auth::user()->id;
-        $updateEventUsers = EventsUsers::findOrFail($id);
-        $updateEventUsers->id_event = $request->id_event;
-        $updateEventUsers->id_user = $user_id;
-        $updateEventUsers->status = $request->status;
-        $updateEventUsers->save();
-        return response()->json('Postulación Actualizada');
+        try {
+            $updateEventUsers = EventsUsers::findOrFail($id);
+            $updateEventUsers->idTalent = $request->idTalent;
+            $updateEventUsers->id_event = $request->id_event;
+            $updateEventUsers->id_user = $user_id;
+            $updateEventUsers->status = $request->status;
+            $updateEventUsers->save();
+            return response()->json(['message'=>'Registro Actualizado'],200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th->errorInfo[2]],400);
+        }        
     }
 
     /**
@@ -115,9 +115,12 @@ class EventsUsersController extends Controller
      */
     public function destroy($id)
     {
-        $eventUsers = EventsUsers::findOrFail($id);
-        $eventUsers->delete();
-
-        return response()->json('Postulación Eliminada');
+        try {
+            $eventUsers = EventsUsers::findOrFail($id);
+            $eventUsers->delete();
+            return response()->json('Postulación Eliminada');
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th->errorInfo[2]],400);
+        }        
     }
 }

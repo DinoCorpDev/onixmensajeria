@@ -10,8 +10,13 @@ class EventsUsers extends Model
     use HasFactory;
 
     protected $fillable=[
-        'status',
+        'idTalent',        
         'id_event',
         'id_user',
+        'status',
     ];
+
+    public function events(){
+        return $this->hasOne(Events::class, 'id','id_event');
+    }
 }
