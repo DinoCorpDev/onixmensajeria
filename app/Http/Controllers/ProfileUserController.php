@@ -110,14 +110,9 @@ class ProfileUserController extends Controller
     public function disableUser(Request $request, $id){
         try {
             $user = User::findOrFail($id);
-            $user->status = $request->status;
-            $user->update();
+            $user->delete();
             
-            if($request->status === true){
-                return response()->json(['message'=>'Usuario Activado'],200);
-            }else{
-                return response()->json(['message'=>'Usuario Desactivado'],200);
-            }
+            return response()->json(['message'=>'Usuario Eliminado'],200);            
         } catch (\Throwable $th) {
             return response()->json(['message'=>$th->errorInfo[2]],400);
         }        
