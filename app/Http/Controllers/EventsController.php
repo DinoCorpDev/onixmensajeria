@@ -48,13 +48,6 @@ class EventsController extends Controller
      */
     public function store(Request $request)
     {
-        /**
-         * crear tabla personal_type = [{label, value}]
-         * crear tabla genero = [{label, value}]
-         * crear tabla aptitudes = [{label, value}]
-         * crear tabla sectores = [{label, value}]         
-        */
-        
         try {
             $newEvent = new Events();
 
@@ -77,38 +70,6 @@ class EventsController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['message'=> $th->errorInfo[2]],400);
         }
-
-        /**
-         * idItalentt, 
-         * name,
-         * banner,
-         * aboutPersonal: {
-         *      type:string,
-         *      quantity: number,
-         *      description: string
-         * },
-         * initialDate: Date,
-         * endDate: Date,
-         * houry: {
-         *       'day-1': {
-         *           initial: number,
-         *           end: number
-         *       }
-         * },
-         * city: string,
-         * location: string guardar latitud y longitud,
-         * address: {
-         *       name: string,
-         *       image: base64, not null
-         *       position: {
-         *           lat: number,
-         *           lng: number
-         *       }
-         *   },
-         *  totalBudget: number,
-         *  dailyBudget: number,         
-         *  status: open o close // validar mediante endDate
-         */
     }
 
     /**
