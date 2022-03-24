@@ -9,19 +9,21 @@ class Events extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     protected $fillable = [
+        'idItalentt',
         'name',
-        'number',
-        'required_personal',
-        'personal_type',
-        'personal_quantity',
-        'date_initial',
-        'date_final',
-        'hourly',
-        'place',
-        'total_budget',
-        'daily_budget',
+        'banner',
+        'typePersonal',
+        'initialDate',
+        'endDate',
+        'houry',
+        'city',
+        'location',
+        'id_address',
+        'totalBudget',
+        'dailyBudget',
         'status',
-        'qr_code',
     ];
 }

@@ -24,10 +24,10 @@ return new class extends Migration
             $table->json('houry');
             $table->string('city');
             $table->string('location');
-            $table->unsignedBigInteger('id_address');
+            $table->string('address');
             $table->bigInteger('totalBudget');
             $table->bigInteger('dailyBudget');
-            $table->string('status');
+            $table->string('status')->default('open');
             $table->timestamps();
         });
     }

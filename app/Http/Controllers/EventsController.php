@@ -17,8 +17,27 @@ class EventsController extends Controller
         /**
          * Validar mediante fecha
          */
-        $events = Events::where('state','1')->get();
-        return response()->json($events);
+        $data=[];
+        $events = Events::orderBy('id','DESC')->get();
+        foreach ($events as $key => $event) {
+            $data[$key]=[
+                'id'=>$event->id,
+                'idItalentt' => $event->idItalentt,
+                'name'=>$event->name,
+                'banner'=>$event->banner,
+                'aboutPersonal'=>json_decode($event->typePersonal),
+                'initialDate'=>$event->initialDate,
+                'endDate'=>$event->endDate,
+                'hourly'=>json_decode($event->houry),
+                'city'=>$event->city,
+                'location'=>$event->location,
+                'address'=>json_decode($event->address),
+                'totalBudget'=>$event->totalBudget,
+                'dailyBudget'=>$event->dailyBudget,
+            ];
+        }
+
+        return response()->json($data);
     }
 
     /**
@@ -31,7 +50,33 @@ class EventsController extends Controller
     {
         /**
          * crear tabla personal_type = [{label, value}]
+         * crear tabla genero = [{label, value}]
+         * crear tabla aptitudes = [{label, value}]
+         * crear tabla sectores = [{label, value}]         
         */
+        
+        try {
+            $newEvent = new Events();
+
+            $newEvent->idItalentt = $request->idItalentt;
+            $newEvent->name = $request->name;
+            $newEvent->banner = $request->banner;
+            $newEvent->typePersonal = json_encode($request->aboutPersonal);
+            $newEvent->initialDate = $request->initialDate;
+            $newEvent->endDate = $request->endDate;
+            $newEvent->houry = json_encode($request->houry);
+            $newEvent->city = $request->city;
+            $newEvent->location = $request->location;
+            $newEvent->address = json_encode($request->address);
+            $newEvent->totalBudget = $request->totalBudget;
+            $newEvent->dailyBudget = $request->dailyBudget;
+            
+            $newEvent->save();
+
+            return response()->json(['message'=>'Evento Guardado'],200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=> $th->errorInfo[2]],400);
+        }
 
         /**
          * idItalentt, 
@@ -64,22 +109,6 @@ class EventsController extends Controller
          *  dailyBudget: number,         
          *  status: open o close // validar mediante endDate
          */
-
-        $newEvent = new Events();
-        $newEvent->name = $request->name;
-        $newEvent->number = $request->number;
-        $newEvent->required_personal = $request->required_personal;
-        $newEvent->personal_type = $request->personal_type;
-        $newEvent->personal_quantity = $request->personal_quantity;
-        $newEvent->date_initial = $request->date_initial;
-        $newEvent->date_final = $request->date_final;
-        $newEvent->hourly = $request->hourly;
-        $newEvent->place = $request->place;
-        $newEvent->total_budget = $request->total_budget;
-        $newEvent->daily_budget = $request->daily_budget;        
-        $newEvent->save();
-
-        return response()->json('Event saved');
     }
 
     /**
@@ -90,7 +119,7 @@ class EventsController extends Controller
      */
     public function show($name)
     {
-        $event = Events::findOrFail($name);
+        $event = Events::where('name',$name)->get();
         return response()->json($event);
     }
 
@@ -102,23 +131,29 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
-        $newEvent = Events::findOrFail($id);
-        $newEvent->name = $request->name;
-        $newEvent->number = $request->number;
-        $newEvent->required_personal = $request->required_personal;
-        $newEvent->personal_type = $request->personal_type;
-        $newEvent->personla_quantity = $request->personla_quantity;
-        $newEvent->date_initial = $request->date_initial;
-        $newEvent->date_final = $request->date_final;
-        $newEvent->hourly = $request->hourly;
-        $newEvent->place = $request->place;
-        $newEvent->total_budget = $request->total_budget;
-        $newEvent->daily_budget = $request->daily_budget;
-        $newEvent->qr_code = $request->qr_code;
-        $newEvent->save();
+    {        
+        try {
+            $newEvent = Events::findOrFail($id);
 
-        return response()->json('Event updated');
+            $newEvent->idItalentt = $request->idItalentt;
+            $newEvent->name = $request->name;
+            $newEvent->banner = $request->banner;
+            $newEvent->typePersonal = json_encode($request->aboutPersonal);
+            $newEvent->initialDate = $request->initialDate;
+            $newEvent->endDate = $request->endDate;
+            $newEvent->houry = json_encode($request->houry);
+            $newEvent->city = $request->city;
+            $newEvent->location = $request->location;
+            $newEvent->address = json_encode($request->address);
+            $newEvent->totalBudget = $request->totalBudget;
+            $newEvent->dailyBudget = $request->dailyBudget;
+            
+            $newEvent->save();
+
+            return response()->json(['message'=>'Evento Actualizado'],200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=> $th->errorInfo[2]],400);
+        }
     }
 
     /**
@@ -130,9 +165,7 @@ class EventsController extends Controller
     public function destroy(Request $request, $id)
     {
         $event = Events::findOrFail($id);
-        $event->state = $request->state;
-        $event->save();
-        
-        return response()->json('Event Updated');
+        $event->delete();
+        return response()->json(['message'=>'Evento Eliminado'],200);
     }
 }
