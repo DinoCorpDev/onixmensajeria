@@ -26,10 +26,16 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        $newRol = new Roles();
-        $newRol->name = $request->name;
+        try {
+            $newRol = new Roles();
+            $newRol->label = $request->label;
+            $newRol->value = $request->value;
+            $newRol->save();
 
-        return response()->json('Rol Created');
+            return response()->json('Rol Created');
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th->errorInfo[2]],400);
+        }        
     }
 
     /**
@@ -40,7 +46,7 @@ class RolesController extends Controller
      */
     public function show($name)
     {
-        $rol = Roles::where('name', $name)->first();
+        $rol = Roles::where('label', $label)->first();
         return response()->json($rol);
     }
 
@@ -53,10 +59,15 @@ class RolesController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $updateRol = Roles::findOrFail($id);
-        $updateRol->name = $request->name;
-        $updateRol->save();
+        try {
+            $updateRol = Roles::findOrFail($id);
+            $updateRol->label = $request->label;
+            $updateRol->value = $request->value;
+            $updateRol->update();
 
-        return response()->json('Rol Updated');
+            return response()->json('Rol Updated');
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th->errorInfo[2]],400);
+        }        
     }
 }

@@ -27,7 +27,7 @@ class GenderController extends Controller
     public function store(Request $request)
     {
         try {
-            $gender = new Gender;
+            $gender = new Gender();
             $gender->label = $request->label;
             $gender->value = $request->value;
             $gender->save();

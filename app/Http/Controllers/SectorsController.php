@@ -27,7 +27,7 @@ class SectorsController extends Controller
     public function store(Request $request)
     {
         try {
-            $sector = new Sector;
+            $sector = new sectors();
             $sector->label = $request->label;
             $sector->value = $request->value;
             $sector->save();

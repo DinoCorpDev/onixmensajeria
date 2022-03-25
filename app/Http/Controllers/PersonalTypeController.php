@@ -27,7 +27,7 @@ class PersonalTypeController extends Controller
     public function store(Request $request)
     {
         try {
-            $typePersonal = new personal_type;
+            $typePersonal = new personal_type();
             $typePersonal->label = $request->label;
             $typePersonal->value = $request->value;
             $typePersonal->save();

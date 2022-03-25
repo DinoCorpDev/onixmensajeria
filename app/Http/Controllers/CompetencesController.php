@@ -27,7 +27,7 @@ class CompetencesController extends Controller
     public function store(Request $request)
     {
         try {
-            $competence = new competences;
+            $competence = new competences();
             $competence->label = $request->label;
             $competence->value = $request->value;
 
