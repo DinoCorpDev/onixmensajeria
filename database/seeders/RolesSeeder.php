@@ -16,23 +16,23 @@ class RolesSeeder extends Seeder
     public function run()
     {
         DB::table('roles')->insert([
-            'name' => 'Administrador'
+            'label' => 'Cantante',
+            'value' => 'singer',
         ]);
 
         DB::table('roles')->insert([
-            'name' => 'Cantante'
+            'label' => 'Modelo',
+            'value' => 'model'
         ]);
 
         DB::table('roles')->insert([
-            'name' => 'Modelo'
+            'label' => 'Presentador',
+            'value' => 'host'
         ]);
 
         DB::table('roles')->insert([
-            'name' => 'Presentador'
-        ]);
-
-        DB::table('roles')->insert([
-            'name' => 'Actor'
+            'label' => 'Actor',
+            'value' => 'actor'
         ]);
     }
 }
