@@ -40,6 +40,38 @@ class EventsController extends Controller
         return response()->json($data);
     }
 
+    public function saveImageB64(String $idItalentt, String $nameEvent, String $image_b64){        
+        $img = $this->getB64Image($image_b64);        
+            // Obtener la extensión de la Imagen
+        $img_extension = $this->getB64Extension($image_b64);
+            // Crear un nombre aleatorio para la imagen
+        $img_name = $idItalentt.'-'.$nameEvent.'.'.$img_extension;
+            // Usando el Storage guardar en el disco creado anteriormente y pasandole a 
+            // la función "put" el nombre de la imagen y los datos de la imagen como 
+            // segundo parametro
+        $imageSaved = Storage::disk('images_events')->put($img_name, $img);
+        $url = storage_path('app\images_events/').$img_name;       
+        return $url;
+    }
+
+    public function getB64Image($base64_image){  
+        // Obtener el String base-64 de los datos         
+        $image_service_str = substr($base64_image, strpos($base64_image, ",")+1);
+        // Decodificar ese string y devolver los datos de la imagen        
+        $image = base64_decode($image_service_str);   
+        // Retornamos el string decodificado
+        return $image; 
+   }
+
+    public function getB64Extension($base64_image){  
+        // Obtener mediante una expresión regular la extensión imagen y guardarla
+        // en la variable "img_extension"        
+        preg_match("/^data:image\/(.*);base64/i",$base64_image, $img_extension);   
+        // Dependiendo si se pide la extensión completa o no retornar el arreglo con
+        // los datos de la extensión en la posición 0 - 1        
+        return $img_extension[1];  
+    }
+
     /**
      * Store a newly created resource in storage.
      *
@@ -47,13 +79,14 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {
+    {        
         try {
+            $banner = $this->$this->saveImageB64($request->idItalentt,$request->name,$request->banner);
             $newEvent = new Events();
 
             $newEvent->idItalentt = $request->idItalentt;
             $newEvent->name = $request->name;
-            $newEvent->banner = $request->banner;
+            $newEvent->banner = $banner;
             $newEvent->typePersonal = json_encode($request->aboutPersonal);
             $newEvent->initialDate = $request->initialDate;
             $newEvent->endDate = $request->endDate;

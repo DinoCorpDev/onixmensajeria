@@ -13,6 +13,9 @@ use Auth;
 use App\Models\User;
 use App\Models\UsersRoles;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Response;
+
 class RegisterController extends Controller
 {
     /*
@@ -60,6 +63,38 @@ class RegisterController extends Controller
         ]);
     }
 
+    public function saveImageB64(String $email, String $type, String $image_b64){        
+        $img = $this->getB64Image($image_b64);        
+            // Obtener la extensión de la Imagen
+        $img_extension = $this->getB64Extension($image_b64);
+            // Crear un nombre aleatorio para la imagen
+        $img_name = $email.'-'.$type.'.'.$img_extension;
+            // Usando el Storage guardar en el disco creado anteriormente y pasandole a 
+            // la función "put" el nombre de la imagen y los datos de la imagen como 
+            // segundo parametro
+        $imageSaved = Storage::disk('images_base64')->put($img_name, $img);
+        $url = storage_path('app\images_base64/').$img_name;       
+        return $url;
+    }
+
+    public function getB64Image($base64_image){  
+        // Obtener el String base-64 de los datos         
+        $image_service_str = substr($base64_image, strpos($base64_image, ",")+1);
+        // Decodificar ese string y devolver los datos de la imagen        
+        $image = base64_decode($image_service_str);   
+        // Retornamos el string decodificado
+        return $image; 
+   }
+
+    public function getB64Extension($base64_image){  
+        // Obtener mediante una expresión regular la extensión imagen y guardarla
+        // en la variable "img_extension"        
+        preg_match("/^data:image\/(.*);base64/i",$base64_image, $img_extension);   
+        // Dependiendo si se pide la extensión completa o no retornar el arreglo con
+        // los datos de la extensión en la posición 0 - 1        
+        return $img_extension[1];  
+    }
+
     /**
      * Create a new user instance after a valid registration.
      *
@@ -67,7 +102,14 @@ class RegisterController extends Controller
      * @return \App\Models\User
      */
     protected function register(Request $request)
-    {
+    {    
+        $profile = $this->saveImageB64($request->email,'profile',$request->profile);        
+        $photos = $request->photos;
+        $arrPhotos = [];
+        foreach ($photos as $key => $photo) {
+            $picture = $this->saveImageB64($request->email,'photos',$photo);
+            array_push($arrPhotos, $picture);
+        }        
         try {
             $user = User::create([
                 "name" => $request->name,
@@ -88,8 +130,8 @@ class RegisterController extends Controller
                 "address" => $request->address,
                 "city" => $request->city,
                
-                "profile" => $request->profile,
-                "photos" => $request->photos,
+                "profile" => $profile,
+                "photos" => json_encode($arrPhotos),
                 "video" =>$request->video,
                 
                 "autorization" => $request->autorization,

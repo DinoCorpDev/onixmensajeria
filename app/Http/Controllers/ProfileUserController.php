@@ -40,7 +40,7 @@ class ProfileUserController extends Controller
                 "city" => $user->city,
                 
                 "profile" => $user->profile,
-                "photos" => $user->photos,
+                "photos" => json_decode($user->photos),
                 "video" =>$user->video,
                     
                 "autorization" => $user->autorization,
@@ -76,9 +76,8 @@ class ProfileUserController extends Controller
     }
 
     public function updateUser(Request $request, $id){        
-        try {
-            $user = User::findOrFail($id);
-
+        try {            
+            $user = User::findOrFail($id);            
             $user->name = $request->name;
             $user->lastname = $request->lastname;
             $user->contact = json_encode($request->contact);        
@@ -93,10 +92,12 @@ class ProfileUserController extends Controller
             $user->experience = json_encode($request->experience);
             $user->identification = $request->identification;
             $user->address = $request->address;
-            $user->city = $request->city;           
+            $user->city = $request->city;        
+
             $user->profile = $request->profile;
             $user->photos = $request->photos;
             $user->video = $request->video;        
+            
             $user->autorization = $request->autorization;
             $user->terms_conditions = $request->terms_conditions;
             $user->rol = json_encode($request->rol);
