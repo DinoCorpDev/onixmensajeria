@@ -28,6 +28,8 @@ class LoginController extends Controller
             $request->session()->regenerate();
  
             return response()->json(['message' => 'Login Correcto'], 200);
+        }else{
+            return response()->json(['message' => 'Login fallido'], 400);
         }
  
         return back()->withErrors([
