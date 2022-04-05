@@ -102,9 +102,9 @@ class ProfileUserController extends Controller
             $user->terms_conditions = $request->terms_conditions;
             $user->rol = json_encode($request->rol);
             $user->update();
-            return response()->json(['message'=>'Usuario Actualizado'],200);
+            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
+            return response()->json(['status' => 400,'statusText' => $th], 200);
         }        
     }
 
@@ -113,9 +113,9 @@ class ProfileUserController extends Controller
             $user = User::findOrFail($id);
             $user->delete();
             
-            return response()->json(['message'=>'Usuario Eliminado'],200);            
+            return response()->json(['status' => 200,'statusText' => 'Usuario Desabilitado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
+            return response()->json(['status' => 400,'statusText' => $th], 200);
         }        
     }
 }

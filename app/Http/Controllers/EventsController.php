@@ -99,9 +99,9 @@ class EventsController extends Controller
             
             $newEvent->save();
 
-            return response()->json(['message'=>'Evento Guardado'],200);
+            return response()->json(['status' => 200,'statusText' => 'Evento Guardado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=> $th->errorInfo[2]],400);
+            return response()->json(['status' => 400,'statusText' => $th], 200);
         }
     }
 
@@ -144,9 +144,9 @@ class EventsController extends Controller
             
             $newEvent->save();
 
-            return response()->json(['message'=>'Evento Actualizado'],200);
+            return response()->json(['status' => 200,'statusText' => 'Evento Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=> $th->errorInfo[2]],400);
+            return response()->json(['status' => 400,'statusText' => $th], 200);
         }
     }
 
@@ -160,6 +160,6 @@ class EventsController extends Controller
     {
         $event = Events::findOrFail($id);
         $event->delete();
-        return response()->json(['message'=>'Evento Eliminado'],200);
+        return response()->json(['status' => 200,'statusText' => 'Evento Eliminado'], 200);
     }
 }
