@@ -27,9 +27,9 @@ class LoginController extends Controller
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
  
-            return response()->json(['message' => 'Login Correcto'], 200);
+            return response()->json(['status' => 200,'statusText' => 'Login Correcto'], 200);
         }else{
-            return response()->json(['message' => 'Login fallido'], 400);
+            return response()->json(['status' => 400,'statusText' => 'Login fallido'], 400);
         }
  
         return back()->withErrors([
