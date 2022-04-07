@@ -102,14 +102,7 @@ class RegisterController extends Controller
      * @return \App\Models\User
      */
     protected function register(Request $request)
-    {    
-        $profile = $this->saveImageB64($request->email,'profile',$request->profile);        
-        $photos = $request->photos;
-        $arrPhotos = [];
-        foreach ($photos as $key => $photo) {
-            $picture = $this->saveImageB64($request->email,'photos',$photo);
-            array_push($arrPhotos, $picture);
-        }        
+    {      
         try {
             $user = User::create([
                 "name" => $request->name,
@@ -117,23 +110,7 @@ class RegisterController extends Controller
                 "contact" => json_encode($request->contact),
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
-                "nickname" => $request->nickname,
-                "birthday" => $request->birthday,
-                "gender" => $request->gender,            
-                "sectors" =>json_encode($request->sectors),
-                "aptitud" =>json_encode($request->aptitud),
-                "pyshical" =>json_encode($request->pyshical),
-                "competences" =>json_encode($request->competences),
-                "education" =>json_encode($request->education),
-                "experience" =>json_encode($request->experience),
-                "identification" => $request->identification,
-                "address" => $request->address,
-                "city" => $request->city,
-               
-                "profile" => $profile,
-                "photos" => json_encode($arrPhotos),
-                "video" =>$request->video,
-                
+                                               
                 "autorization" => $request->autorization,
                 "terms_conditions" =>$request->terms_conditions,
                 "rol" =>json_encode($request->rol)

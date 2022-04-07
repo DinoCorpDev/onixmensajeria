@@ -111,13 +111,19 @@ class ProfileUserController extends Controller
         return $img_extension[1];  
     }
 
-    public function updateUser(Request $request, $id){        
+    public function updateUser(Request $request, $id){                
         try {  
             $user = User::findOrFail($id);    
             if($user->profile){                
                 File::delete($user->profile);
                 $profile = $this->saveImageB64($user->email,'profile',$request->profile);                
                 $user->profile = $profile;
+            }
+
+            if($user->video){                
+                File::delete($user->video);
+                $video = $this->saveImageB64($user->email,'video',$request->video);
+                $user->video = $video;
             }
 
             $photosDelete = json_decode($user->photos);            
@@ -151,12 +157,8 @@ class ProfileUserController extends Controller
             $user->experience = json_encode($request->experience);
             $user->identification = $request->identification;
             $user->address = $request->address;
-            $user->city = $request->city;        
+            $user->city = $request->city;                    
                     
-            $user->video = $request->video;        
-            
-            $user->autorization = $request->autorization;
-            $user->terms_conditions = $request->terms_conditions;
             $user->rol = json_encode($request->rol);
             $user->update();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
