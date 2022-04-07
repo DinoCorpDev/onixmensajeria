@@ -39,6 +39,6 @@ class LoginController extends Controller
 
     public function logout(){
         Auth::logout();        
-        return response()->json('Sesion Cerrada');
+        return response()->json(['status' => 200,'statusText' => 'Sesion Cerrada'], 200);
     }
 }
