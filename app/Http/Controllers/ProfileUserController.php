@@ -213,7 +213,7 @@ class ProfileUserController extends Controller
             $changeP->provisionalPassword = false;
             $changeP->save();
             
-            return response()->json(['status'=>200,'statusMessage'=>'Contraseña Actualizada, inicia sesion']);
+            return response()->json(['status'=>200,'statusMessage'=>'Contraseña Actualizada']);
         } catch (\Throwable $th) {
             
             return response()->json(['status'=>400,'statusMessage'=>'Verifica La Información']);
