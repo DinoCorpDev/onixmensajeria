@@ -117,7 +117,7 @@ class RegisterController extends Controller
             
             return response()->json(['status' => 200,'statusText' => 'Usuario Creado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 200);
+            return response()->json(['status' => 400,'statusText' => 'Hubo un error'], 400);
         }        
     }
 }
