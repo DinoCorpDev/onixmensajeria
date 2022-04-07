@@ -112,8 +112,7 @@ class RegisterController extends Controller
                 "password" => Hash::make($request->password),
                                                
                 "autorization" => $request->autorization,
-                "terms_conditions" =>$request->terms_conditions,
-                "rol" =>json_encode($request->rol)
+                "terms_conditions" =>$request->terms_conditions,                
             ]);
             
             return response()->json(['status' => 200,'statusText' => 'Usuario Creado'], 200);

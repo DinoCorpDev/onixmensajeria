@@ -114,16 +114,20 @@ class ProfileUserController extends Controller
     public function updateUser(Request $request, $id){                
         try {  
             $user = User::findOrFail($id);    
-            if($user->profile){                
-                File::delete($user->profile);
+            if($request->profile){     
+                if($user->profile){
+                    File::delete($user->profile);
+                }
                 $profile = $this->saveImageB64($user->email,'profile',$request->profile);                
                 $user->profile = $profile;
             }
 
-            if($user->video){                
-                File::delete($user->video);
-                $video = $this->saveImageB64($user->email,'video',$request->video);
-                $user->video = $video;
+            if($request->video){
+                if($user->video){                    
+                    File::delete($user->video);
+                }                
+                $videoUploaded = $this->saveImageB64($user->email,'video',$request->video);
+                $user->video = $videoUploaded;
             }
 
             $photosDelete = json_decode($user->photos);            
@@ -137,7 +141,7 @@ class ProfileUserController extends Controller
                 $photos = $request->photos;
                 $arrPhotos = [];
                 foreach ($photos as $key => $photo) {                              
-                    $picture = $this->saveImageB64($request->email,'photos'.$key,$photo[$key]);
+                    $picture = $this->saveImageB64($user->email,'photos'.$key,$photo[$key]);
                     array_push($arrPhotos, $picture);
                 }
                 $user->photos = $arrPhotos;
@@ -163,7 +167,7 @@ class ProfileUserController extends Controller
             $user->update();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 200);
+            return response()->json(['status' => 400,'statusText' => throw $th], 200);
         }        
     }
 
