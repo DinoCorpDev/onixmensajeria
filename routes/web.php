@@ -27,9 +27,6 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
 
-    //Ruta de crud de roles
-    Route::resource('roles', 'App\Http\Controllers\RolesController');
-
     //Ruta de crud de eventos
     Route::resource('events', 'App\Http\Controllers\EventsController');
 
@@ -37,7 +34,12 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');    
 });
 
-Route::resource('gender','App\Http\Controllers\GenderController');
-Route::resource('sectors','App\Http\Controllers\SectorsController');
-Route::resource('competences','App\Http\Controllers\CompetencesController');
-Route::resource('personalType','App\Http\Controllers\PersonalTypeController');
+Route::resource('gender',App\Http\Controllers\GenderController::class);
+Route::get('sectors',[App\Http\Controllers\SectorsController::class,'index']);
+// Route::get('competences',[App\Http\Controllers\CompetencesController::class,'index']);
+Route::get('personalType',[App\Http\Controllers\PersonalTypeController::class,'index']);
+//Ruta de crud de roles
+//Route::get('roles', [App\Http\Controllers\RolesController::class,'index']);
+
+Route::get('getRoles', [App\Http\Controllers\RolesController::class,'index']);
+Route::get('getCompetences',[App\Http\Controllers\CompetencesController::class,'index']);
