@@ -23,7 +23,6 @@ return new class extends Migration
             $table->string("nickname")->nullable();
             $table->date("birthday")->nullable();
             $table->string("gender")->nullable();
-            $table->string("aptitud")->nullable();
             $table->string("sectors")->nullable();
             $table->string("pyshical")->nullable();
             $table->string("competences")->nullable();
@@ -37,7 +36,7 @@ return new class extends Migration
             $table->string("video")->nullable();
             $table->boolean("autorization");
             $table->boolean("terms_conditions");
-            $table->string("rol")->nullable();
+            $table->string("roles")->nullable();
             $table->boolean('provisionalPassword')->default(false);
             $table->boolean('status')->default(true);
             $table->rememberToken();

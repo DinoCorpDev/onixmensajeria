@@ -25,8 +25,7 @@ class User extends Authenticatable
         "password",
         "nickname",
         "birthday",
-        "gender",
-        "aptitud",
+        "gender",        
         "sectors",
         "pyshical",
         "competences",
@@ -40,7 +39,7 @@ class User extends Authenticatable
         "video",
         "autorization",
         "terms_conditions",
-        "rol",
+        "roles",
         "status",
         "provisionalPassword"
     ];
@@ -86,10 +85,6 @@ class User extends Authenticatable
 
     public function experiences(){
         return $this->hasMany(Experiences::class, 'id','id_user');
-    }
-
-    public function aptitudes(){
-        return $this->hasMany(Aptitudes::class, 'id','id_user');
     }
 
     public function sectors(){

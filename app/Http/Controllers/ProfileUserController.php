@@ -36,8 +36,7 @@ class ProfileUserController extends Controller
                 "nickname" => $user->nickname,
                 "birthday" => $user->birthday,
                 "gender" => $user->gender,            
-                "sectors" =>json_decode($user->sectors),
-                "aptitud" =>json_decode($user->aptitud),
+                "sectors" =>json_decode($user->sectors),                
                 "pyshical" =>json_decode($user->pyshical),
                 "competences" =>json_decode($user->competences),
                 "education" =>json_decode($user->education),
@@ -52,7 +51,8 @@ class ProfileUserController extends Controller
                     
                 "autorization" => $user->autorization,
                 "terms_conditions" =>$user->terms_conditions,
-                "rol" =>json_decode($user->rol)
+                "roles" =>json_decode($user->role),
+                "provisionalPassword" =>$user->provisionalPassword,
             ];
             return response()->json($data);
         } catch (\Throwable $th) {
@@ -156,8 +156,7 @@ class ProfileUserController extends Controller
             $user->nickname = $request->nickname;
             $user->birthday = $request->birthday;
             $user->gender = $request->gender;            
-            $user->sectors = json_encode($request->sectors);
-            $user->aptitud = json_encode($request->aptitud);
+            $user->sectors = json_encode($request->sectors);            
             $user->pyshical = json_encode($request->pyshical);
             $user->competences = json_encode($request->competences);
             $user->education = json_encode($request->education);
@@ -166,7 +165,7 @@ class ProfileUserController extends Controller
             $user->address = $request->address;
             $user->city = $request->city;                    
                     
-            $user->rol = json_encode($request->rol);
+            $user->roles = json_encode($request->roles);
             $user->update();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
