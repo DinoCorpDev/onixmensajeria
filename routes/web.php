@@ -43,3 +43,6 @@ Route::get('personalType',[App\Http\Controllers\PersonalTypeController::class,'i
 
 Route::get('getRoles', [App\Http\Controllers\RolesController::class,'index']);
 Route::get('getCompetences',[App\Http\Controllers\CompetencesController::class,'index']);
+
+Route::post('sendPassword',[App\Http\Controllers\ProfileUserController::class, 'sendPassword']);
+Route::post('updatePassword', [App\Http\Controllers\ProfileUserController::class, 'updatePassword']);

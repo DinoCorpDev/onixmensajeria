@@ -10,6 +10,9 @@ use Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Hash;
+use Mail;
+use App\Mail\NotifyMail;
 
 class ProfileUserController extends Controller
 {
@@ -169,6 +172,52 @@ class ProfileUserController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['status' => 400,'statusText' => throw $th], 200);
         }        
+    }
+
+    public function sendPassword(Request $request){
+        $dataUser = User::where('email',$request->email)->first();
+        if($dataUser){        
+            $caracteres = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#!';
+            $password = null;
+            
+            $aleatoria = substr(str_shuffle($caracteres), 0, 10);
+            $password = $aleatoria;        
+        
+            $data=[
+                $request->email,
+                $password,
+            ];
+            try {
+                $changeP = User::where('email',$request->email)->first();
+                $changeP->password = Hash::make($password);
+                $changeP->provisionalPassword = true;
+                $changeP->save();
+
+                Mail::to($request->email)->send(new NotifyMail($data));
+
+                return response()->json(['status'=>200,'statusMessage'=>'Correo con nueva contraseña enviada']);
+            } catch (\Throwable $th) {
+                //throw $th;
+                return response()->json(['status'=>400,'statusMessage'=>throw $th]);
+            }
+        }else{
+            return response()->json(['status'=>400,'statusMessage'=>'El correo No Existe']);
+        }        
+    }
+
+    public function updatePassword(Request $request){        
+        try {            
+            $user = Auth::user();
+            $changeP = User::where('email',$user->email)->first();            
+            $changeP->password = Hash::make($request->get('password'));            
+            $changeP->provisionalPassword = false;
+            $changeP->save();
+            
+            return response()->json(['status'=>200,'statusMessage'=>'Contraseña Actualizada, inicia sesion']);
+        } catch (\Throwable $th) {
+            
+            return response()->json(['status'=>400,'statusMessage'=>'Verifica La Información']);
+        }
     }
 
     public function disableUser(Request $request, $id){
