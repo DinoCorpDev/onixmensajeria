@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Events;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
 
 class EventsController extends Controller
 {
@@ -50,7 +53,7 @@ class EventsController extends Controller
             // la función "put" el nombre de la imagen y los datos de la imagen como 
             // segundo parametro
         $imageSaved = Storage::disk('images_events')->put($img_name, $img);
-        $url = storage_path('app\images_events/').$img_name;       
+        $url = storage_path('app\images_eventsB64/').$img_name;       
         return $url;
     }
 
@@ -81,7 +84,7 @@ class EventsController extends Controller
     public function store(Request $request)
     {        
         try {
-            $banner = $this->$this->saveImageB64($request->idItalentt,$request->name,$request->banner);
+            $banner = $this->saveImageB64($request->idItalentt,$request->name,$request->banner);
             $newEvent = new Events();
 
             $newEvent->idItalentt = $request->idItalentt;
@@ -127,11 +130,14 @@ class EventsController extends Controller
     public function update(Request $request, $id)
     {        
         try {
-            $newEvent = Events::findOrFail($id);
-
+            $newEvent = Events::findOrFail($id);            
+            if($request->banner){
+                File::delete($newEvent->banner);
+                $banner = $this->saveImageB64($request->idItalentt,$request->name,$request->banner);
+                $newEvent->banner = $banner;
+            }
             $newEvent->idItalentt = $request->idItalentt;
-            $newEvent->name = $request->name;
-            $newEvent->banner = $request->banner;
+            $newEvent->name = $request->name;            
             $newEvent->typePersonal = json_encode($request->aboutPersonal);
             $newEvent->initialDate = $request->initialDate;
             $newEvent->endDate = $request->endDate;

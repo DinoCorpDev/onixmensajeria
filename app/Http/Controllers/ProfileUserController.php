@@ -7,6 +7,10 @@ use App\Models\User;
 use App\Models\UsersRoles;
 use Auth;
 
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\File;
+
 class ProfileUserController extends Controller
 {
     /**
@@ -75,9 +79,64 @@ class ProfileUserController extends Controller
         
     }
 
+    public function saveImageB64(String $email, String $type, String $image_b64){        
+        $img = $this->getB64Image($image_b64);        
+            // Obtener la extensión de la Imagen
+        $img_extension = $this->getB64Extension($image_b64);
+            // Crear un nombre aleatorio para la imagen
+        $img_name = $email.'-'.$type.'.'.$img_extension;
+            // Usando el Storage guardar en el disco creado anteriormente y pasandole a 
+            // la función "put" el nombre de la imagen y los datos de la imagen como 
+            // segundo parametro
+        $imageSaved = Storage::disk('images_base64')->put($img_name, $img);
+        $url = storage_path('app\images_base64/').$img_name;       
+        return $url;
+    }
+
+    public function getB64Image($base64_image){  
+        // Obtener el String base-64 de los datos         
+        $image_service_str = substr($base64_image, strpos($base64_image, ",")+1);
+        // Decodificar ese string y devolver los datos de la imagen        
+        $image = base64_decode($image_service_str);   
+        // Retornamos el string decodificado
+        return $image; 
+   }
+
+    public function getB64Extension($base64_image){  
+        // Obtener mediante una expresión regular la extensión imagen y guardarla
+        // en la variable "img_extension"        
+        preg_match("/^data:image\/(.*);base64/i",$base64_image, $img_extension);   
+        // Dependiendo si se pide la extensión completa o no retornar el arreglo con
+        // los datos de la extensión en la posición 0 - 1        
+        return $img_extension[1];  
+    }
+
     public function updateUser(Request $request, $id){        
-        try {            
-            $user = User::findOrFail($id);            
+        try {  
+            $user = User::findOrFail($id);    
+            if($user->profile){                
+                File::delete($user->profile);
+                $profile = $this->saveImageB64($user->email,'profile',$request->profile);                
+                $user->profile = $profile;
+            }
+
+            $photosDelete = json_decode($user->photos);            
+            if($photosDelete){                
+                foreach ($photosDelete as $key => $photo) {
+                    File::delete($photo);
+                }
+            }          
+
+            if($request->photos){                  
+                $photos = $request->photos;
+                $arrPhotos = [];
+                foreach ($photos as $key => $photo) {                              
+                    $picture = $this->saveImageB64($request->email,'photos'.$key,$photo[$key]);
+                    array_push($arrPhotos, $picture);
+                }
+                $user->photos = $arrPhotos;
+            }            
+            
             $user->name = $request->name;
             $user->lastname = $request->lastname;
             $user->contact = json_encode($request->contact);        
@@ -93,9 +152,7 @@ class ProfileUserController extends Controller
             $user->identification = $request->identification;
             $user->address = $request->address;
             $user->city = $request->city;        
-
-            $user->profile = $request->profile;
-            $user->photos = $request->photos;
+                    
             $user->video = $request->video;        
             
             $user->autorization = $request->autorization;
