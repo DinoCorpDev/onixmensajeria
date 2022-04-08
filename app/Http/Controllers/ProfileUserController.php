@@ -174,6 +174,14 @@ class ProfileUserController extends Controller
         }        
     }
 
+    public function updateFirstLogin(Request $request, $id){
+        $user = User::findOrFail($id);
+        $user->firstLogin = $request->firstLogin;
+        $user->update();
+
+        return response()->json(['status' => 200,'statusText' => 'Campo Actualizado'], 200);   
+    }
+
     public function sendPassword(Request $request){
         $dataUser = User::where('email',$request->email)->first();
         if($dataUser){        
