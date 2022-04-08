@@ -49,10 +49,11 @@ class ProfileUserController extends Controller
                 "photos" => json_decode($user->photos),
                 "video" =>$user->video,
                     
-                "autorization" => $user->autorization,
-                "terms_conditions" =>$user->terms_conditions,
+                "autorization" => $user->autorization === "1" ? true : false,
+                "terms_conditions" =>$user->terms_conditions === "1" ? true : false,
                 "roles" =>json_decode($user->role),
                 "provisionalPassword" =>$user->provisionalPassword,
+                "firstLogin" =>$user->firstLogin === "1" ? true : false,
             ];
             return response()->json($data);
         } catch (\Throwable $th) {
@@ -164,12 +165,12 @@ class ProfileUserController extends Controller
             $user->identification = $request->identification;
             $user->address = $request->address;
             $user->city = $request->city;                    
-                    
+            $user->firstLogin = $request->firstLogin;
             $user->roles = json_encode($request->roles);
             $user->update();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => throw $th], 200);
+            return response()->json(['status' => 400,'statusText' =>$th], 200);
         }        
     }
 
@@ -197,7 +198,7 @@ class ProfileUserController extends Controller
                 return response()->json(['status'=>200,'statusMessage'=>'Correo con nueva contraseña enviada']);
             } catch (\Throwable $th) {
                 //throw $th;
-                return response()->json(['status'=>400,'statusMessage'=>throw $th]);
+                return response()->json(['status'=>400,'statusMessage'=>$th]);
             }
         }else{
             return response()->json(['status'=>400,'statusMessage'=>'El correo No Existe']);
@@ -207,9 +208,9 @@ class ProfileUserController extends Controller
     public function updatePassword(Request $request){        
         try {            
             $user = Auth::user();
-            $changeP = User::where('email',$user->email)->first();            
+            $changeP = User::where('email',$user->email)->first();              
             $changeP->password = Hash::make($request->get('password'));            
-            $changeP->provisionalPassword = false;
+            $changeP->provisionalPassword = false;            
             $changeP->save();
             
             return response()->json(['status'=>200,'statusMessage'=>'Contraseña Actualizada']);

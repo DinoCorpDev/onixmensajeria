@@ -41,7 +41,8 @@ class User extends Authenticatable
         "terms_conditions",
         "roles",
         "status",
-        "provisionalPassword"
+        "provisionalPassword",
+        "firstLogin",
     ];
 
     /**
