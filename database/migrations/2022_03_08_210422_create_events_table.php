@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('typePersonal');
             $table->date('initialDate');
             $table->date('endDate');
-            $table->json('houry');
+            $table->json('hourly');
             $table->string('city');
             $table->string('location');
             $table->string('address');

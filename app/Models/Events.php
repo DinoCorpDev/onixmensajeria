@@ -18,7 +18,7 @@ class Events extends Model
         'typePersonal',
         'initialDate',
         'endDate',
-        'houry',
+        'hourly',
         'city',
         'location',
         'id_address',

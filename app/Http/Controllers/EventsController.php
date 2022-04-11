@@ -31,7 +31,7 @@ class EventsController extends Controller
                 'aboutPersonal'=>json_decode($event->typePersonal),
                 'initialDate'=>$event->initialDate,
                 'endDate'=>$event->endDate,
-                'hourly'=>json_decode($event->houry),
+                'hourly'=>json_decode($event->hourly),
                 'city'=>$event->city,
                 'location'=>$event->location,
                 'address'=>json_decode($event->address),
@@ -141,7 +141,7 @@ class EventsController extends Controller
             $newEvent->typePersonal = json_encode($request->aboutPersonal);
             $newEvent->initialDate = $request->initialDate;
             $newEvent->endDate = $request->endDate;
-            $newEvent->houry = json_encode($request->houry);
+            $newEvent->hourly = json_encode($request->hourly);
             $newEvent->city = $request->city;
             $newEvent->location = $request->location;
             $newEvent->address = json_encode($request->address);
