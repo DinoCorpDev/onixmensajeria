@@ -34,7 +34,7 @@ class SectorsController extends Controller
 
             return response()->json(['message'=>'Sector Creado'],200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
+            return response()->json(['message'=>$th],400);
         }        
     }
 
@@ -57,16 +57,16 @@ class SectorsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {
+    {        
         try {
-            $sector = Sector::findOrFail($id);
+            $sector = Sectors::findOrFail($id);
             $sector->label = $request->label;
             $sector->value = $request->value;
             $sector->update();
 
             return response()->json(['message'=>'Sector Actualizado'],200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
+            return response()->json(['message'=>$th],400);
         }
     }
 
@@ -76,15 +76,15 @@ class SectorsController extends Controller
      * @param  \App\Models\sectors  $sectors
      * @return \Illuminate\Http\Response
      */
-    public function destroy(sectors $sectors)
+    public function destroy($id)
     {
         try {
-            $sector = Sector::findOrFail($id);
+            $sector = Sectors::findOrFail($id);
             $sector->delete();
 
             return response()->json(['message'=>'Sector Eliminado'],200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
+            return response()->json(['message'=>$th],400);
         }
     }
 }

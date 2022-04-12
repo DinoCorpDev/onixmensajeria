@@ -30,6 +30,8 @@ Route::group(['middleware' => ['auth']], function () {
 
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
 
+    Route::get('getAllUsers',[App\Http\Controllers\ProfileUserController::class, 'getAllUsers']);
+
     //Ruta de crud de eventos
     Route::resource('events', 'App\Http\Controllers\EventsController');
 
@@ -49,3 +51,7 @@ Route::get('getCompetences',[App\Http\Controllers\CompetencesController::class,'
 
 Route::post('sendPassword',[App\Http\Controllers\ProfileUserController::class, 'sendPassword']);
 Route::post('updatePassword', [App\Http\Controllers\ProfileUserController::class, 'updatePassword']);
+
+Route::resource('competences', 'App\Http\Controllers\CompetencesController');
+Route::resource('sector', 'App\Http\Controllers\SectorsController');
+Route::resource('rol','App\Http\Controllers\RolesController');

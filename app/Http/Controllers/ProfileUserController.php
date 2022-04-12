@@ -21,6 +21,14 @@ class ProfileUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getAllUsers(){
+        try {
+            $users = User::all();
+            return response()->json(['data'=>$users],200);
+        } catch (\Throwable $th) {
+            return response()->json(['status'=>500, 'statusText'=>'Error en servidor'],500);
+        }        
+    }
     public function index()
     {
         try {

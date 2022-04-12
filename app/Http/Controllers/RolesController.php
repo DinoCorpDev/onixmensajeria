@@ -70,4 +70,16 @@ class RolesController extends Controller
             return response()->json(['message'=>$th->errorInfo[2]],400);
         }        
     }
+
+    public function destroy($id)
+    {
+        try {
+            $sector = Roles::findOrFail($id);
+            $sector->delete();
+
+            return response()->json(['message'=>'Rol Eliminado'],200);
+        } catch (\Throwable $th) {
+            return response()->json(['message'=>$th],400);
+        }
+    }
 }
