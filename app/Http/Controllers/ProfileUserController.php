@@ -32,10 +32,42 @@ class ProfileUserController extends Controller
 
     public function getAllUsers(){
         try {
+            $data=[];
             $users = User::all();
-            return response()->json(['data'=>$users],200);
+            foreach ($users as $key => $users) {
+                $dataToPush=[
+                    "id"=>$users->id,
+                    "name" => $users->name,
+                    "lastname" => $users->lastname,
+                    "contact" => json_decode($users->contact),
+                    "email" => $users->email,
+                    "nickname" => $users->nickname,
+                    "birthday" => $users->birthday,
+                    "gender" => $users->gender,            
+                    "sectors" =>json_decode($users->sectors),                
+                    "pyshical" =>json_decode($users->pyshical),
+                    "competences" =>json_decode($users->competences),
+                    "education" =>json_decode($users->education),
+                    "experience" =>json_decode($users->experience),
+                    "identification" => $users->identification,
+                    "address" => $users->address,
+                    "city" => $users->city,
+                    
+                    "profile" => $users->profile,
+                    "photos" => json_decode($users->photos),
+                    "video" =>$users->video,
+                        
+                    "autorization" => $users->autorization === "1" ? true : false,
+                    "terms_conditions" =>$users->terms_conditions === "1" ? true : false,
+                    "roles" =>json_decode($users->role),
+                    "provisionalPassword" =>$users->provisionalPassword,
+                    "firstLogin" =>$users->firstLogin === "1" ? true : false,
+                ];
+                array_push($data, $dataToPush);
+            }
+            return response()->json(['data'=>$data],200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>500, 'statusText'=>'Error en servidor'],500);
+            return response()->json(['status'=>500, 'statusText'=>throw $th],500);
         }        
     }
     public function index()

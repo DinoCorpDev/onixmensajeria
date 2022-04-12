@@ -42,6 +42,9 @@
             </ul>
         </div>
         <div v-if="user">        
+            <div v-if="showUsers">
+                <UsersComponent :changeActive="changeActive"/>
+            </div>
             <div v-if="shoAttitudes">
                 <AptitudesComponent :changeActive="changeActive"/>
             </div>
@@ -60,6 +63,7 @@
 import AptitudesComponent from '../Aptitudes/index.vue';
 import RolesComponent from '../Roles/index.vue';
 import SectoresComponent from '../Sectores/index.vue';
+import UsersComponent from '../Users/index.vue';
 
 export default {
     props:['user','logout'],
@@ -67,6 +71,7 @@ export default {
         AptitudesComponent,
         RolesComponent,
         SectoresComponent,
+        UsersComponent,
     },
     data(){
         return{
@@ -77,23 +82,13 @@ export default {
             sectorsActive: false,
             logoutActive: false,
 
-            showUsers:false,
+            showUsers:true,
             shoAttitudes:false,   
             showRoles:false,
             showSectores: false,
         }
     },
-    mounted(){
-        this.getUsers();
-        console.log(this.user)
-    },
     methods:{
-        getUsers(){
-            axios.get('getAllUsers').then((response)=>{
-                console.log(response.data);
-            })
-        },
-
         activateMenu(){  
             if(this.changeActive === false){
                 this.changeActive = true
