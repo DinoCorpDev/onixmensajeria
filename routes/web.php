@@ -51,6 +51,7 @@ Route::get('getCompetences',[App\Http\Controllers\CompetencesController::class,'
 
 Route::post('sendPassword',[App\Http\Controllers\ProfileUserController::class, 'sendPassword']);
 Route::post('updatePassword', [App\Http\Controllers\ProfileUserController::class, 'updatePassword']);
+Route::get('getMyUser',[App\Http\Controllers\ProfileUserController::class, 'getMyUser']);
 
 Route::resource('competences', 'App\Http\Controllers\CompetencesController');
 Route::resource('sector', 'App\Http\Controllers\SectorsController');

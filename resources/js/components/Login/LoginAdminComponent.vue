@@ -44,12 +44,19 @@
                 user:null,
             }
         },
+        mounted(){
+            axios.get('getMyUser').then((response) => {                
+                this.user = response.data.data;
+            }).catch((error)=>{
+                console.log(error);
+            })
+        },
         methods:{
             login(){
                 let data={
                     email: this.email,
                     password: this.password
-                }
+                }                
                 axios.post('login',data).then((response)=>{
                     this.user = response.data.data;
                 }).catch((error)=>{

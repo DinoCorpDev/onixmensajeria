@@ -6,7 +6,7 @@
                 <li class="list" style="--clr:#f44336">
                     <a href="#">
                         <span class="icon"><i class="bi bi-person-circle"></i></span>
-                        <span class="text">{{user && user.names ? user.names : 'User test'}}</span>
+                        <span class="text">{{user && user.name ? user.name+' '+user.lastname : 'User test'}}</span>
                     </a>
                 </li>
                 <li :class="usersActive ? 'list active' : 'list' " style="--clr:#f44336">

@@ -5561,26 +5561,35 @@ __webpack_require__.r(__webpack_exports__);
       user: null
     };
   },
+  mounted: function mounted() {
+    var _this = this;
+
+    axios.get('getMyUser').then(function (response) {
+      _this.user = response.data.data;
+    })["catch"](function (error) {
+      console.log(error);
+    });
+  },
   methods: {
     login: function login() {
-      var _this = this;
+      var _this2 = this;
 
       var data = {
         email: this.email,
         password: this.password
       };
       axios.post('login', data).then(function (response) {
-        _this.user = response.data.data;
+        _this2.user = response.data.data;
       })["catch"](function (error) {
         toastr.error('Usuario y / o Contraseña Incorrectos');
         console.log(error);
       });
     },
     logout: function logout() {
-      var _this2 = this;
+      var _this3 = this;
 
       axios.post('logout').then(function (response) {
-        _this2.cleanData();
+        _this3.cleanData();
 
         console.log(response.data);
       });
@@ -41411,7 +41420,9 @@ var render = function () {
                 _c("span", { staticClass: "text" }, [
                   _vm._v(
                     _vm._s(
-                      _vm.user && _vm.user.names ? _vm.user.names : "User test"
+                      _vm.user && _vm.user.name
+                        ? _vm.user.name + " " + _vm.user.lastname
+                        : "User test"
                     )
                   ),
                 ]),

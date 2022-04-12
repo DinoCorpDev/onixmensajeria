@@ -21,6 +21,15 @@ class ProfileUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getMyUser(){        
+        $user = Auth::user();
+        if($user) {        
+            return response()->json(['data'=>$user],200);
+        }else{
+            return response()->json(['status'=>500, 'statusText'=>'Sin Usuario'],500);
+        }
+    }
+
     public function getAllUsers(){
         try {
             $users = User::all();
