@@ -5,13 +5,14 @@
                 <h2><strong>Usuarios</strong></h2>
             </div>
             <div class="card-body">
-                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Sector</button>
+                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Usuario</button>
                 <table class="table table-striped table-bordered table-response">
                     <thead>
                         <tr>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Correo</th>
+                            <th>Contacto</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -20,9 +21,9 @@
                             <td>{{user.name}}</td>
                             <td>{{user.lastname}}</td>
                             <td>{{user.email}}</td>
+                            <td>{{user.contact.phone}}</td>
                             <td>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Editar</button>
-                                <button class="btn btn-danger">Eliminar</button>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">Editar</button>                                
                             </td>
                         </tr>
                     </tbody>

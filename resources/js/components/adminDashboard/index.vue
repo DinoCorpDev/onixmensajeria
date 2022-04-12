@@ -1,6 +1,6 @@
 <template>
-    <div>
-        <div :class="changeActive ? 'content navigation open col' : 'content navigation col'">        
+    <div class="mt-3">
+        <div :class="changeActive ? 'content navigation open' : 'content navigation'">        
             <div class="menuToggle" v-on:click="activateMenu"></div>
             <ul>
                 <li class="list" style="--clr:#f44336">
@@ -11,7 +11,7 @@
                 </li>
                 <li :class="usersActive ? 'list active' : 'list' " style="--clr:#f44336">
                     <a href="#" v-on:click="activeLink('users')">
-                        <span class="icon"><i class="bi bi-app-indicator"></i></span>
+                        <span class="icon"><i class="bi bi-people-fill"></i></span>
                         <span class="text">Usuarios</span>
                     </a>
                 </li>

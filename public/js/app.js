@@ -5960,6 +5960,7 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['changeActive'],
   data: function data() {
@@ -41572,7 +41573,7 @@ var render = function () {
                 "data-bs-target": "#exampleModal",
               },
             },
-            [_vm._v("Crear Sector")]
+            [_vm._v("Crear Usuario")]
           ),
           _vm._v(" "),
           _c(
@@ -41592,6 +41593,8 @@ var render = function () {
                     _c("td", [_vm._v(_vm._s(user.lastname))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(user.email))]),
+                    _vm._v(" "),
+                    _c("td", [_vm._v(_vm._s(user.contact.phone))]),
                     _vm._v(" "),
                     _vm._m(2, true),
                   ])
@@ -41628,6 +41631,8 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Correo")]),
         _vm._v(" "),
+        _c("th", [_vm._v("Contacto")]),
+        _vm._v(" "),
         _c("th"),
       ]),
     ])
@@ -41648,8 +41653,6 @@ var staticRenderFns = [
         },
         [_vm._v("Editar")]
       ),
-      _vm._v(" "),
-      _c("button", { staticClass: "btn btn-danger" }, [_vm._v("Eliminar")]),
     ])
   },
   function () {
@@ -41736,13 +41739,13 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", [
+  return _c("div", { staticClass: "mt-3" }, [
     _c(
       "div",
       {
         class: _vm.changeActive
-          ? "content navigation open col"
-          : "content navigation col",
+          ? "content navigation open"
+          : "content navigation",
       },
       [
         _c("div", {
@@ -41973,7 +41976,7 @@ var staticRenderFns = [
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
     return _c("span", { staticClass: "icon" }, [
-      _c("i", { staticClass: "bi bi-app-indicator" }),
+      _c("i", { staticClass: "bi bi-people-fill" }),
     ])
   },
   function () {

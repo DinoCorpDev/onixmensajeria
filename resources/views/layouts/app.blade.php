@@ -29,7 +29,7 @@
 </head>
 <body>
     <div id="app">
-        <nav class="navbar navbar-expand-md navbar-light bg-white shadow-sm" style="position:fixed:flex">
+        <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm" style="position:fixed:flex">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
                     Italentt
