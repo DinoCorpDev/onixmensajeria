@@ -164,7 +164,42 @@ class ProfileUserController extends Controller
         return $img_extension[1];  
     }
 
-    public function updateUser(Request $request, $id){                
+    public function updateUserInAdmin(Request $request, $id){        
+        try {  
+            $user = User::findOrFail($id);
+            $user->name = $request->name;
+            $user->lastname = $request->lastname;
+            $user->contact = json_encode($request->contact);
+            $user->nickname = $request->nickname;
+            $user->address = $request->address;
+            $user->city = $request->city;
+            $user->save();
+            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 400,'statusText' => throw $th], 400);
+        }
+    }
+
+    public function adminRegisterUser(Request $request){      
+        try {
+            $user = User::create([
+                "name" => $request->name,
+                "lastname" => $request->lastname,
+                "contact" => json_encode($request->contact),
+                "email" => $request->email,
+                "password" => Hash::make($request->password),
+                                               
+                "autorization" => $request->autorization,
+                "terms_conditions" =>$request->terms_conditions,                
+            ]);
+            
+            return response()->json(['status' => 200,'statusText' => 'Usuario Creado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 400,'statusText' => throw $th], 400);
+        }        
+    }
+
+    public function updateUser(Request $request, $id){
         try {  
             $user = User::findOrFail($id);    
             if($request->profile){     
@@ -219,7 +254,7 @@ class ProfileUserController extends Controller
             $user->update();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>$th], 200);
+            return response()->json(['status' => 400,'statusText' => throw $th], 400);
         }        
     }
 

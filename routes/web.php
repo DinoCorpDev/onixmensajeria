@@ -25,7 +25,9 @@ Route::group(['middleware' => ['auth']], function () {
     //Ruta de usuarios, actualizacion, muestra y deshabilitacion
     Route::put('disableUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'disableUser']);
     Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
-
+    Route::patch('updateUserInAdmin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);    
+    Route::post('adminRegisterUser',[App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);    
+    
     Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);    
 
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
