@@ -38,7 +38,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('events', 'App\Http\Controllers\EventsController');
 
     //Ruta de crud de eventos a los que el usuario se postuló
-    Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');    
+    Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');  
+    
+    Route::get('getPostulations',[App\Http\Controllers\EventsUsersController::class, 'getPostulations']);
 });
 
 Route::resource('gender',App\Http\Controllers\GenderController::class);

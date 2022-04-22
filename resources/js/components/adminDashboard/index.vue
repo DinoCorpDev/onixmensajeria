@@ -33,6 +33,14 @@
                         <span class="text">Sectores</span>
                     </a>
                 </li>
+
+                <li :class="postulationsActive ? 'list active' : 'list' " style="--clr:#2196f3">
+                    <a href="#" v-on:click="activeLink('postulations')">
+                        <span class="icon"><i class="bi bi-shield"></i></span>
+                        <span class="text">Postulaciones</span>
+                    </a>
+                </li>
+
                 <li :class="logoutActive ? 'list active' : 'list' " style="--clr:#d321f3">
                     <a href="#" v-on:click="activeLink('logout')">
                         <span class="icon"><i class="bi bi-x-octagon-fill"></i></span>
@@ -56,6 +64,10 @@
             <div v-if="showSectores">
                 <SectoresComponent :changeActive="changeActive"/>
             </div>
+
+            <div v-if="showPostulations">
+                <PostulationsComponent :changeActive="changeActive"/>
+            </div>
         </div>
     </div>
 </template>
@@ -64,6 +76,7 @@ import AptitudesComponent from '../Aptitudes/index.vue';
 import RolesComponent from '../Roles/index.vue';
 import SectoresComponent from '../Sectores/index.vue';
 import UsersComponent from '../Users/index.vue';
+import PostulationsComponent from '../Postulations/index.vue';
 
 export default {
     props:['user','logout'],
@@ -72,6 +85,7 @@ export default {
         RolesComponent,
         SectoresComponent,
         UsersComponent,
+        PostulationsComponent
     },
     data(){
         return{
@@ -80,12 +94,14 @@ export default {
             rolesActive: false,
             attitudesActive: false,
             sectorsActive: false,
+            postulationsActive: false,
             logoutActive: false,
 
             showUsers:true,
             shoAttitudes:false,   
             showRoles:false,
             showSectores: false,
+            showPostulations:false,
         }
     },
     methods:{
@@ -104,11 +120,13 @@ export default {
                     this.attitudesActive = false;
                     this.sectorsActive = false;
                     this.logoutActive = false;
+                    this.postulationsActive = false;
 
                     this.showUsers = true;
                     this.shoAttitudes = false;
                     this.showRoles= false;
                     this.showSectores= false;
+                    this.showPostulations = false;
                     break;
                 case 'roles':
                     this.usersActive = false;
@@ -116,11 +134,13 @@ export default {
                     this.attitudesActive = false;
                     this.sectorsActive = false;
                     this.logoutActive = false;
+                    this.postulationsActive = false;
 
                     this.showUsers = false;
                     this.shoAttitudes = false;
                     this.showRoles= true;
                     this.showSectores= false;
+                    this.showPostulations = false;
                     break;
 
                 case 'attitudes':
@@ -129,11 +149,13 @@ export default {
                     this.attitudesActive = true;
                     this.sectorsActive = false;
                     this.logoutActive = false;
+                    this.postulationsActive = false;
 
                     this.showUsers = false;
                     this.shoAttitudes = true;
                     this.showRoles= false;
                     this.showSectores= false;
+                    this.showPostulations = false;
                     break;
 
                 case 'sectors':
@@ -141,24 +163,42 @@ export default {
                     this.rolesActive = false;
                     this.attitudesActive = false;
                     this.sectorsActive = true;  
-                    this.logoutActive = false;   
+                    this.logoutActive = false; 
+                    this.postulationsActive = false;                
                     
                     this.showUsers = false;
                     this.shoAttitudes = false;
                     this.showRoles= false;
                     this.showSectores= true;
-                    break;                    
+                    this.showPostulations = false;
+                    break; 
+                case 'postulations':
+                    this.usersActive = false;
+                    this.rolesActive = false;
+                    this.attitudesActive = false;
+                    this.sectorsActive = false;
+                    this.logoutActive = false;
+                    this.postulationsActive = true;
+
+                    this.showUsers = false;
+                    this.shoAttitudes = false;
+                    this.showRoles= false;
+                    this.showSectores= false;
+                    this.showPostulations = true;
+                    break;                   
                 case 'logout':
                     this.usersActive = false;
                     this.rolesActive = false;
                     this.attitudesActive = false;
                     this.sectorsActive = false;
                     this.logoutActive = true;
+                    this.postulationsActive = false;
 
                     this.showUsers = false;
                     this.shoAttitudes = false;
                     this.showRoles= false;
                     this.showSectores= false;
+                    this.showPostulations = false;
                     this.logout();
                     break;
             }

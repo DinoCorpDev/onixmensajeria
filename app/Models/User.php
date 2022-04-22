@@ -94,5 +94,5 @@ class User extends Authenticatable
 
     public function roles(){
         return $this->hasMany(UsersRoles::class, 'id','id_user');
-    }    
+    }
 }

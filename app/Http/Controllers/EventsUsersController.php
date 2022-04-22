@@ -7,9 +7,33 @@ use App\Models\Events;
 use App\Models\Users;
 use Illuminate\Http\Request;
 use Auth;
+use DB;
 
 class EventsUsersController extends Controller
 {
+    public function getPostulations(){
+        $data = [];
+        $postulations = DB::select('call getAllPostulations()');
+        foreach ($postulations as $key => $postulation) {
+            $data[$key] = [
+                'address'=>json_decode($postulation->address),
+                'city'=>$postulation->city,
+                'dailyBudget'=>$postulation->dailyBudget,
+                'event_end_date'=>$postulation->event_end_date,
+                'event_initial_date'=>$postulation->event_initial_date,
+                'event_name'=>$postulation->event_name,
+                'hourly'=>json_decode($postulation->hourly),
+                'id'=>$postulation->id,
+                'idTalent'=>$postulation->idTalent,
+                'location'=>$postulation->location,
+                'status'=>$postulation->status,
+                'totalBudget'=>$postulation->totalBudget,
+                'total_assistants'=>$postulation->total_assistants,
+                'typePersonal'=>$postulation->typePersonal,
+            ];
+        }
+        return response()->json($data);
+    }
     /**
      * Display a listing of the resource.
      *
@@ -18,8 +42,9 @@ class EventsUsersController extends Controller
     public function index()
     {
         $data=[];
-        $user_id = Auth::user()->id;
-        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();
+        $user_id = Auth::user()->id;        
+        
+        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();        
 
         foreach ($eventsUsers as $key => $eventsUser) {
             $data[$key]=[
