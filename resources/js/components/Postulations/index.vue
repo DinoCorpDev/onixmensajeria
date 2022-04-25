@@ -10,42 +10,41 @@
                         <tr>
                             <th>Nombre del Evento</th>
                             <th>Dirección</th>
-                            <th>Ciudad</th>                            
-                            <th>Fecha Inicio</th>
-                            <th>Fecha Fin</th>
+                            <th>Ciudad</th>                                                        
                             <th>Calendario del Evento</th>
                             <th>Ubicación</th>
                             <th>Tipo de Personal</th>
                             <th>Presupuesto Diario</th>
-                            <th>Presupuesto Final</th>
-                            <th>Estado</th>
+                            <th>Presupuesto Final</th>                        
                             <th>Total Asistentes</th>
+                            <th>Fecha Inicio</th>
+                            <th>Fecha Fin</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr v-for="(postulation, key) in postulations" :key="key">
                             <td>{{postulation.event_name}}</td>
                             <td>
-                                <!-- {{postulation.address}} -->
+                                <div v-for="(direction, key) in postulation.address" :key="key">
+                                    <p>{{direction.address}}</p>
+                                </div>                                
                             </td>
                             
                             <td>{{postulation.city}}</td>                            
-                            
-                            <td>{{postulation.event_initial_date}}</td>
-                            <td>{{postulation.event_end_date}}</td>                            
-                            
-                            <td>
-                                <!-- {{postulation.hourly}} -->
+                                                                                
+                            <td class="mr-3">
+                                <div v-for="(calendar, key) in postulation.hourly" :key="key">
+                                    <p>Día: {{calendar.day+' - Hora: '+calendar.hourly}}</p><br/>
+                                </div>                                
                             </td>
                                                                                     
                             <td>{{postulation.location}}</td>
                             <td>{{postulation.typePersonal}}</td>   
                             <td>{{postulation.dailyBudget}}</td>                         
-                            <td>{{postulation.totalBudget}}</td>
-                            <td>{{postulation.status}}</td>
+                            <td>{{postulation.totalBudget}}</td>                            
                             <td>{{postulation.total_assistants}}</td>
-                            
-                            
+                            <td>{{postulation.event_initial_date}}</td>
+                            <td>{{postulation.event_end_date}}</td>
                         </tr>
                     </tbody>
                 </table>

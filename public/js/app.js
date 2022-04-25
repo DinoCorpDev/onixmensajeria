@@ -5696,7 +5696,6 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
-//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['changeActive'],
@@ -41452,15 +41451,36 @@ var render = function () {
                 return _c("tr", { key: key }, [
                   _c("td", [_vm._v(_vm._s(postulation.event_name))]),
                   _vm._v(" "),
-                  _c("td"),
+                  _c(
+                    "td",
+                    _vm._l(postulation.address, function (direction, key) {
+                      return _c("div", { key: key }, [
+                        _c("p", [_vm._v(_vm._s(direction.address))]),
+                      ])
+                    }),
+                    0
+                  ),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(postulation.city))]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(postulation.event_initial_date))]),
-                  _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(postulation.event_end_date))]),
-                  _vm._v(" "),
-                  _c("td"),
+                  _c(
+                    "td",
+                    { staticClass: "mr-3" },
+                    _vm._l(postulation.hourly, function (calendar, key) {
+                      return _c("div", { key: key }, [
+                        _c("p", [
+                          _vm._v(
+                            "Día: " +
+                              _vm._s(
+                                calendar.day + " - Hora: " + calendar.hourly
+                              )
+                          ),
+                        ]),
+                        _c("br"),
+                      ])
+                    }),
+                    0
+                  ),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(postulation.location))]),
                   _vm._v(" "),
@@ -41470,9 +41490,11 @@ var render = function () {
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(postulation.totalBudget))]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(postulation.status))]),
-                  _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(postulation.total_assistants))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(postulation.event_initial_date))]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(postulation.event_end_date))]),
                 ])
               }),
               0
@@ -41614,10 +41636,6 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Ciudad")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Fecha Inicio")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Fecha Fin")]),
-        _vm._v(" "),
         _c("th", [_vm._v("Calendario del Evento")]),
         _vm._v(" "),
         _c("th", [_vm._v("Ubicación")]),
@@ -41628,9 +41646,11 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th", [_vm._v("Presupuesto Final")]),
         _vm._v(" "),
-        _c("th", [_vm._v("Estado")]),
-        _vm._v(" "),
         _c("th", [_vm._v("Total Asistentes")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Fecha Inicio")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Fecha Fin")]),
       ]),
     ])
   },
