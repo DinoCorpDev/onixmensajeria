@@ -2,7 +2,7 @@
     <div :class="changeActive === true ? 'container content-large': 'container content-short'">
         <div class="card">
             <div class="card-header text-center">
-                <h2><strong>Postulaciones</strong></h2>
+                <h2><strong>Detalle de Convocatorias</strong></h2>
             </div>
             <div class="card-body">                
                 <table class="table table-sm">

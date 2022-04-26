@@ -32,7 +32,7 @@
         <nav class="navbar navbar-expand-md navbar-dark bg-dark shadow-sm" style="position:fixed:flex">
             <div class="container">
                 <a class="navbar-brand" href="{{ url('/') }}">
-                    Italentt
+                    iTalentt
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="{{ __('Toggle navigation') }}">
                     <span class="navbar-toggler-icon"></span>

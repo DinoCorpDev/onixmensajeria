@@ -279,7 +279,7 @@ export default {
 .navigation ul{
     display:flex;
     flex-direction: column;
-    gap: 10px;
+    /* gap: 10px; */
     width: 100%;
 }
 

@@ -52,8 +52,8 @@ class EventsController extends Controller
             // Usando el Storage guardar en el disco creado anteriormente y pasandole a 
             // la función "put" el nombre de la imagen y los datos de la imagen como 
             // segundo parametro
-        $imageSaved = Storage::disk('images_events')->put($img_name, $img);
-        $url = storage_path('app\images_eventsB64/').$img_name;       
+        $imageSaved = Storage::disk('public')->put($img_name, $img);
+        $url = Storage::disk('public')->url($img_name);
         return $url;
     }
 
