@@ -6,6 +6,7 @@
             </div>
             <div class="card-body">
                 <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Usuario</button>
+                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#importModal">Importar Usuarios</button>
                 <table class="table table-striped table-bordered table-response">
                     <thead>
                         <tr>
@@ -85,6 +86,26 @@
                     </div>
                 </div>
             </div>
+        </div>
+
+        <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h2>Importación de Usuarios</h2>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="">Importar</label>
+                            <input type="file" class="form-control" v-on:change="(e)=>importFile(e.target.files)"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                        <button type="button" class="btn btn-primary" v-on:click="saveFile">Importar</button>
+                    </div>
+                </div>
+            </div>
         </div>       
     </div>
 </template>
@@ -101,6 +122,7 @@ export default {
                 terms_conditions:true,
             },
             id:null,
+            file:null
         }    
     },
 
@@ -152,6 +174,19 @@ export default {
                 terms_conditions:true,
             };
             this.id = null
+        },
+        importFile(data){            
+            this.file = data[0];
+        },
+
+        saveFile(){
+            var data = new  FormData();
+            data.append('file', this.file);
+            data.append('_method', 'POST');
+            
+            axios.post('/importUsersXML',data).then(response => {
+                console.log(response)
+            })
         }
     }
 }

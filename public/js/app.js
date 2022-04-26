@@ -6122,6 +6122,27 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['changeActive'],
@@ -6133,7 +6154,8 @@ __webpack_require__.r(__webpack_exports__);
         autorization: true,
         terms_conditions: true
       },
-      id: null
+      id: null,
+      file: null
     };
   },
   mounted: function mounted() {
@@ -6191,6 +6213,17 @@ __webpack_require__.r(__webpack_exports__);
         terms_conditions: true
       };
       this.id = null;
+    },
+    importFile: function importFile(data) {
+      this.file = data[0];
+    },
+    saveFile: function saveFile() {
+      var data = new FormData();
+      data.append('file', this.file);
+      data.append('_method', 'POST');
+      axios.post('/importUsersXML', data).then(function (response) {
+        console.log(response);
+      });
     }
   }
 });
@@ -42240,6 +42273,18 @@ var render = function () {
           ),
           _vm._v(" "),
           _c(
+            "button",
+            {
+              staticClass: "btn btn-primary mb-2",
+              attrs: {
+                "data-bs-toggle": "modal",
+                "data-bs-target": "#importModal",
+              },
+            },
+            [_vm._v("Importar Usuarios")]
+          ),
+          _vm._v(" "),
+          _c(
             "table",
             {
               staticClass: "table table-striped table-bordered table-response",
@@ -42588,6 +42633,63 @@ var render = function () {
           ]),
         ]
       ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "importModal",
+            tabindex: "-1",
+            "aria-labelledby": "importModalLabel",
+            "aria-hidden": "true",
+          },
+        },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c("div", { staticClass: "modal-content" }, [
+              _vm._m(2),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-body" }, [
+                _c("div", { staticClass: "form-group" }, [
+                  _c("label", { attrs: { for: "" } }, [_vm._v("Importar")]),
+                  _vm._v(" "),
+                  _c("input", {
+                    staticClass: "form-control",
+                    attrs: { type: "file" },
+                    on: {
+                      change: function (e) {
+                        return _vm.importFile(e.target.files)
+                      },
+                    },
+                  }),
+                ]),
+              ]),
+              _vm._v(" "),
+              _c("div", { staticClass: "modal-footer" }, [
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-secondary",
+                    attrs: { type: "button", "data-bs-dismiss": "modal" },
+                  },
+                  [_vm._v("Cerrar")]
+                ),
+                _vm._v(" "),
+                _c(
+                  "button",
+                  {
+                    staticClass: "btn btn-primary",
+                    attrs: { type: "button" },
+                    on: { click: _vm.saveFile },
+                  },
+                  [_vm._v("Importar")]
+                ),
+              ]),
+            ]),
+          ]),
+        ]
+      ),
     ]
   )
 }
@@ -42616,6 +42718,14 @@ var staticRenderFns = [
         _vm._v(" "),
         _c("th"),
       ]),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "modal-header" }, [
+      _c("h2", [_vm._v("Importación de Usuarios")]),
     ])
   },
 ]

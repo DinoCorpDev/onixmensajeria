@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Mail;
 use App\Mail\NotifyMail;
+use SimpleXMLElement;
 
 class ProfileUserController extends Controller
 {
@@ -321,5 +322,35 @@ class ProfileUserController extends Controller
         } catch (\Throwable $th) {
             return response()->json(['status' => 400,'statusText' => $th], 200);
         }        
+    }
+
+    public function importUsersXML(Request $request){
+        $file = new SimpleXMLElement($request->file,NULL, TRUE);    
+        $posts=[];
+        foreach ($file->channel->item as $item) {
+            $categories = [];
+            $tags       = [];            
+            foreach ($item->category as $category) {
+                if ($category['nicename'] != "uncategorized" && $category['domain']) {
+                    array_push($categories,(string)$category);
+                } elseif ($category['domain'] == 'post_tag') {
+                    array_push($tags,(string)$category);
+                }
+            }
+    
+            $content = $item->children('http://purl.org/rss/1.0/modules/content/');
+            $wp_id = $item->xpath('wp:post_id');
+            $posts[] = array(
+                "talentName"  => (string)$item->title, 
+                "wp_id"       => (string)$wp_id[0],                
+                "description" => (string)$content->encoded,
+                "pubDate"     => (string)$item->pubDate,
+                "categories"  => $categories,
+                "tags"        => $tags,
+                "url"         => (string)$item->guid
+            );
+        }
+
+        return response()->json($posts);
     }
 }
