@@ -68,7 +68,7 @@ class ProfileUserController extends Controller
             }
             return response()->json(['data'=>$data],200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>500, 'statusText'=>throw $th],500);
+            return response()->json(['status'=>500, 'statusText'=>$th],500);
         }        
     }
     public function index()
@@ -177,7 +177,7 @@ class ProfileUserController extends Controller
             $user->save();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => throw $th], 400);
+            return response()->json(['status' => 400,'statusText' =>$th], 400);
         }
     }
 
@@ -196,7 +196,7 @@ class ProfileUserController extends Controller
             
             return response()->json(['status' => 200,'statusText' => 'Usuario Creado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => throw $th], 400);
+            return response()->json(['status' => 400,'statusText' =>$th], 400);
         }        
     }
 
@@ -255,7 +255,7 @@ class ProfileUserController extends Controller
             $user->update();
             return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => throw $th], 400);
+            return response()->json(['status' => 400,'statusText' =>$th], 400);
         }        
     }
 
