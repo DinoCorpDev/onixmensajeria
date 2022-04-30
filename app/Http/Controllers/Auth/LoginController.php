@@ -25,12 +25,16 @@ class LoginController extends Controller
         ]);
  
         if (Auth::attempt($credentials)) {
-            $request->session()->regenerate();
+            try {
+                $request->session()->regenerate();
  
-            $user = Auth::user();
-            return response()->json(['status' => 200,'data' => $user], 200);
+                $user = Auth::user();
+                return response()->json(['status' => 200,'data' => $user], 200);
+            } catch (\Throwable $th) {
+                return response()->json(['status' => 400,'statusText' => $th], 400);
+            }
         }else{
-            return response()->json(['status' => 400,'statusText' => 'Login fallido'], 400);
+            return response()->json(['status' => 400,'statusText' => 'Error en servidor'], 400);
         }
  
         return back()->withErrors([

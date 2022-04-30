@@ -39,6 +39,7 @@ return new class extends Migration
             $table->string("roles")->nullable();
             $table->boolean('provisionalPassword')->default(false);
             $table->boolean('firstLogin')->default(true);
+            $table->boolean('verified')->default(true);
             $table->boolean('status')->default(true);
             $table->rememberToken();
             $table->timestamps();

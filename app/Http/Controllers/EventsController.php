@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Events;
+use App\Models\EventsUsers;
+use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Response;
@@ -15,31 +17,131 @@ class EventsController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
-    {
+    public function index(Request $request)
+    {        
+        $filterParam = $request->search ? $request->search : ''; 
+        $data=[];       
         /**
          * Validar mediante fecha
          */
-        $data=[];
-        $events = Events::orderBy('id','DESC')->get();
-        foreach ($events as $key => $event) {
-            $data[$key]=[
-                'id'=>$event->id,
-                'idItalentt' => $event->idItalentt,
-                'name'=>$event->name,
-                'banner'=>$event->banner,
-                'aboutPersonal'=>json_decode($event->typePersonal),
-                'initialDate'=>$event->initialDate,
-                'endDate'=>$event->endDate,
-                'hourly'=>json_decode($event->hourly),
-                'city'=>$event->city,
-                'location'=>$event->location,
-                'address'=>json_decode($event->address),
-                'totalBudget'=>$event->totalBudget,
-                'dailyBudget'=>$event->dailyBudget,
-            ];
-        }
+        switch ($filterParam) {
+            case 'open':
+                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();
+                foreach ($events as $key => $event) {
+                    $data[$key]=[
+                        'id'=>$event->id,
+                        'idItalentt' => $event->idItalentt,
+                        'name'=>$event->name,
+                        'banner'=>$event->banner,
+                        'aboutPersonal'=>json_decode($event->typePersonal),
+                        'initialDate'=>$event->initialDate,
+                        'endDate'=>$event->endDate,
+                        'hourly'=>json_decode($event->hourly),
+                        'city'=>$event->city,
+                        'location'=>$event->location,
+                        'address'=>json_decode($event->address),
+                        'totalBudget'=>$event->totalBudget,
+                        'dailyBudget'=>$event->dailyBudget,
+                        'status'=>$event->status,
+                    ];
+                }
+                break;
+            case 'close':
+                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();
+                foreach ($events as $key => $event) {
+                    $data[$key]=[
+                        'id'=>$event->id,
+                        'idItalentt' => $event->idItalentt,
+                        'name'=>$event->name,
+                        'banner'=>$event->banner,
+                        'aboutPersonal'=>json_decode($event->typePersonal),
+                        'initialDate'=>$event->initialDate,
+                        'endDate'=>$event->endDate,
+                        'hourly'=>json_decode($event->hourly),
+                        'city'=>$event->city,
+                        'location'=>$event->location,
+                        'address'=>json_decode($event->address),
+                        'totalBudget'=>$event->totalBudget,
+                        'dailyBudget'=>$event->dailyBudget,
+                        'status'=>$event->status,
+                    ];
+                }
+                break;
+            case 'accept':
+                $user_id = Auth::user()->id;
+                $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();        
 
+                foreach ($eventsUsers as $key => $eventsUser) {
+                    $data[$key]=[                
+                        "id"=>$eventsUser->events->id,
+                        "idItalentt"=>$eventsUser->events->idItalentt,
+                        "name"=>$eventsUser->events->name,
+                        "banner"=>$eventsUser->events->banner,
+                        "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
+                        "initialDate"=>$eventsUser->events->initialDate,
+                        "endDate"=>$eventsUser->events->endDate,
+                        "houry"=>json_decode($eventsUser->events->houry),
+                        "city"=>$eventsUser->events->city,
+                        "location"=>$eventsUser->events->location,
+                        "address"=>json_decode($eventsUser->events->address),
+                        "totalBudget"=>$eventsUser->events->totalBudget,
+                        "dailyBudget"=>$eventsUser->events->dailyBudget,
+                        "status"=>$eventsUser->events->status
+                    ];
+                }
+                break;
+            
+            case 'skip':
+                $user_id = Auth::user()->id;
+                $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();        
+
+                foreach ($eventsUsers as $key => $eventsUser) {
+                    $data[$key]=[                
+                        "id"=>$eventsUser->events->id,
+                        "idItalentt"=>$eventsUser->events->idItalentt,
+                        "name"=>$eventsUser->events->name,
+                        "banner"=>$eventsUser->events->banner,
+                        "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
+                        "initialDate"=>$eventsUser->events->initialDate,
+                        "endDate"=>$eventsUser->events->endDate,
+                        "houry"=>json_decode($eventsUser->events->houry),
+                        "city"=>$eventsUser->events->city,
+                        "location"=>$eventsUser->events->location,
+                        "address"=>json_decode($eventsUser->events->address),
+                        "totalBudget"=>$eventsUser->events->totalBudget,
+                        "dailyBudget"=>$eventsUser->events->dailyBudget,
+                        "status"=>$eventsUser->events->status
+                    ];
+                }
+                break;
+            
+                case 'reject':
+                    $user_id = Auth::user()->id;
+                    $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();        
+    
+                    foreach ($eventsUsers as $key => $eventsUser) {
+                        $data[$key]=[                
+                            "id"=>$eventsUser->events->id,
+                            "idItalentt"=>$eventsUser->events->idItalentt,
+                            "name"=>$eventsUser->events->name,
+                            "banner"=>$eventsUser->events->banner,
+                            "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
+                            "initialDate"=>$eventsUser->events->initialDate,
+                            "endDate"=>$eventsUser->events->endDate,
+                            "houry"=>json_decode($eventsUser->events->houry),
+                            "city"=>$eventsUser->events->city,
+                            "location"=>$eventsUser->events->location,
+                            "address"=>json_decode($eventsUser->events->address),
+                            "totalBudget"=>$eventsUser->events->totalBudget,
+                            "dailyBudget"=>$eventsUser->events->dailyBudget,
+                            "status"=>$eventsUser->events->status
+                        ];
+                    }
+                    break;
+            default:
+                # code...
+                break;
+        }        
         return response()->json($data);
     }
 

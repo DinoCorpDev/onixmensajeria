@@ -44,8 +44,7 @@ class ProfileUserController extends Controller
                     "email" => $users->email,
                     "nickname" => $users->nickname,
                     "birthday" => $users->birthday,
-                    "gender" => $users->gender,            
-                    "sectors" =>json_decode($users->sectors),                
+                    "gender" => $users->gender,                                
                     "pyshical" =>json_decode($users->pyshical),
                     "competences" =>json_decode($users->competences),
                     "education" =>json_decode($users->education),
@@ -60,9 +59,10 @@ class ProfileUserController extends Controller
                         
                     "autorization" => $users->autorization === "1" ? true : false,
                     "terms_conditions" =>$users->terms_conditions === "1" ? true : false,
-                    "roles" =>json_decode($users->role),
-                    "provisionalPassword" =>$users->provisionalPassword,
+                    "roles" =>json_decode($users->roles),
+                    "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
                     "firstLogin" =>$users->firstLogin === "1" ? true : false,
+                    "verified" =>$users->verified === "1" ? true : false,
                 ];
                 array_push($data, $dataToPush);
             }
@@ -85,8 +85,7 @@ class ProfileUserController extends Controller
                 "email" => $user->email,
                 "nickname" => $user->nickname,
                 "birthday" => $user->birthday,
-                "gender" => $user->gender,            
-                "sectors" =>json_decode($user->sectors),                
+                "gender" => json_decode($user->gender),
                 "pyshical" =>json_decode($user->pyshical),
                 "competences" =>json_decode($user->competences),
                 "education" =>json_decode($user->education),
@@ -99,11 +98,12 @@ class ProfileUserController extends Controller
                 "photos" => json_decode($user->photos),
                 "video" =>$user->video,
                     
-                "autorization" => $user->autorization === "1" ? true : false,
-                "terms_conditions" =>$user->terms_conditions === "1" ? true : false,
-                "roles" =>json_decode($user->role),
-                "provisionalPassword" =>$user->provisionalPassword,
-                "firstLogin" =>$user->firstLogin === "1" ? true : false,
+                "autorization" => $user->autorization === 1 ? true : false,
+                "terms_conditions" =>$user->terms_conditions === 1 ? true : false,
+                "roles" =>json_decode($user->roles),
+                "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
+                "firstLogin" =>$user->firstLogin === 1 ? true : false,
+                "verified" =>$user->verified === 1 ? true : false,
             ];
             return response()->json($data);
         } catch (\Throwable $th) {
@@ -202,13 +202,19 @@ class ProfileUserController extends Controller
 
     public function updateUser(Request $request, $id){
         try {  
-            $user = User::findOrFail($id);    
-            if($request->profile){     
-                if($user->profile){
-                    File::delete($user->profile);
+            $user = User::findOrFail($id);
+            $photosToSave=[];
+            $videosToSave=[];
+            if($user->profile){
+                File::delete($user->profile);
+            }            
+            if($request->profile){
+                $photoToArray = $request->profile;
+                foreach ($photoToArray as $key => $picture) {
+                    $profile = $this->saveImageB64($user->email,'profile',$picture);                
+                    array_push($photosToSave,$profile);
                 }
-                $profile = $this->saveImageB64($user->email,'profile',$request->profile);                
-                $user->profile = $profile;
+                $user->profile = json_encode($photosToSave);
             }
 
             if($request->video){
@@ -219,21 +225,23 @@ class ProfileUserController extends Controller
                 $user->video = $videoUploaded;
             }
 
-            $photosDelete = json_decode($user->photos);            
-            if($photosDelete){                
-                foreach ($photosDelete as $key => $photo) {
-                    File::delete($photo);
-                }
-            }          
+            if($request->photos){
+                $photosDelete = json_decode($user->photos);            
+                if($photosDelete){                
+                    foreach ($photosDelete as $key => $photo) {
+                        File::delete($photo);
+                    }
+                }          
 
-            if($request->photos){                  
-                $photos = $request->photos;
-                $arrPhotos = [];
-                foreach ($photos as $key => $photo) {                              
-                    $picture = $this->saveImageB64($user->email,'photos'.$key,$photo[$key]);
-                    array_push($arrPhotos, $picture);
+                if($request->photos){                  
+                    $photos = $request->photos;
+                    $arrPhotos = [];
+                    foreach ($photos as $key => $photo) {                              
+                        $picture = $this->saveImageB64($user->email,'photos'.$key,$photo[$key]);
+                        array_push($arrPhotos, $picture);
+                    }
+                    $user->photos = $arrPhotos;
                 }
-                $user->photos = $arrPhotos;
             }            
             
             $user->name = $request->name;
@@ -241,8 +249,7 @@ class ProfileUserController extends Controller
             $user->contact = json_encode($request->contact);        
             $user->nickname = $request->nickname;
             $user->birthday = $request->birthday;
-            $user->gender = $request->gender;            
-            $user->sectors = json_encode($request->sectors);            
+            $user->gender = $request->gender;                        
             $user->pyshical = json_encode($request->pyshical);
             $user->competences = json_encode($request->competences);
             $user->education = json_encode($request->education);
@@ -250,12 +257,15 @@ class ProfileUserController extends Controller
             $user->identification = $request->identification;
             $user->address = $request->address;
             $user->city = $request->city;                    
-            $user->firstLogin = $request->firstLogin;
+            $user->firstLogin = $request->firstLogin;            
             $user->roles = json_encode($request->roles);
             $user->update();
-            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
+            
+            $userUpdated = $this->index();
+
+            return response()->json(['status' => 200,'data' => $userUpdated], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>$th], 400);
+            return response()->json(['status' => 400,'statusText' =>[throw $th]], 400);
         }        
     }
 
@@ -300,16 +310,15 @@ class ProfileUserController extends Controller
 
     public function updatePassword(Request $request){        
         try {            
-            $user = Auth::user();
-            $changeP = User::where('email',$user->email)->first();              
-            $changeP->password = Hash::make($request->get('password'));            
+            $user_email = $request->email;
+            $changeP = User::where('email',$user_email)->first();              
+            $changeP->password = Hash::make($request->password);            
             $changeP->provisionalPassword = false;            
             $changeP->save();
-            
-            return response()->json(['status'=>200,'statusMessage'=>'Contraseña Actualizada']);
+
+            return response()->json(['status'=>200,'statusText'=>'Contraseña Actualizada'],200);
         } catch (\Throwable $th) {
-            
-            return response()->json(['status'=>400,'statusMessage'=>'Verifica La Información']);
+            return response()->json(['status'=>400,'statusText'=>$th]);
         }
     }
 

@@ -43,6 +43,7 @@ class User extends Authenticatable
         "status",
         "provisionalPassword",
         "firstLogin",
+        "verified",
     ];
 
     /**

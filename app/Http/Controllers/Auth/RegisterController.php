@@ -9,7 +9,7 @@ use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Auth;
-
+use validate;
 use App\Models\User;
 use App\Models\UsersRoles;
 
@@ -103,13 +103,22 @@ class RegisterController extends Controller
      */
     protected function register(Request $request)
     {      
+        $validator = Validator::make($request->all(), [            
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:6',
+        ]);
+
+        if($validator->fails()){
+            return response()->json($validator->errors()->toJson(), 400);
+        }
+
         try {
             $user = User::create([
                 "name" => $request->name,
                 "lastname" => $request->lastname,
                 "contact" => json_encode($request->contact),
-                "email" => $request->email,
-                "password" => Hash::make($request->password),
+                "email" => $request->get('email'),
+                "password" => Hash::make($request->get('password')),
                                                
                 "autorization" => $request->autorization,
                 "terms_conditions" =>$request->terms_conditions,                
@@ -117,7 +126,7 @@ class RegisterController extends Controller
             
             return response()->json(['status' => 200,'statusText' => 'Usuario Creado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => 'Hubo un error'], 400);
+            return response()->json(['status' => 400,'statusText' => $th], 400);
         }        
     }
 }
