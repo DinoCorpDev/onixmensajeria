@@ -216,10 +216,27 @@ class EventsController extends Controller
      * @param  \App\Models\Events  $events
      * @return \Illuminate\Http\Response
      */
-    public function show($name)
-    {
-        $event = Events::where('name',$name)->get();
-        return response()->json($event);
+    public function show($idItalentt)
+    {        
+        $event = Events::where('idItalentt',$idItalentt)->first();
+        $data=[
+            'id'=>$event->id,
+            'idItalentt' => $event->idItalentt,
+            'name'=>$event->name,
+            'banner'=>$event->banner,
+            'aboutPersonal'=>json_decode($event->typePersonal),
+            'initialDate'=>$event->initialDate,
+            'endDate'=>$event->endDate,
+            'hourly'=>json_decode($event->hourly),
+            'city'=>$event->city,
+            'location'=>$event->location,
+            'address'=>json_decode($event->address),
+            'totalBudget'=>$event->totalBudget,
+            'dailyBudget'=>$event->dailyBudget,
+            'status'=>$event->status,
+        ];
+
+        return response()->json($data);
     }
 
     /**

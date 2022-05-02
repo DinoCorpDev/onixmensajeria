@@ -54,7 +54,7 @@ class ProfileUserController extends Controller
                     "city" => $users->city,
                     
                     "profile" => $users->profile,
-                    "photos" => json_decode($users->photos),
+                    "photos" => $users->photos,
                     "video" =>$users->video,
                         
                     "autorization" => $users->autorization === "1" ? true : false,
@@ -75,8 +75,7 @@ class ProfileUserController extends Controller
     {
         try {
             $user_id = Auth::user()->id;
-            $user = User::findOrFail($user_id);
-
+            $user = User::findOrFail($user_id);            
             $data=[
                 "id"=>$user->id,
                 "name" => $user->name,
@@ -204,41 +203,23 @@ class ProfileUserController extends Controller
         try {  
             $user = User::findOrFail($id);
             $photosToSave=[];
-            $videosToSave=[];
-            if($user->profile){
-                File::delete($user->profile);
-            }            
-            if($request->profile){
-                $photoToArray = $request->profile;
-                foreach ($photoToArray as $key => $picture) {
-                    $profile = $this->saveImageB64($user->email,'profile',$picture);                
-                    array_push($photosToSave,$profile);
-                }
-                $user->profile = json_encode($photosToSave);
-            }
+            $videosToSave=[];                     
 
-            if($request->video){
-                if($user->video){                    
-                    File::delete($user->video);
-                }                
-                $videoUploaded = $this->saveImageB64($user->email,'video',$request->video);
-                $user->video = $videoUploaded;
+            $user->profile = $request->profile;
+            
+
+            if($request->video){                                               
+                $user->video = $request->video;
             }
 
             if($request->photos){
-                $photosDelete = json_decode($user->photos);            
-                if($photosDelete){                
-                    foreach ($photosDelete as $key => $photo) {
-                        File::delete($photo);
-                    }
-                }          
+                $photosDelete = json_decode($user->photos);
 
                 if($request->photos){                  
                     $photos = $request->photos;
                     $arrPhotos = [];
-                    foreach ($photos as $key => $photo) {                              
-                        $picture = $this->saveImageB64($user->email,'photos'.$key,$photo[$key]);
-                        array_push($arrPhotos, $picture);
+                    foreach ($photos as $key => $photo) {
+                        array_push($arrPhotos, $photo);
                     }
                     $user->photos = $arrPhotos;
                 }
@@ -256,14 +237,40 @@ class ProfileUserController extends Controller
             $user->experience = json_encode($request->experience);
             $user->identification = $request->identification;
             $user->address = $request->address;
-            $user->city = $request->city;                    
-            $user->firstLogin = $request->firstLogin;            
+            $user->city = $request->city;                                
             $user->roles = json_encode($request->roles);
             $user->update();
-            
-            $userUpdated = $this->index();
 
-            return response()->json(['status' => 200,'data' => $userUpdated], 200);
+            $dataToPush=[
+                "id"=>$user->id,
+                "name" => $user->name,
+                "lastname" => $user->lastname,
+                "contact" => json_decode($user->contact),
+                "email" => $user->email,
+                "nickname" => $user->nickname,
+                "birthday" => $user->birthday,
+                "gender" => $user->gender,                                
+                "pyshical" =>json_decode($user->pyshical),
+                "competences" =>json_decode($user->competences),
+                "education" =>json_decode($user->education),
+                "experience" =>json_decode($user->experience),
+                "identification" => $user->identification,
+                "address" => $user->address,
+                "city" => $user->city,
+                
+                "profile" => $user->profile,
+                "photos" => $user->photos,
+                "video" =>$user->video,
+                    
+                "autorization" => $user->autorization === "1" ? true : false,
+                "terms_conditions" =>$user->terms_conditions === "1" ? true : false,
+                "roles" =>json_decode($user->roles),
+                "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
+                "firstLogin" =>$user->firstLogin === "1" ? true : false,
+                "verified" =>$user->verified === "1" ? true : false,
+            ];
+            
+            return response()->json(['status' => 200,'data' => $dataToPush], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => 400,'statusText' =>[throw $th]], 400);
         }        
