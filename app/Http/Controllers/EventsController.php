@@ -32,7 +32,7 @@ class EventsController extends Controller
             case 'open':
                 $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();                
                 foreach ($events as $key => $event) {
-                    if(isset($eventsUsers[$key])){
+                    // if(isset($eventsUsers[$key]) && ){
                         $data[$key]=[
                             'id'=>$event->id,
                             'idItalentt' => $event->idItalentt,
@@ -49,7 +49,7 @@ class EventsController extends Controller
                             'dailyBudget'=>$event->dailyBudget,
                             'status'=>$event->status,
                         ];
-                    }                    
+                    // }                    
                 }
                 break;
             case 'close':
