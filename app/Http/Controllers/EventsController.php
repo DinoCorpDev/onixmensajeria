@@ -20,30 +20,36 @@ class EventsController extends Controller
     public function index(Request $request)
     {        
         $filterParam = $request->search ? $request->search : ''; 
-        $data=[];       
+        $dataToFilter=[];     
+        $data=[];
+        $id_events_users=[];  
+        $user_id = Auth::user()->id;
+        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();        
         /**
          * Validar mediante fecha
          */
         switch ($filterParam) {
             case 'open':
-                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();
+                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();                
                 foreach ($events as $key => $event) {
-                    $data[$key]=[
-                        'id'=>$event->id,
-                        'idItalentt' => $event->idItalentt,
-                        'name'=>$event->name,
-                        'banner'=>$event->banner,
-                        'aboutPersonal'=>json_decode($event->typePersonal),
-                        'initialDate'=>$event->initialDate,
-                        'endDate'=>$event->endDate,
-                        'hourly'=>json_decode($event->hourly),
-                        'city'=>$event->city,
-                        'location'=>$event->location,
-                        'address'=>json_decode($event->address),
-                        'totalBudget'=>$event->totalBudget,
-                        'dailyBudget'=>$event->dailyBudget,
-                        'status'=>$event->status,
-                    ];
+                    if(isset($eventsUsers[$key])){
+                        $data[$key]=[
+                            'id'=>$event->id,
+                            'idItalentt' => $event->idItalentt,
+                            'name'=>$event->name,
+                            'banner'=>$event->banner,
+                            'aboutPersonal'=>json_decode($event->typePersonal),
+                            'initialDate'=>$event->initialDate,
+                            'endDate'=>$event->endDate,
+                            'hourly'=>json_decode($event->hourly),
+                            'city'=>$event->city,
+                            'location'=>$event->location,
+                            'address'=>json_decode($event->address),
+                            'totalBudget'=>$event->totalBudget,
+                            'dailyBudget'=>$event->dailyBudget,
+                            'status'=>$event->status,
+                        ];
+                    }                    
                 }
                 break;
             case 'close':

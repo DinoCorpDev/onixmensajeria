@@ -5445,7 +5445,7 @@ __webpack_require__.r(__webpack_exports__);
     getCompetences: function getCompetences() {
       var _this = this;
 
-      axios.get('getCompetences').then(function (response) {
+      axios.get('api/getCompetences').then(function (response) {
         _this.competences = response.data;
       })["catch"](function (error) {
         console.log(error);
@@ -5459,7 +5459,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       if (this.id !== null) {
-        axios.put("competences/".concat(this.id), this.competence).then(function (response) {
+        axios.put("api/competences/".concat(this.id), this.competence).then(function (response) {
           _this2.cleanData();
 
           toastr.success('Aptitud Actualizada');
@@ -5469,7 +5469,7 @@ __webpack_require__.r(__webpack_exports__);
           console.log(error);
         });
       } else {
-        axios.post('competences', this.competence).then(function (response) {
+        axios.post('api/competences', this.competence).then(function (response) {
           _this2.cleanData();
 
           toastr.success('Aptitud Creada');
@@ -5484,7 +5484,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       if (window.confirm('Seguro desea Eliminar este dato?')) {
-        axios["delete"]("competences/".concat(id)).then(function (response) {
+        axios["delete"]("api/competences/".concat(id)).then(function (response) {
           toastr.success('Sector Eliminado');
 
           _this3.getCompetences();
@@ -5564,7 +5564,7 @@ __webpack_require__.r(__webpack_exports__);
   mounted: function mounted() {
     var _this = this;
 
-    axios.get('getMyUser').then(function (response) {
+    axios.get('api/getMyUser').then(function (response) {
       _this.user = response.data.data;
     })["catch"](function (error) {
       console.log(error);
@@ -5578,7 +5578,7 @@ __webpack_require__.r(__webpack_exports__);
         email: this.email,
         password: this.password
       };
-      axios.post('login', data).then(function (response) {
+      axios.post('api/login', data).then(function (response) {
         _this2.user = response.data.data;
       })["catch"](function (error) {
         toastr.error('Usuario y / o Contraseña Incorrectos');
@@ -5588,7 +5588,7 @@ __webpack_require__.r(__webpack_exports__);
     logout: function logout() {
       var _this3 = this;
 
-      axios.post('logout').then(function (response) {
+      axios.post('api/logout').then(function (response) {
         _this3.cleanData();
 
         console.log(response.data);
@@ -5715,7 +5715,7 @@ __webpack_require__.r(__webpack_exports__);
     getPostulations: function getPostulations() {
       var _this = this;
 
-      axios.get('getPostulations').then(function (response) {
+      axios.get('api/getPostulations').then(function (response) {
         _this.postulations = response.data;
       })["catch"](function (error) {
         console.log(error);
@@ -5814,7 +5814,7 @@ __webpack_require__.r(__webpack_exports__);
     getRoles: function getRoles() {
       var _this = this;
 
-      axios.get('getRoles').then(function (response) {
+      axios.get('api/getRoles').then(function (response) {
         _this.roles = response.data;
       })["catch"](function (error) {
         console.log(error);
@@ -5828,7 +5828,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       if (this.id !== null) {
-        axios.put("rol/".concat(this.id), this.rol).then(function (response) {
+        axios.put("api/rol/".concat(this.id), this.rol).then(function (response) {
           _this2.cleanData();
 
           toastr.success('rol Actualizado');
@@ -5838,7 +5838,7 @@ __webpack_require__.r(__webpack_exports__);
           console.log(error);
         });
       } else {
-        axios.post('rol', this.rol).then(function (response) {
+        axios.post('api/rol', this.rol).then(function (response) {
           _this2.cleanData();
 
           toastr.success('rol Creado');
@@ -5853,7 +5853,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       if (window.confirm('Seguro desea Eliminar este dato?')) {
-        axios["delete"]("rol/".concat(id)).then(function (response) {
+        axios["delete"]("api/rol/".concat(id)).then(function (response) {
           toastr.success('rol Eliminado');
 
           _this3.getRoles();
@@ -5961,7 +5961,7 @@ __webpack_require__.r(__webpack_exports__);
     getSectors: function getSectors() {
       var _this = this;
 
-      axios.get('sectors').then(function (response) {
+      axios.get('api/sectors').then(function (response) {
         _this.sectors = response.data;
       })["catch"](function (error) {
         console.log(error);
@@ -5975,7 +5975,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this2 = this;
 
       if (this.id !== null) {
-        axios.put("sector/".concat(this.id), this.sector).then(function (response) {
+        axios.put("api/sector/".concat(this.id), this.sector).then(function (response) {
           _this2.cleanData();
 
           toastr.success('Sector Actualizado');
@@ -5985,7 +5985,7 @@ __webpack_require__.r(__webpack_exports__);
           console.log(error);
         });
       } else {
-        axios.post('sector', this.sector).then(function (response) {
+        axios.post('api/sector', this.sector).then(function (response) {
           _this2.cleanData();
 
           toastr.success('Sector Creado');
@@ -6000,7 +6000,7 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
 
       if (window.confirm('Seguro desea Eliminar este dato?')) {
-        axios["delete"]("sector/".concat(id)).then(function (response) {
+        axios["delete"]("api/sector/".concat(id)).then(function (response) {
           toastr.success('Sector Eliminado');
 
           _this3.getSectors();
@@ -6166,7 +6166,7 @@ __webpack_require__.r(__webpack_exports__);
     getUsers: function getUsers() {
       var _this = this;
 
-      axios.get('getAllUsers').then(function (response) {
+      axios.get('api/getAllUsers').then(function (response) {
         _this.users = response.data.data;
       });
     },
@@ -6179,7 +6179,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (this.id === null) {
         console.log(this.user);
-        axios.post('adminRegisterUser', this.user).then(function (response) {
+        axios.post('api/adminRegisterUser', this.user).then(function (response) {
           console.log(response.data);
           toastr.success('Usuario Creado');
 
@@ -6192,7 +6192,7 @@ __webpack_require__.r(__webpack_exports__);
         });
       } else {
         console.log(this.user);
-        axios.patch("updateUserInAdmin/".concat(this.id), this.user).then(function (response) {
+        axios.patch("api/updateUserInAdmin/".concat(this.id), this.user).then(function (response) {
           console.log(response.data);
           toastr.success('Usuario Actualizado');
 
@@ -6221,7 +6221,7 @@ __webpack_require__.r(__webpack_exports__);
       var data = new FormData();
       data.append('file', this.file);
       data.append('_method', 'POST');
-      axios.post('/importUsersXML', data).then(function (response) {
+      axios.post('api//importUsersXML', data).then(function (response) {
         console.log(response);
       });
     }

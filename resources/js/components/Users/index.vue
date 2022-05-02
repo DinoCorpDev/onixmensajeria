@@ -133,7 +133,7 @@ export default {
 
     methods:{
         getUsers(){
-            axios.get('getAllUsers').then(response=>{
+            axios.get('api/getAllUsers').then(response=>{
                 this.users = response.data.data
             })
         },
@@ -144,7 +144,7 @@ export default {
         saveUser(){
             if(this.id === null){
                 console.log(this.user);
-                axios.post('adminRegisterUser',this.user).then((response)=>{
+                axios.post('api/adminRegisterUser',this.user).then((response)=>{
                     console.log(response.data);
                     toastr.success('Usuario Creado');
                     this.cleanData();
@@ -155,7 +155,7 @@ export default {
                 })
             }else{
                 console.log(this.user);
-                axios.patch(`updateUserInAdmin/${this.id}`,this.user).then((response)=>{
+                axios.patch(`api/updateUserInAdmin/${this.id}`,this.user).then((response)=>{
                     console.log(response.data);
                     toastr.success('Usuario Actualizado');
                     this.cleanData();
@@ -184,7 +184,7 @@ export default {
             data.append('file', this.file);
             data.append('_method', 'POST');
             
-            axios.post('/importUsersXML',data).then(response => {
+            axios.post('api//importUsersXML',data).then(response => {
                 console.log(response)
             })
         }

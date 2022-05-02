@@ -96,7 +96,7 @@ export default {
     },
     methods:{
         getPostulations(){
-            axios.get('getPostulations').then((response)=>{
+            axios.get('api/getPostulations').then((response)=>{
                 this.postulations = response.data;
             }).catch((error)=>{
                 console.log(error);

@@ -73,7 +73,7 @@ export default {
     },
     methods:{
         getCompetences(){
-            axios.get('getCompetences').then((response)=>{
+            axios.get('api/getCompetences').then((response)=>{
                 this.competences = response.data;
             }).catch((error)=>{
                 console.log(error);
@@ -87,7 +87,7 @@ export default {
 
         saveCompetence(){
             if(this.id !== null){
-                axios.put(`competences/${this.id}`,this.competence).then((response)=>{
+                axios.put(`api/competences/${this.id}`,this.competence).then((response)=>{
                     this.cleanData();
                     toastr.success('Aptitud Actualizada');
                     this.getCompetences();                    
@@ -95,7 +95,7 @@ export default {
                     console.log(error);
                 })
             }else{
-                axios.post('competences',this.competence).then((response)=>{  
+                axios.post('api/competences',this.competence).then((response)=>{  
                     this.cleanData();
                     toastr.success('Aptitud Creada');                  
                     this.getCompetences();                    
@@ -107,7 +107,7 @@ export default {
 
         deleteCompetence(id){
             if(window.confirm('Seguro desea Eliminar este dato?')){
-                axios.delete(`competences/${id}`).then((response)=>{
+                axios.delete(`api/competences/${id}`).then((response)=>{
                     toastr.success('Sector Eliminado');
                     this.getCompetences();
                     this.cleanData();

@@ -45,7 +45,7 @@ class ProfileUserController extends Controller
                     "nickname" => $users->nickname,
                     "birthday" => $users->birthday,
                     "gender" => $users->gender,                                
-                    "pyshical" =>json_decode($users->pyshical),
+                    "physical" =>json_decode($users->pyshical),
                     "competences" =>json_decode($users->competences),
                     "education" =>json_decode($users->education),
                     "experience" =>json_decode($users->experience),
@@ -97,12 +97,12 @@ class ProfileUserController extends Controller
                 "photos" => json_decode($user->photos),
                 "video" =>$user->video,
                     
-                "autorization" => $user->autorization === 1 ? true : false,
-                "terms_conditions" =>$user->terms_conditions === 1 ? true : false,
+                "autorization" => $user->autorization === "1" ? true : false,
+                "terms_conditions" =>$user->terms_conditions === "1" ? true : false,
                 "roles" =>json_decode($user->roles),
-                "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
-                "firstLogin" =>$user->firstLogin === 1 ? true : false,
-                "verified" =>$user->verified === 1 ? true : false,
+                "provisionalPassword" => $user->provisionalPassword === "1" ? true : false,
+                "firstLogin" =>$user->firstLogin === "1" ? true : false,
+                "verified" =>$user->verified === "1" ? true : false,
             ];
             return response()->json($data);
         } catch (\Throwable $th) {
@@ -231,7 +231,7 @@ class ProfileUserController extends Controller
             $user->nickname = $request->nickname;
             $user->birthday = $request->birthday;
             $user->gender = $request->gender;                        
-            $user->pyshical = json_encode($request->pyshical);
+            $user->pyshical = json_encode($request->physical);
             $user->competences = json_encode($request->competences);
             $user->education = json_encode($request->education);
             $user->experience = json_encode($request->experience);

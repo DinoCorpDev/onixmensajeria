@@ -25,7 +25,7 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['middleware' => ['auth']], function () {
     //Ruta de usuarios, actualizacion, muestra y deshabilitacion
     Route::put('disableUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'disableUser']);
-    Route::patch('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
+    Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
     Route::patch('updateUserInAdmin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);    
     Route::post('adminRegisterUser',[App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);    
     
@@ -40,9 +40,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::resource('convocations', 'App\Http\Controllers\EventsController');    
 
     //Ruta de crud de eventos a los que el usuario se postuló
-    // Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');  
+    Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');  
     
-    // Route::get('getPostulations',[App\Http\Controllers\EventsUsersController::class, 'getPostulations']);
+    Route::get('getPostulations',[App\Http\Controllers\EventsUsersController::class, 'getPostulations']);
 });
 
 Route::resource('gender',App\Http\Controllers\GenderController::class);

@@ -73,7 +73,7 @@ export default {
     },
     methods:{
         getSectors(){
-            axios.get('sectors').then((response)=>{
+            axios.get('api/sectors').then((response)=>{
                 this.sectors = response.data;
             }).catch((error)=>{
                 console.log(error);
@@ -87,7 +87,7 @@ export default {
 
         saveSector(){
             if(this.id !== null){
-                axios.put(`sector/${this.id}`,this.sector).then((response)=>{
+                axios.put(`api/sector/${this.id}`,this.sector).then((response)=>{
                     this.cleanData();
                     toastr.success('Sector Actualizado');
                     this.getSectors();                    
@@ -95,7 +95,7 @@ export default {
                     console.log(error);
                 })
             }else{
-                axios.post('sector',this.sector).then((response)=>{  
+                axios.post('api/sector',this.sector).then((response)=>{  
                     this.cleanData();
                     toastr.success('Sector Creado');                  
                     this.getSectors();                    
@@ -107,7 +107,7 @@ export default {
 
         deleteSector(id){
             if(window.confirm('Seguro desea Eliminar este dato?')){
-                axios.delete(`sector/${id}`).then((response)=>{
+                axios.delete(`api/sector/${id}`).then((response)=>{
                     toastr.success('Sector Eliminado');
                     this.getSectors();
                     this.cleanData();
