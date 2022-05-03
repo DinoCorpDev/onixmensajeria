@@ -6,6 +6,7 @@
 import JQuery from 'jquery';
 window.$ = JQuery;
 require('./bootstrap');
+import '../firebaseConection/databaseConection';
 
 window.Vue = require('vue').default;
 

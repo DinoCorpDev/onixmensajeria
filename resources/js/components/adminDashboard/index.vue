@@ -66,7 +66,7 @@
             </div>
 
             <div v-if="showPostulations">
-                <PostulationsComponent :changeActive="changeActive"/>
+                <Postulations :changeActive="changeActive"/>
             </div>
         </div>
     </div>
@@ -76,7 +76,7 @@ import AptitudesComponent from '../Aptitudes/index.vue';
 import RolesComponent from '../Roles/index.vue';
 import SectoresComponent from '../Sectores/index.vue';
 import UsersComponent from '../Users/index.vue';
-import PostulationsComponent from '../Postulations/index.vue';
+import Postulations from '../Postulations/index.vue';
 
 export default {
     props:['user','logout'],
@@ -85,7 +85,7 @@ export default {
         RolesComponent,
         SectoresComponent,
         UsersComponent,
-        PostulationsComponent
+        Postulations
     },
     data(){
         return{

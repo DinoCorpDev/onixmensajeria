@@ -86,7 +86,7 @@ class EventsController extends Controller
                         "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
                         "initialDate"=>$eventsUser->events->initialDate,
                         "endDate"=>$eventsUser->events->endDate,
-                        "houry"=>json_decode($eventsUser->events->houry),
+                        "hourly"=>json_decode($eventsUser->events->hourly),
                         "city"=>$eventsUser->events->city,
                         "location"=>$eventsUser->events->location,
                         "address"=>json_decode($eventsUser->events->address),
@@ -110,7 +110,7 @@ class EventsController extends Controller
                         "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
                         "initialDate"=>$eventsUser->events->initialDate,
                         "endDate"=>$eventsUser->events->endDate,
-                        "houry"=>json_decode($eventsUser->events->houry),
+                        "hourly"=>json_decode($eventsUser->events->hourly),
                         "city"=>$eventsUser->events->city,
                         "location"=>$eventsUser->events->location,
                         "address"=>json_decode($eventsUser->events->address),
@@ -134,7 +134,7 @@ class EventsController extends Controller
                             "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
                             "initialDate"=>$eventsUser->events->initialDate,
                             "endDate"=>$eventsUser->events->endDate,
-                            "houry"=>json_decode($eventsUser->events->houry),
+                            "hourly"=>json_decode($eventsUser->events->hourly),
                             "city"=>$eventsUser->events->city,
                             "location"=>$eventsUser->events->location,
                             "address"=>json_decode($eventsUser->events->address),
@@ -191,17 +191,16 @@ class EventsController extends Controller
      */
     public function store(Request $request)
     {        
-        try {
-            $banner = $this->saveImageB64($request->idItalentt,$request->name,$request->banner);
+        try {            
             $newEvent = new Events();
 
             $newEvent->idItalentt = $request->idItalentt;
             $newEvent->name = $request->name;
-            $newEvent->banner = $banner;
+            $newEvent->banner = $request->banner;
             $newEvent->typePersonal = json_encode($request->aboutPersonal);
             $newEvent->initialDate = $request->initialDate;
             $newEvent->endDate = $request->endDate;
-            $newEvent->houry = json_encode($request->houry);
+            $newEvent->hourly = json_encode($request->hourly);
             $newEvent->city = $request->city;
             $newEvent->location = $request->location;
             $newEvent->address = json_encode($request->address);
@@ -256,11 +255,8 @@ class EventsController extends Controller
     {        
         try {
             $newEvent = Events::findOrFail($id);            
-            if($request->banner){
-                File::delete($newEvent->banner);
-                $banner = $this->saveImageB64($request->idItalentt,$request->name,$request->banner);
-                $newEvent->banner = $banner;
-            }
+            
+            $newEvent->banner = $request->banner;            
             $newEvent->idItalentt = $request->idItalentt;
             $newEvent->name = $request->name;            
             $newEvent->typePersonal = json_encode($request->aboutPersonal);

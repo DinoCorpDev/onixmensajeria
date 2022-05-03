@@ -23,7 +23,7 @@ class ProfileUserController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function getMyUser(){        
-        $user = Auth::user();
+        $user = Auth::user();        
         if($user) {        
             return response()->json(['data'=>$user],200);
         }else{
