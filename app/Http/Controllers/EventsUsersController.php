@@ -11,25 +11,32 @@ use DB;
 
 class EventsUsersController extends Controller
 {
-    public function getPostulations(){
-        $data = [];
-        $postulations = DB::select('call getAllPostulations()');
+    public function getPostulations(Request $request){ 
+        $data=[];
+        $postulations = DB::select('call getAllPostulations('.$request->id_event.')');
         foreach ($postulations as $key => $postulation) {
-            $data[$key] = [
-                'address'=>json_decode($postulation->address),
-                'city'=>$postulation->city,
-                'dailyBudget'=>$postulation->dailyBudget,
-                'event_end_date'=>$postulation->event_end_date,
-                'event_initial_date'=>$postulation->event_initial_date,
-                'event_name'=>$postulation->event_name,
-                'hourly'=>json_decode($postulation->hourly),
-                'id'=>$postulation->id,
-                'idTalent'=>$postulation->idTalent,
-                'location'=>$postulation->location,
-                'status'=>$postulation->status,
-                'totalBudget'=>$postulation->totalBudget,
-                'total_assistants'=>$postulation->total_assistants,
-                'typePersonal'=>$postulation->typePersonal,
+            $data[$key]=[
+                "id"=>$postulation->id,
+                "address"=>$postulation->address,                
+                "birthday"=>$postulation->birthday,
+                "city"=>$postulation->city,
+                "competences"=>json_decode($postulation->competences),
+                "contact"=>json_decode($postulation->contact),                
+                "education"=>json_decode($postulation->education),
+                "email"=>$postulation->email,
+                "experience"=>json_decode($postulation->experience),
+                "gender"=>json_decode($postulation->gender),                
+                "identification"=>$postulation->identification,
+                "lastname"=>$postulation->lastname,
+                "name"=>$postulation->name,
+                "nickname"=>$postulation->nickname,                
+                "photos"=>json_decode($postulation->photos),
+                "profile"=>$postulation->profile,
+                "provisionalPassword"=>$postulation->provisionalPassword,
+                "pyshical"=>json_decode($postulation->pyshical),
+                "roles"=>json_decode($postulation->roles),                
+                "status"=>$postulation->status,                               
+                "video"=>$postulation->video,
             ];
         }
         return response()->json($data);
@@ -39,6 +46,30 @@ class EventsUsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
+    public function getAllConvocations(){
+        $data=[];
+        $events = Events::all();        
+
+        foreach ($events as $key => $event) {
+            $data[$key]=[
+                "id"=>$event->id,
+                "idItalentt"=>$event->idItalentt,
+                "name"=>$event->name,
+                "banner"=>$event->banner,
+                "aboutPersonal"=>json_decode($event->typePersonal),
+                "initialDate"=>$event->initialDate,
+                "endDate"=>$event->endDate,
+                "hourly"=>json_decode($event->hourly),
+                "city"=>$event->city,
+                "location"=>$event->location,
+                "address"=>json_decode($event->address),
+                "totalBudget"=>$event->totalBudget,
+                "dailyBudget"=>$event->dailyBudget,
+                "status"=>$event->status        
+            ];
+        }
+        return response()->json($data);
+    }
     public function index()
     {
         $data=[];

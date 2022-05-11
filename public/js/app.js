@@ -42989,6 +42989,139 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -42996,30 +43129,45 @@ __webpack_require__.r(__webpack_exports__);
   data: function data() {
     return {
       postulations: [],
+      postulateds: [],
       postulation: {
         aboutPersonal: {},
         hourly: [{
           day: "",
           hourly: ""
-        }]
+        }],
+        banner: null
       },
       id: null,
       myModal: '',
+      detailUserModal: '',
       fileBanner: null
     };
   },
   mounted: function mounted() {
-    this.getPostulations();
+    this.getConvocations();
     this.modal = new bootstrap__WEBPACK_IMPORTED_MODULE_0__.Modal(document.getElementById('exampleModal'));
+    this.detailUserModal = new bootstrap__WEBPACK_IMPORTED_MODULE_0__.Modal(document.getElementById('detailUserModal'));
   },
   methods: {
-    getPostulations: function getPostulations() {
+    getConvocations: function getConvocations() {
       var _this = this;
 
-      axios.get('api/getPostulations').then(function (response) {
+      axios.get('api/getAllConvocations').then(function (response) {
         _this.postulations = response.data;
       })["catch"](function (error) {
         console.log(error);
+      });
+    },
+    getPostulations: function getPostulations(id) {
+      var _this2 = this;
+
+      axios.post('api/getPostulations', {
+        id_event: id
+      }).then(function (response) {
+        _this2.postulateds = response.data;
+
+        _this2.detailUserModal.show();
       });
     },
     moreDays: function moreDays() {
@@ -43034,17 +43182,62 @@ __webpack_require__.r(__webpack_exports__);
     bannerUpload: function bannerUpload(file) {
       this.fileBanner = file[0];
     },
+    editPostulation: function editPostulation(data) {
+      this.postulation = data;
+      this.id = data.id;
+      this.modal.show();
+    },
     savePostulation: function savePostulation() {
-      var storage = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.getStorage)();
-      var storageRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.ref)(storage, "adminDashboard/postulations/".concat(this.fileBanner.name, "/"));
-      (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.uploadBytesResumable)(storageRef, this.fileBanner).then(function (snapshot) {
-        (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.getDownloadURL)(snapshot.ref).then(function (url) {
-          console.log('File available at', url);
+      var _this3 = this;
+
+      if (this.fileBanner) {
+        var storage = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.getStorage)();
+        var storageRef = (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.ref)(storage, "adminDashboard/postulations/".concat(this.fileBanner.name, "/"));
+        (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.uploadBytesResumable)(storageRef, this.fileBanner).then(function (snapshot) {
+          (0,firebase_storage__WEBPACK_IMPORTED_MODULE_1__.getDownloadURL)(snapshot.ref).then(function (url) {
+            _this3.postulation.banner = url;
+          });
+        })["catch"](function (error) {
+          console.error('Upload failed', error);
         });
-      })["catch"](function (error) {
-        console.error('Upload failed', error);
-      });
-      console.log(this.postulation);
+      }
+
+      setTimeout(function () {
+        if (_this3.id === null) {
+          axios.post('api/convocations', _this3.postulation).then(function (response) {
+            _this3.cleanData();
+
+            toastr.success('Postulación creada');
+            console.log(response.data);
+          })["catch"](function (error) {
+            toastr.info('Intente de nuevo mas tarde');
+            console.log(error);
+          });
+        } else {
+          axios.put("api/convocations/".concat(_this3.id, "}"), _this3.postulation).then(function (response) {
+            _this3.cleanData();
+
+            toastr.success('Postulación Actualizada');
+          })["catch"](function (error) {
+            toastr.info('Intente de nuevo mas tarde');
+            console.log(error);
+          });
+        }
+      }, "2000");
+    },
+    cleanData: function cleanData() {
+      this.postulation = {
+        aboutPersonal: {},
+        hourly: [{
+          day: "",
+          hourly: ""
+        }],
+        banner: null
+      };
+      this.id = null;
+      this.fileBanner = null;
+      this.getConvocations();
+      this.modal.hide();
     }
   }
 });
@@ -79226,7 +79419,14 @@ var render = function () {
               "tbody",
               _vm._l(_vm.postulations, function (postulation, key) {
                 return _c("tr", { key: key }, [
-                  _c("td", [_vm._v(_vm._s(postulation.event_name))]),
+                  _c("td", [
+                    _c("img", {
+                      staticStyle: { height: "74px", width: "117px" },
+                      attrs: { src: postulation.banner, alt: "" },
+                    }),
+                  ]),
+                  _vm._v(" "),
+                  _c("td", [_vm._v(_vm._s(postulation.name))]),
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(postulation.address.name))]),
                   _vm._v(" "),
@@ -79234,9 +79434,33 @@ var render = function () {
                   _vm._v(" "),
                   _c("td", [_vm._v(_vm._s(postulation.location))]),
                   _vm._v(" "),
-                  _c("td", [_vm._v(_vm._s(postulation.total_assistants))]),
-                  _vm._v(" "),
-                  _vm._m(3, true),
+                  _c("td", [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-outline-primary",
+                        on: {
+                          click: function ($event) {
+                            return _vm.getPostulations(postulation.id)
+                          },
+                        },
+                      },
+                      [_vm._v("Detalle")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-outline-primary",
+                        on: {
+                          click: function ($event) {
+                            return _vm.editPostulation(postulation)
+                          },
+                        },
+                      },
+                      [_vm._v("Editar")]
+                    ),
+                  ]),
                 ])
               }),
               0
@@ -79510,7 +79734,7 @@ var render = function () {
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          type: "text",
+                          type: "date",
                           required: "required",
                           name: "label",
                         },
@@ -79548,7 +79772,7 @@ var render = function () {
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          type: "text",
+                          type: "date",
                           required: "required",
                           name: "label",
                         },
@@ -79822,7 +80046,7 @@ var render = function () {
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          type: "text",
+                          type: "number",
                           required: "required",
                           name: "label",
                         },
@@ -79858,7 +80082,7 @@ var render = function () {
                         ],
                         staticClass: "form-control",
                         attrs: {
-                          type: "text",
+                          type: "number",
                           required: "required",
                           name: "label",
                         },
@@ -79895,12 +80119,505 @@ var render = function () {
                   "button",
                   {
                     staticClass: "btn btn-primary",
-                    attrs: { type: "button", "data-bs-dismiss": "modal" },
+                    attrs: { type: "button" },
                     on: { click: _vm.savePostulation },
                   },
                   [_vm._v("Guardar Cambios")]
                 ),
               ]),
+            ]),
+          ]),
+        ]
+      ),
+      _vm._v(" "),
+      _c(
+        "div",
+        {
+          staticClass: "modal fade",
+          attrs: {
+            id: "detailUserModal",
+            tabindex: "-1",
+            "aria-labelledby": "detailUserModalLabel",
+            "aria-hidden": "true",
+          },
+        },
+        [
+          _c("div", { staticClass: "modal-dialog" }, [
+            _c(
+              "div",
+              { staticClass: "modal-content" },
+              [
+                _vm._m(3),
+                _vm._v(" "),
+                _vm._l(_vm.postulateds, function (postulate, key) {
+                  return _c(
+                    "div",
+                    { key: key, staticClass: "modal-body mb-5" },
+                    [
+                      _c("div", { staticClass: "row" }, [
+                        _c("div", { staticClass: "col" }, [
+                          _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "name_user" } }, [
+                              _vm._v("Nombre y Apellido Postulado"),
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "name_user",
+                                disabled: "",
+                              },
+                              domProps: {
+                                value:
+                                  postulate.name + " " + postulate.lastname,
+                              },
+                            }),
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group" }, [
+                            _c(
+                              "label",
+                              { attrs: { for: "identification_user" } },
+                              [_vm._v("Documento Postulado")]
+                            ),
+                            _vm._v(" "),
+                            _c("input", {
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "identification_user",
+                                disabled: "",
+                              },
+                              domProps: { value: postulate.identification },
+                            }),
+                          ]),
+                        ]),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "row mt-5 mb-5" }, [
+                        _c("div", { staticClass: "col" }, [
+                          _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "lastname_user" } }, [
+                              _vm._v("Nombre Artistico"),
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "lastname_user",
+                                disabled: "",
+                              },
+                              domProps: { value: postulate.nickname },
+                            }),
+                          ]),
+                          _vm._v(" "),
+                          _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "birthday_user" } }, [
+                              _vm._v("Fecha de Nacimiento"),
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "birthday_user",
+                                disabled: "",
+                              },
+                              domProps: { value: postulate.birthday },
+                            }),
+                          ]),
+                        ]),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "row mt-5" }, [
+                        _c("div", { staticClass: "col" }, [
+                          _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "city_user" } }, [
+                              _vm._v("Ciudad Postulado"),
+                            ]),
+                            _vm._v(" "),
+                            _c("input", {
+                              staticClass: "form-control",
+                              attrs: {
+                                type: "text",
+                                id: "city_user",
+                                disabled: "",
+                              },
+                              domProps: { value: postulate.city },
+                            }),
+                          ]),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col" }, [
+                          postulate.gender
+                            ? _c("div", { staticClass: "form-group" }, [
+                                _c("label", { attrs: { for: "gender_user" } }, [
+                                  _vm._v("Genero Postulado"),
+                                ]),
+                                _vm._v(" "),
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: {
+                                    type: "text",
+                                    id: "city_user",
+                                    disabled: "",
+                                  },
+                                  domProps: { value: postulate.gender.label },
+                                }),
+                              ])
+                            : _vm._e(),
+                        ]),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "row mb-5" }, [
+                        _c("div", { staticClass: "col" }, [
+                          _c(
+                            "div",
+                            { staticClass: "form-group" },
+                            [
+                              _c("label", { attrs: { for: "gender_user" } }, [
+                                _vm._v("Foto Postulado"),
+                              ]),
+                              _vm._v(" "),
+                              _vm._l(postulate.photos, function (photo, key) {
+                                return _c("div", { key: key }, [
+                                  _c(
+                                    "a",
+                                    {
+                                      attrs: {
+                                        href: photo.uri,
+                                        target: "_blank",
+                                      },
+                                    },
+                                    [_vm._v("Link " + _vm._s(key))]
+                                  ),
+                                ])
+                              }),
+                            ],
+                            2
+                          ),
+                        ]),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "col" }, [
+                          _c("div", { staticClass: "form-group" }, [
+                            _c("label", { attrs: { for: "video_user" } }, [
+                              _vm._v("Video Postulado"),
+                            ]),
+                            _vm._v(" "),
+                            _c(
+                              "a",
+                              {
+                                attrs: {
+                                  href: postulate.video,
+                                  target: "_blank",
+                                },
+                              },
+                              [_vm._v("Video")]
+                            ),
+                          ]),
+                        ]),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "row" }, [
+                        _c("div", { staticClass: "col" }, [
+                          postulate.contact
+                            ? _c("div", { staticClass: "form-group" }, [
+                                _c(
+                                  "label",
+                                  { attrs: { for: "contact_user" } },
+                                  [_vm._v("Contacto Postulado")]
+                                ),
+                                _vm._v(" "),
+                                postulate.contact
+                                  ? _c("div", [
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Celular: " +
+                                            postulate.contact.phone,
+                                        },
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Facebook: " +
+                                            postulate.contact.facebook,
+                                        },
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Instagram: " +
+                                            postulate.contact.instagram,
+                                        },
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Snapchat: " +
+                                            postulate.contact.snapchat,
+                                        },
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Twitter: " +
+                                            postulate.contact.twitter,
+                                        },
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Spotify: " +
+                                            postulate.contact.spotify,
+                                        },
+                                      }),
+                                      _vm._v(" "),
+                                      _c("input", {
+                                        staticClass: "form-control",
+                                        attrs: { type: "text" },
+                                        domProps: {
+                                          value:
+                                            "Youtube: " +
+                                            postulate.contact.youtube,
+                                        },
+                                      }),
+                                    ])
+                                  : _vm._e(),
+                              ])
+                            : _vm._e(),
+                          _vm._v(" "),
+                          postulate.competences &&
+                          postulate.competences.length > 0
+                            ? _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "competences_user" } },
+                                    [_vm._v("Competencias Postulado")]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm._l(
+                                    postulate.competences,
+                                    function (competence, key) {
+                                      return _c("div", { key: key }, [
+                                        _c("input", {
+                                          staticClass: "form-control",
+                                          attrs: { type: "text" },
+                                          domProps: { value: competence.label },
+                                        }),
+                                      ])
+                                    }
+                                  ),
+                                ],
+                                2
+                              )
+                            : _vm._e(),
+                          _vm._v(" "),
+                          postulate.education && postulate.education.length > 0
+                            ? _c(
+                                "div",
+                                { staticClass: "form-group" },
+                                [
+                                  _c(
+                                    "label",
+                                    { attrs: { for: "education_user" } },
+                                    [_vm._v("Educación Postulado")]
+                                  ),
+                                  _vm._v(" "),
+                                  _vm._l(
+                                    postulate.education,
+                                    function (education, key) {
+                                      return _c("div", { key: key }, [
+                                        _c("input", {
+                                          staticClass: "form-control",
+                                          attrs: { type: "text" },
+                                          domProps: {
+                                            value: "Titulo: " + education.title,
+                                          },
+                                        }),
+                                        _vm._v(" "),
+                                        _c("input", {
+                                          staticClass: "form-control",
+                                          attrs: { type: "text" },
+                                          domProps: {
+                                            value:
+                                              "Institución: " +
+                                              education.institution,
+                                          },
+                                        }),
+                                        _vm._v(" "),
+                                        _c("input", {
+                                          staticClass: "form-control",
+                                          attrs: { type: "text" },
+                                          domProps: {
+                                            value:
+                                              "Fecha Inicial: " +
+                                              education.initialDate,
+                                          },
+                                        }),
+                                      ])
+                                    }
+                                  ),
+                                ],
+                                2
+                              )
+                            : _vm._e(),
+                        ]),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "row" }, [
+                        _c(
+                          "div",
+                          { staticClass: "col" },
+                          [
+                            postulate.roles && postulate.roles.length > 0
+                              ? _c("div", { staticClass: "form-group" })
+                              : _vm._e(),
+                            _vm._v(" "),
+                            _c("label", { attrs: { for: "roles_user" } }, [
+                              _vm._v("Roles Postulado"),
+                            ]),
+                            _vm._v(" "),
+                            _vm._l(postulate.roles, function (role, key) {
+                              return _c("div", { key: key }, [
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: { type: "text" },
+                                  domProps: { value: role.name },
+                                }),
+                              ])
+                            }),
+                          ],
+                          2
+                        ),
+                        _vm._v(" "),
+                        _c("div", { staticClass: "form-group" }, [
+                          _c("label", { attrs: { for: "pyshical_user" } }, [
+                            _vm._v("Atributos Fisicos Postulado"),
+                          ]),
+                          _vm._v(" "),
+                          postulate.pyshical
+                            ? _c("div", [
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: { type: "text" },
+                                  domProps: {
+                                    value:
+                                      "Ojos: " + postulate.pyshical.eyesColor,
+                                  },
+                                }),
+                                _vm._v(" "),
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: { type: "text" },
+                                  domProps: {
+                                    value:
+                                      "Cabello: " +
+                                      postulate.pyshical.hairColor,
+                                  },
+                                }),
+                                _vm._v(" "),
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: { type: "text" },
+                                  domProps: {
+                                    value:
+                                      "Altura: " + postulate.pyshical.height,
+                                  },
+                                }),
+                                _vm._v(" "),
+                                postulate.pyshical.pantSize
+                                  ? _c("input", {
+                                      staticClass: "form-control",
+                                      attrs: { type: "text" },
+                                      domProps: {
+                                        value:
+                                          "Pantalon: " +
+                                          postulate.pyshical.pantSize.label,
+                                      },
+                                    })
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                postulate.pyshical.shirtSize
+                                  ? _c("input", {
+                                      staticClass: "form-control",
+                                      attrs: { type: "text" },
+                                      domProps: {
+                                        value:
+                                          "Camisa: " +
+                                          postulate.pyshical.shirtSize.label,
+                                      },
+                                    })
+                                  : _vm._e(),
+                                _vm._v(" "),
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: { type: "text" },
+                                  domProps: {
+                                    value:
+                                      "Zapatos: " + postulate.pyshical.shoes,
+                                  },
+                                }),
+                                _vm._v(" "),
+                                _c("input", {
+                                  staticClass: "form-control",
+                                  attrs: { type: "text" },
+                                  domProps: {
+                                    value: "Peso: " + postulate.pyshical.weight,
+                                  },
+                                }),
+                              ])
+                            : _vm._e(),
+                        ]),
+                      ]),
+                    ]
+                  )
+                }),
+              ],
+              2
+            ),
+            _vm._v(" "),
+            _c("div", { staticClass: "modal-footer" }, [
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-secondary",
+                  attrs: { type: "button", "data-bs-dismiss": "modal" },
+                },
+                [_vm._v("Cerrar")]
+              ),
+              _vm._v(" "),
+              _c(
+                "button",
+                {
+                  staticClass: "btn btn-primary",
+                  attrs: { type: "button" },
+                  on: { click: _vm.savePostulation },
+                },
+                [_vm._v("Guardar Cambios")]
+              ),
             ]),
           ]),
         ]
@@ -79941,6 +80658,8 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
+        _c("th", [_vm._v("Banner")]),
+        _vm._v(" "),
         _c("th", [_vm._v("Nombre del Evento")]),
         _vm._v(" "),
         _c("th", [_vm._v("Dirección")]),
@@ -79948,8 +80667,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Ciudad")]),
         _vm._v(" "),
         _c("th", [_vm._v("Ubicación")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Total Asistentes")]),
       ]),
     ])
   },
@@ -79957,14 +80674,21 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("td", [
-      _c("button", { staticClass: "btn btn-outline-primary" }, [
-        _vm._v("Detalle"),
-      ]),
+    return _c("div", { staticClass: "modal-header" }, [
+      _c(
+        "h5",
+        { staticClass: "modal-title", attrs: { id: "detailUserModalLabel" } },
+        [_vm._v("Detalle De Postulación")]
+      ),
       _vm._v(" "),
-      _c("button", { staticClass: "btn btn-outline-primary" }, [
-        _vm._v("Editar"),
-      ]),
+      _c("button", {
+        staticClass: "btn-close",
+        attrs: {
+          type: "button",
+          "data-bs-dismiss": "modal",
+          "aria-label": "Close",
+        },
+      }),
     ])
   },
 ]
