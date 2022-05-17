@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Hash;
 use Mail;
 use App\Mail\NotifyMail;
 use SimpleXMLElement;
+use Excel;
+use App\Imports\UserImport;
 
 class ProfileUserController extends Controller
 {
@@ -60,7 +62,7 @@ class ProfileUserController extends Controller
                     "autorization" => $users->autorization === "1" ? true : false,
                     "terms_conditions" =>$users->terms_conditions === "1" ? true : false,
                     "roles" =>json_decode($users->roles),
-                    "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
+                    "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
                     "firstLogin" =>$users->firstLogin === "1" ? true : false,
                     "verified" =>$users->verified === "1" ? true : false,
                 ];
@@ -68,7 +70,7 @@ class ProfileUserController extends Controller
             }
             return response()->json(['data'=>$data],200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>500, 'statusText'=>$th],500);
+            return response()->json(['status'=>500, 'statusText'=>throw $th],500);
         }        
     }
     public function index()
@@ -319,13 +321,13 @@ class ProfileUserController extends Controller
         try {            
             $user_email = $request->email;
             $changeP = User::where('email',$user_email)->first();              
-            $changeP->password = Hash::make($request->password);            
+            $changeP->password = Hash::make($request->password);
             $changeP->provisionalPassword = false;            
             $changeP->save();
 
             return response()->json(['status'=>200,'statusText'=>'Contraseña Actualizada'],200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>400,'statusText'=>$th]);
+            return response()->json(['status'=>400,'statusText'=>$th],400);
         }
     }
 
@@ -336,37 +338,20 @@ class ProfileUserController extends Controller
             
             return response()->json(['status' => 200,'statusText' => 'Usuario Desabilitado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 200);
+            return response()->json(['status' => 400,'statusText' => $th], 400);
         }        
     }
 
-    public function importUsersXML(Request $request){
-        $file = new SimpleXMLElement($request->file,NULL, TRUE);    
-        $posts=[];
-        foreach ($file->channel->item as $item) {
-            $categories = [];
-            $tags       = [];            
-            foreach ($item->category as $category) {
-                if ($category['nicename'] != "uncategorized" && $category['domain']) {
-                    array_push($categories,(string)$category);
-                } elseif ($category['domain'] == 'post_tag') {
-                    array_push($tags,(string)$category);
-                }
+    public function importUsersCSV(Request $request){
+        set_time_limit(0);
+        try {
+            if($request->hasFile('file')){
+                $file = $request->file('file')->getRealPath();
+                $data = Excel::import(new UserImport, $file);             
             }
-    
-            $content = $item->children('http://purl.org/rss/1.0/modules/content/');
-            $wp_id = $item->xpath('wp:post_id');
-            $posts[] = array(
-                "talentName"  => (string)$item->title, 
-                "wp_id"       => (string)$wp_id[0],                
-                "description" => (string)$content->encoded,
-                "pubDate"     => (string)$item->pubDate,
-                "categories"  => $categories,
-                "tags"        => $tags,
-                "url"         => (string)$item->guid
-            );
-        }
-
-        return response()->json($posts);
+            return response()->json(['status' => 200,'statusText' => 'Usuarios Importados por Completo'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 400,'statusText' => $th], 400);
+        }        
     }
 }

@@ -211,7 +211,7 @@ class EventsController extends Controller
 
             return response()->json(['status' => 200,'statusText' => 'Evento Guardado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 200);
+            return response()->json(['status' => 400,'statusText' => $th], 400);
         }
     }
 

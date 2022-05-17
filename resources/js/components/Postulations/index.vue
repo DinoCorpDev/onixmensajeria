@@ -275,6 +275,7 @@
                                     <input type="text" class="form-control" :value="'Peso: '+postulate.pyshical.weight"/>                                    
                                 </div>
                             </div>
+                            <GmapMap :center="center" :zoom='12' style='width:100%;  height: 400px;'/>
                         </div>  
                     </div>
                 </div>
@@ -293,6 +294,7 @@ export default {
     props:['changeActive'],
     data() {
         return{
+            center: { lat: 45.508, lng: -73.587 },
             postulations:[],
             postulateds:[],
             postulation:{
@@ -315,6 +317,14 @@ export default {
         this.detailUserModal = new Modal(document.getElementById('detailUserModal'));
     },
     methods:{
+        geolocate(){
+            navigator.geolocation.getCurrentPosition(position => {
+                this.center = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude,
+                };
+            });
+        },
         getConvocations(){
             axios.get('api/getAllConvocations').then((response)=>{
                 this.postulations = response.data;

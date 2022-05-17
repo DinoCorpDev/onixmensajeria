@@ -34,7 +34,7 @@ Route::group(['middleware' => ['auth']], function () {
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
 
     Route::get('getAllUsers',[App\Http\Controllers\ProfileUserController::class, 'getAllUsers']);
-    Route::post('importUsersXML',[App\Http\Controllers\ProfileUserController::class, 'importUsersXML']);
+    Route::post('importUsersCSV',[App\Http\Controllers\ProfileUserController::class, 'importUsersCSV']);
 
     //Ruta de crud de eventos
     Route::resource('convocations', 'App\Http\Controllers\EventsController');    
