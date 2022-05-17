@@ -20,30 +20,36 @@ class EventsController extends Controller
     public function index(Request $request)
     {        
         $filterParam = $request->search ? $request->search : ''; 
-        $data=[];       
+        $dataToFilter=[];     
+        $data=[];
+        $id_events_users=[];  
+        $user_id = Auth::user()->id;
+        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();        
         /**
          * Validar mediante fecha
          */
         switch ($filterParam) {
             case 'open':
-                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();
+                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();                
                 foreach ($events as $key => $event) {
-                    $data[$key]=[
-                        'id'=>$event->id,
-                        'idItalentt' => $event->idItalentt,
-                        'name'=>$event->name,
-                        'banner'=>$event->banner,
-                        'aboutPersonal'=>json_decode($event->typePersonal),
-                        'initialDate'=>$event->initialDate,
-                        'endDate'=>$event->endDate,
-                        'hourly'=>json_decode($event->hourly),
-                        'city'=>$event->city,
-                        'location'=>$event->location,
-                        'address'=>json_decode($event->address),
-                        'totalBudget'=>$event->totalBudget,
-                        'dailyBudget'=>$event->dailyBudget,
-                        'status'=>$event->status,
-                    ];
+                    // if(isset($eventsUsers[$key]) && ){
+                        $data[$key]=[
+                            'id'=>$event->id,
+                            'idItalentt' => $event->idItalentt,
+                            'name'=>$event->name,
+                            'banner'=>$event->banner,
+                            'aboutPersonal'=>json_decode($event->typePersonal),
+                            'initialDate'=>$event->initialDate,
+                            'endDate'=>$event->endDate,
+                            'hourly'=>json_decode($event->hourly),
+                            'city'=>$event->city,
+                            'location'=>$event->location,
+                            'address'=>json_decode($event->address),
+                            'totalBudget'=>$event->totalBudget,
+                            'dailyBudget'=>$event->dailyBudget,
+                            'status'=>$event->status,
+                        ];
+                    // }                    
                 }
                 break;
             case 'close':
@@ -80,7 +86,7 @@ class EventsController extends Controller
                         "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
                         "initialDate"=>$eventsUser->events->initialDate,
                         "endDate"=>$eventsUser->events->endDate,
-                        "houry"=>json_decode($eventsUser->events->houry),
+                        "hourly"=>json_decode($eventsUser->events->hourly),
                         "city"=>$eventsUser->events->city,
                         "location"=>$eventsUser->events->location,
                         "address"=>json_decode($eventsUser->events->address),
@@ -104,7 +110,7 @@ class EventsController extends Controller
                         "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
                         "initialDate"=>$eventsUser->events->initialDate,
                         "endDate"=>$eventsUser->events->endDate,
-                        "houry"=>json_decode($eventsUser->events->houry),
+                        "hourly"=>json_decode($eventsUser->events->hourly),
                         "city"=>$eventsUser->events->city,
                         "location"=>$eventsUser->events->location,
                         "address"=>json_decode($eventsUser->events->address),
@@ -128,7 +134,7 @@ class EventsController extends Controller
                             "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
                             "initialDate"=>$eventsUser->events->initialDate,
                             "endDate"=>$eventsUser->events->endDate,
-                            "houry"=>json_decode($eventsUser->events->houry),
+                            "hourly"=>json_decode($eventsUser->events->hourly),
                             "city"=>$eventsUser->events->city,
                             "location"=>$eventsUser->events->location,
                             "address"=>json_decode($eventsUser->events->address),
@@ -185,17 +191,16 @@ class EventsController extends Controller
      */
     public function store(Request $request)
     {        
-        try {
-            $banner = $this->saveImageB64($request->idItalentt,$request->name,$request->banner);
+        try {            
             $newEvent = new Events();
 
             $newEvent->idItalentt = $request->idItalentt;
             $newEvent->name = $request->name;
-            $newEvent->banner = $banner;
+            $newEvent->banner = $request->banner;
             $newEvent->typePersonal = json_encode($request->aboutPersonal);
             $newEvent->initialDate = $request->initialDate;
             $newEvent->endDate = $request->endDate;
-            $newEvent->houry = json_encode($request->houry);
+            $newEvent->hourly = json_encode($request->hourly);
             $newEvent->city = $request->city;
             $newEvent->location = $request->location;
             $newEvent->address = json_encode($request->address);
@@ -206,7 +211,7 @@ class EventsController extends Controller
 
             return response()->json(['status' => 200,'statusText' => 'Evento Guardado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 200);
+            return response()->json(['status' => 400,'statusText' => $th], 400);
         }
     }
 
@@ -217,7 +222,7 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($idItalentt)
-    {
+    {        
         $event = Events::where('idItalentt',$idItalentt)->first();
         $data=[
             'id'=>$event->id,
@@ -250,11 +255,8 @@ class EventsController extends Controller
     {        
         try {
             $newEvent = Events::findOrFail($id);            
-            if($request->banner){
-                File::delete($newEvent->banner);
-                $banner = $this->saveImageB64($request->idItalentt,$request->name,$request->banner);
-                $newEvent->banner = $banner;
-            }
+            
+            $newEvent->banner = $request->banner;            
             $newEvent->idItalentt = $request->idItalentt;
             $newEvent->name = $request->name;            
             $newEvent->typePersonal = json_encode($request->aboutPersonal);

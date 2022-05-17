@@ -3,10 +3,19 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
+import Vue from 'vue';
 import JQuery from 'jquery';
 window.$ = JQuery;
 require('./bootstrap');
+import '../firebaseConection/databaseConection';
+import * as VueGoogleMaps from 'vue2-google-maps';
 
+Vue.use(VueGoogleMaps, {
+    load: {
+      key: 'YOUR_GOOGLE_MAPS_API_KEY_GOES_HERE',
+      libraries: 'places',
+    }
+});
 window.Vue = require('vue').default;
 
 /**

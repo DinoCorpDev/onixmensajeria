@@ -45,7 +45,7 @@
             }
         },
         mounted(){
-            axios.get('getMyUser').then((response) => {                
+            axios.get('api/getMyUser').then((response) => {                
                 this.user = response.data.data;
             }).catch((error)=>{
                 console.log(error);
@@ -57,7 +57,7 @@
                     email: this.email,
                     password: this.password
                 }                
-                axios.post('login',data).then((response)=>{
+                axios.post('api/login',data).then((response)=>{
                     this.user = response.data.data;
                 }).catch((error)=>{
                     toastr.error('Usuario y / o Contraseña Incorrectos');
@@ -65,7 +65,7 @@
                 });
             },
             logout(){
-                axios.post('logout').then((response)=>{
+                axios.post('api/logout').then((response)=>{
                     this.cleanData();
                     console.log(response.data);                    
                 })

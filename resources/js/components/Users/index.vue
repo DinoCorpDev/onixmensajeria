@@ -95,12 +95,15 @@
                         <h2>Importación de Usuarios</h2>
                     </div>
                     <div class="modal-body">
+                        <div class="spinner-border text-secondary" role="status" v-if="loader === true">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
                         <div class="form-group">
                             <label for="">Importar</label>
                             <input type="file" class="form-control" v-on:change="(e)=>importFile(e.target.files)"/>
                         </div>
                     </div>
-                    <div class="modal-footer">
+                    <div class="modal-footer" v-if="loader === false">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
                         <button type="button" class="btn btn-primary" v-on:click="saveFile">Importar</button>
                     </div>
@@ -122,7 +125,8 @@ export default {
                 terms_conditions:true,
             },
             id:null,
-            file:null
+            file:null,
+            loader:false
         }    
     },
 
@@ -133,7 +137,7 @@ export default {
 
     methods:{
         getUsers(){
-            axios.get('getAllUsers').then(response=>{
+            axios.get('api/getAllUsers').then(response=>{
                 this.users = response.data.data
             })
         },
@@ -144,7 +148,7 @@ export default {
         saveUser(){
             if(this.id === null){
                 console.log(this.user);
-                axios.post('adminRegisterUser',this.user).then((response)=>{
+                axios.post('api/adminRegisterUser',this.user).then((response)=>{
                     console.log(response.data);
                     toastr.success('Usuario Creado');
                     this.cleanData();
@@ -155,7 +159,7 @@ export default {
                 })
             }else{
                 console.log(this.user);
-                axios.patch(`updateUserInAdmin/${this.id}`,this.user).then((response)=>{
+                axios.patch(`api/updateUserInAdmin/${this.id}`,this.user).then((response)=>{
                     console.log(response.data);
                     toastr.success('Usuario Actualizado');
                     this.cleanData();
@@ -173,19 +177,29 @@ export default {
                 autorization:true,
                 terms_conditions:true,
             };
-            this.id = null
+            this.id = null,
+            this.file = null
         },
         importFile(data){            
             this.file = data[0];
         },
 
         saveFile(){
+            this.loader = true;
             var data = new  FormData();
             data.append('file', this.file);
-            data.append('_method', 'POST');
-            
-            axios.post('/importUsersXML',data).then(response => {
-                console.log(response)
+            data.append('_method', 'POST');            
+            axios.post('api/importUsersCSV',data).then(response => {                
+                this.loader = false
+                toastr.success('Usuarios Importados');
+                this.cleanData();
+                this.getUsers();
+            }).catch((error)=>{
+                this.loader = false
+                toastr.error('Revisa que los campos estén completos e intenta de nuevo mas tarde');
+                this.cleanData();
+                this.getUsers();
+                console.log(error);
             })
         }
     }

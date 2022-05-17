@@ -25,8 +25,7 @@ class User extends Authenticatable
         "password",
         "nickname",
         "birthday",
-        "gender",        
-        "sectors",
+        "gender",                
         "pyshical",
         "competences",
         "education",
@@ -43,7 +42,7 @@ class User extends Authenticatable
         "status",
         "provisionalPassword",
         "firstLogin",
-        "verified"
+        "verified",
     ];
 
     /**

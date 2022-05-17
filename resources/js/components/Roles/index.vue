@@ -73,7 +73,7 @@ export default {
     },
     methods:{
         getRoles(){
-            axios.get('getRoles').then((response)=>{
+            axios.get('api/getRoles').then((response)=>{
                 this.roles = response.data;
             }).catch((error)=>{
                 console.log(error);
@@ -87,7 +87,7 @@ export default {
 
         saveRol(){
             if(this.id !== null){
-                axios.put(`rol/${this.id}`,this.rol).then((response)=>{
+                axios.put(`api/rol/${this.id}`,this.rol).then((response)=>{
                     this.cleanData();
                     toastr.success('rol Actualizado');
                     this.getRoles();                    
@@ -95,7 +95,7 @@ export default {
                     console.log(error);
                 })
             }else{
-                axios.post('rol',this.rol).then((response)=>{  
+                axios.post('api/rol',this.rol).then((response)=>{  
                     this.cleanData();
                     toastr.success('rol Creado');                  
                     this.getRoles();                    
@@ -107,7 +107,7 @@ export default {
 
         deleteRol(id){
             if(window.confirm('Seguro desea Eliminar este dato?')){
-                axios.delete(`rol/${id}`).then((response)=>{
+                axios.delete(`api/rol/${id}`).then((response)=>{
                     toastr.success('rol Eliminado');
                     this.getRoles();
                     this.cleanData();
