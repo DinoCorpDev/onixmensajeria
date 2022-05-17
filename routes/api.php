@@ -63,3 +63,4 @@ Route::get('getMyUser',[App\Http\Controllers\ProfileUserController::class, 'getM
 Route::resource('competences', 'App\Http\Controllers\CompetencesController');
 Route::resource('sector', 'App\Http\Controllers\SectorsController');
 Route::resource('rol','App\Http\Controllers\RolesController');
+Route::get('getAllUsers/{name}',[App\Http\Controllers\ProfileUserController::class, 'show']);

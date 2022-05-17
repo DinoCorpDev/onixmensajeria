@@ -36,7 +36,7 @@ class ProfileUserController extends Controller
     public function getAllUsers(){
         try {
             $data=[];
-            $users = User::all();
+            $users = User::orderBy('id','DESC')->paginate(20);
             foreach ($users as $key => $users) {
                 $dataToPush=[
                     "id"=>$users->id,
@@ -129,9 +129,46 @@ class ProfileUserController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function show($id)
+    public function show($searchParam)
     {
-        
+        try {
+            $data=[];
+            $users = User::where('name','LIKE','%'.$searchParam.'%')->orWhere('lastname','LIKE','%'.$searchParam.'%')->orWhere('email','LIKE','%'.$searchParam.'%')->get();
+            foreach ($users as $key => $users) {
+                $dataToPush=[
+                    "id"=>$users->id,
+                    "name" => $users->name,
+                    "lastname" => $users->lastname,
+                    "contact" => json_decode($users->contact),
+                    "email" => $users->email,
+                    "nickname" => $users->nickname,
+                    "birthday" => $users->birthday,
+                    "gender" => $users->gender,                                
+                    "physical" =>json_decode($users->pyshical),
+                    "competences" =>json_decode($users->competences),
+                    "education" =>json_decode($users->education),
+                    "experience" =>json_decode($users->experience),
+                    "identification" => $users->identification,
+                    "address" => $users->address,
+                    "city" => $users->city,
+                    
+                    "profile" => $users->profile,
+                    "photos" => $users->photos,
+                    "video" =>$users->video,
+                        
+                    "autorization" => $users->autorization === "1" ? true : false,
+                    "terms_conditions" =>$users->terms_conditions === "1" ? true : false,
+                    "roles" =>json_decode($users->roles),
+                    "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
+                    "firstLogin" =>$users->firstLogin === "1" ? true : false,
+                    "verified" =>$users->verified === "1" ? true : false,
+                ];
+                array_push($data, $dataToPush);
+            }
+            return response()->json(['data'=>$data],200);
+        } catch (\Throwable $th) {
+            return response()->json(['status'=>500, 'statusText'=>throw $th],500);
+        }
     }
 
     public function saveImageB64(String $email, String $type, String $image_b64){        

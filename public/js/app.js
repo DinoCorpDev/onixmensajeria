@@ -42702,7 +42702,7 @@ __webpack_require__.r(__webpack_exports__);
 
       if (window.confirm('Seguro desea Eliminar este dato?')) {
         axios["delete"]("api/competences/".concat(id)).then(function (response) {
-          toastr.success('Sector Eliminado');
+          toastr.success('Aptitud Eliminado');
 
           _this3.getCompetences();
 
@@ -43679,6 +43679,20 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['changeActive'],
@@ -43692,19 +43706,44 @@ __webpack_require__.r(__webpack_exports__);
       },
       id: null,
       file: null,
-      loader: false
+      loader: false,
+      page: 1,
+      search: ''
     };
+  },
+  watch: {
+    search: function search(newVal, oldVal) {
+      var _this = this;
+
+      if (newVal !== '' && newVal !== oldVal) {
+        axios.get("api/getAllUsers/".concat(newVal)).then(function (response) {
+          _this.users = response.data.data;
+        });
+      } else {
+        this.getUsers();
+      }
+    }
   },
   mounted: function mounted() {
     this.getUsers();
     this.modal = new bootstrap__WEBPACK_IMPORTED_MODULE_0__.Modal(document.getElementById('exampleModal'));
   },
   methods: {
+    nextPage: function nextPage() {
+      this.page = this.page + 1;
+      this.getUsers();
+    },
+    lastPage: function lastPage() {
+      if (this.page > 1) {
+        this.page = this.page - 1;
+        this.getUsers();
+      }
+    },
     getUsers: function getUsers() {
-      var _this = this;
+      var _this2 = this;
 
-      axios.get('api/getAllUsers').then(function (response) {
-        _this.users = response.data.data;
+      axios.get("api/getAllUsers?page=".concat(this.page)).then(function (response) {
+        _this2.users = response.data.data;
       });
     },
     editUser: function editUser(data) {
@@ -43712,7 +43751,7 @@ __webpack_require__.r(__webpack_exports__);
       this.id = data.id;
     },
     saveUser: function saveUser() {
-      var _this2 = this;
+      var _this3 = this;
 
       if (this.id === null) {
         console.log(this.user);
@@ -43720,9 +43759,9 @@ __webpack_require__.r(__webpack_exports__);
           console.log(response.data);
           toastr.success('Usuario Creado');
 
-          _this2.cleanData();
+          _this3.cleanData();
 
-          _this2.getUsers();
+          _this3.getUsers();
         })["catch"](function (error) {
           toastr.error('Intenta de nuevo mas Tarde');
           console.log(error);
@@ -43733,9 +43772,9 @@ __webpack_require__.r(__webpack_exports__);
           console.log(response.data);
           toastr.success('Usuario Actualizado');
 
-          _this2.cleanData();
+          _this3.cleanData();
 
-          _this2.getUsers();
+          _this3.getUsers();
         })["catch"](function (error) {
           toastr.error('Intenta de nuevo mas Tarde');
           console.log(error);
@@ -43755,26 +43794,26 @@ __webpack_require__.r(__webpack_exports__);
       this.file = data[0];
     },
     saveFile: function saveFile() {
-      var _this3 = this;
+      var _this4 = this;
 
       this.loader = true;
       var data = new FormData();
       data.append('file', this.file);
       data.append('_method', 'POST');
       axios.post('api/importUsersCSV', data).then(function (response) {
-        _this3.loader = false;
+        _this4.loader = false;
         toastr.success('Usuarios Importados');
 
-        _this3.cleanData();
+        _this4.cleanData();
 
-        _this3.getUsers();
+        _this4.getUsers();
       })["catch"](function (error) {
-        _this3.loader = false;
+        _this4.loader = false;
         toastr.error('Revisa que los campos estén completos e intenta de nuevo mas tarde');
 
-        _this3.cleanData();
+        _this4.cleanData();
 
-        _this3.getUsers();
+        _this4.getUsers();
 
         console.log(error);
       });
@@ -82063,29 +82102,38 @@ var render = function () {
         _vm._m(0),
         _vm._v(" "),
         _c("div", { staticClass: "card-body" }, [
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary mb-2",
-              attrs: {
-                "data-bs-toggle": "modal",
-                "data-bs-target": "#exampleModal",
-              },
-            },
-            [_vm._v("Crear Usuario")]
-          ),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary mb-2",
-              attrs: {
-                "data-bs-toggle": "modal",
-                "data-bs-target": "#importModal",
-              },
-            },
-            [_vm._v("Importar Usuarios")]
-          ),
+          _c("div", { staticClass: "container" }, [
+            _c("div", { staticClass: "row" }, [
+              _vm._m(1),
+              _vm._v(" "),
+              _c("div", { staticClass: "col" }, [
+                _c("input", {
+                  directives: [
+                    {
+                      name: "model",
+                      rawName: "v-model",
+                      value: _vm.search,
+                      expression: "search",
+                    },
+                  ],
+                  staticClass: "form-control",
+                  attrs: {
+                    type: "text",
+                    placeholder: "Buscar por Nombre o Apellido o Correo",
+                  },
+                  domProps: { value: _vm.search },
+                  on: {
+                    input: function ($event) {
+                      if ($event.target.composing) {
+                        return
+                      }
+                      _vm.search = $event.target.value
+                    },
+                  },
+                }),
+              ]),
+            ]),
+          ]),
           _vm._v(" "),
           _c(
             "table",
@@ -82093,7 +82141,7 @@ var render = function () {
               staticClass: "table table-striped table-bordered table-response",
             },
             [
-              _vm._m(1),
+              _vm._m(2),
               _vm._v(" "),
               _c(
                 "tbody",
@@ -82104,8 +82152,6 @@ var render = function () {
                     _c("td", [_vm._v(_vm._s(user.lastname))]),
                     _vm._v(" "),
                     _c("td", [_vm._v(_vm._s(user.email))]),
-                    _vm._v(" "),
-                    _c("td", [_vm._v(_vm._s(user.contact.phone))]),
                     _vm._v(" "),
                     _c("td", [
                       _c(
@@ -82131,6 +82177,36 @@ var render = function () {
               ),
             ]
           ),
+          _vm._v(" "),
+          _c("nav", { attrs: { "aria-label": "Page navigation example" } }, [
+            _c("ul", { staticClass: "pagination" }, [
+              _c(
+                "li",
+                { class: _vm.page > 1 ? "page-item" : "page-item disabled" },
+                [
+                  _c(
+                    "a",
+                    { staticClass: "page-link", on: { click: _vm.lastPage } },
+                    [_vm._v("Anterior")]
+                  ),
+                ]
+              ),
+              _vm._v(" "),
+              _c("li", { staticClass: "page-item" }, [
+                _c("a", { staticClass: "page-link" }, [
+                  _vm._v(_vm._s(_vm.page)),
+                ]),
+              ]),
+              _vm._v(" "),
+              _c("li", { staticClass: "page-item" }, [
+                _c(
+                  "a",
+                  { staticClass: "page-link", on: { click: _vm.nextPage } },
+                  [_vm._v("Siguiente")]
+                ),
+              ]),
+            ]),
+          ]),
         ]),
       ]),
       _vm._v(" "),
@@ -82451,7 +82527,7 @@ var render = function () {
         [
           _c("div", { staticClass: "modal-dialog" }, [
             _c("div", { staticClass: "modal-content" }, [
-              _vm._m(2),
+              _vm._m(3),
               _vm._v(" "),
               _c("div", { staticClass: "modal-body" }, [
                 _vm.loader === true
@@ -82526,6 +82602,36 @@ var staticRenderFns = [
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
+    return _c("div", { staticClass: "col" }, [
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-primary mb-2",
+          attrs: {
+            "data-bs-toggle": "modal",
+            "data-bs-target": "#exampleModal",
+          },
+        },
+        [_vm._v("Crear Usuario")]
+      ),
+      _vm._v(" "),
+      _c(
+        "button",
+        {
+          staticClass: "btn btn-primary mb-2",
+          attrs: {
+            "data-bs-toggle": "modal",
+            "data-bs-target": "#importModal",
+          },
+        },
+        [_vm._v("Importar Usuarios")]
+      ),
+    ])
+  },
+  function () {
+    var _vm = this
+    var _h = _vm.$createElement
+    var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
         _c("th", [_vm._v("Nombre")]),
@@ -82533,8 +82639,6 @@ var staticRenderFns = [
         _c("th", [_vm._v("Apellido")]),
         _vm._v(" "),
         _c("th", [_vm._v("Correo")]),
-        _vm._v(" "),
-        _c("th", [_vm._v("Contacto")]),
         _vm._v(" "),
         _c("th"),
       ]),

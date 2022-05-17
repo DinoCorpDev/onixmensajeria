@@ -5,15 +5,23 @@
                 <h2><strong>Usuarios</strong></h2>
             </div>
             <div class="card-body">
-                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Usuario</button>
-                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#importModal">Importar Usuarios</button>
+                <div class="container">
+                    <div class="row">
+                        <div class="col">
+                            <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Usuario</button>                        
+                            <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#importModal">Importar Usuarios</button>
+                        </div>
+                        <div class="col">
+                            <input type="text" class="form-control" placeholder="Buscar por Nombre o Apellido o Correo" v-model="search">
+                        </div>
+                    </div>
+                </div>
                 <table class="table table-striped table-bordered table-response">
                     <thead>
                         <tr>
                             <th>Nombre</th>
                             <th>Apellido</th>
                             <th>Correo</th>
-                            <th>Contacto</th>
                             <th></th>
                         </tr>
                     </thead>
@@ -22,13 +30,19 @@
                             <td>{{user.name}}</td>
                             <td>{{user.lastname}}</td>
                             <td>{{user.email}}</td>
-                            <td>{{user.contact.phone}}</td>
                             <td>
                                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" v-on:click="editUser(user)">Editar</button>                                
                             </td>
                         </tr>
                     </tbody>
                 </table>
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination">
+                        <li :class="page > 1 ? 'page-item' : 'page-item disabled'"><a class="page-link" v-on:click="lastPage">Anterior</a></li>                        
+                        <li class="page-item"><a class="page-link">{{page}}</a></li>
+                        <li class="page-item"><a class="page-link" v-on:click="nextPage">Siguiente</a></li>
+                    </ul>
+                </nav>
             </div>
         </div> 
         <!-- Modal -->
@@ -126,8 +140,21 @@ export default {
             },
             id:null,
             file:null,
-            loader:false
+            loader:false,
+            page:1,
+            search:'',
         }    
+    },
+    watch:{
+        search: function(newVal, oldVal){
+            if(newVal !== '' && newVal !== oldVal){
+                axios.get(`api/getAllUsers/${newVal}`).then(response=>{
+                    this.users = response.data.data
+                })
+            }else{
+                this.getUsers();
+            }
+        }
     },
 
     mounted(){
@@ -136,8 +163,20 @@ export default {
     },
 
     methods:{
+        nextPage(){
+            
+            this.page = this.page + 1;
+            this.getUsers();
+            
+        },
+        lastPage(){
+            if(this.page > 1){
+                this.page = this.page - 1;
+                this.getUsers();
+            }
+        },
         getUsers(){
-            axios.get('api/getAllUsers').then(response=>{
+            axios.get(`api/getAllUsers?page=${this.page}`).then(response=>{
                 this.users = response.data.data
             })
         },

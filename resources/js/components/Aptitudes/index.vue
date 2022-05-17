@@ -108,7 +108,7 @@ export default {
         deleteCompetence(id){
             if(window.confirm('Seguro desea Eliminar este dato?')){
                 axios.delete(`api/competences/${id}`).then((response)=>{
-                    toastr.success('Sector Eliminado');
+                    toastr.success('Aptitud Eliminado');
                     this.getCompetences();
                     this.cleanData();
                 }).catch((error)=>{
