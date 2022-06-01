@@ -18,19 +18,19 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
-    {        
-        $filterParam = $request->search ? $request->search : ''; 
-        $dataToFilter=[];     
+    {
+        $filterParam = $request->search ? $request->search : '';
+        $dataToFilter=[];
         $data=[];
-        $id_events_users=[];  
+        $id_events_users=[];
         $user_id = Auth::user()->id;
-        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();        
+        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();
         /**
          * Validar mediante fecha
          */
         switch ($filterParam) {
             case 'open':
-                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();                
+                $events = Events::where('status',$filterParam)->orderBy('id','DESC')->get();
                 foreach ($events as $key => $event) {
                     // if(isset($eventsUsers[$key]) && ){
                         $data[$key]=[
@@ -49,7 +49,7 @@ class EventsController extends Controller
                             'dailyBudget'=>$event->dailyBudget,
                             'status'=>$event->status,
                         ];
-                    // }                    
+                    // }
                 }
                 break;
             case 'close':
@@ -75,10 +75,10 @@ class EventsController extends Controller
                 break;
             case 'accept':
                 $user_id = Auth::user()->id;
-                $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();        
+                $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();
 
                 foreach ($eventsUsers as $key => $eventsUser) {
-                    $data[$key]=[                
+                    $data[$key]=[
                         "id"=>$eventsUser->events->id,
                         "idItalentt"=>$eventsUser->events->idItalentt,
                         "name"=>$eventsUser->events->name,
@@ -96,13 +96,13 @@ class EventsController extends Controller
                     ];
                 }
                 break;
-            
+
             case 'skip':
                 $user_id = Auth::user()->id;
-                $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();        
+                $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();
 
                 foreach ($eventsUsers as $key => $eventsUser) {
-                    $data[$key]=[                
+                    $data[$key]=[
                         "id"=>$eventsUser->events->id,
                         "idItalentt"=>$eventsUser->events->idItalentt,
                         "name"=>$eventsUser->events->name,
@@ -120,13 +120,13 @@ class EventsController extends Controller
                     ];
                 }
                 break;
-            
+
                 case 'reject':
                     $user_id = Auth::user()->id;
-                    $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();        
-    
+                    $eventsUsers = EventsUsers::where('id_user',$user_id)->where('status',$filterParam)->with('events')->get();
+
                     foreach ($eventsUsers as $key => $eventsUser) {
-                        $data[$key]=[                
+                        $data[$key]=[
                             "id"=>$eventsUser->events->id,
                             "idItalentt"=>$eventsUser->events->idItalentt,
                             "name"=>$eventsUser->events->name,
@@ -147,40 +147,40 @@ class EventsController extends Controller
             default:
                 # code...
                 break;
-        }        
+        }
         return response()->json($data);
     }
 
-    public function saveImageB64(String $idItalentt, String $nameEvent, String $image_b64){        
-        $img = $this->getB64Image($image_b64);        
+    public function saveImageB64(String $idItalentt, String $nameEvent, String $image_b64){
+        $img = $this->getB64Image($image_b64);
             // Obtener la extensión de la Imagen
         $img_extension = $this->getB64Extension($image_b64);
             // Crear un nombre aleatorio para la imagen
         $img_name = $idItalentt.'-'.$nameEvent.'.'.$img_extension;
-            // Usando el Storage guardar en el disco creado anteriormente y pasandole a 
-            // la función "put" el nombre de la imagen y los datos de la imagen como 
+            // Usando el Storage guardar en el disco creado anteriormente y pasandole a
+            // la función "put" el nombre de la imagen y los datos de la imagen como
             // segundo parametro
         $imageSaved = Storage::disk('public')->put($img_name, $img);
         $url = Storage::disk('public')->url($img_name);
         return $url;
     }
 
-    public function getB64Image($base64_image){  
-        // Obtener el String base-64 de los datos         
+    public function getB64Image($base64_image){
+        // Obtener el String base-64 de los datos
         $image_service_str = substr($base64_image, strpos($base64_image, ",")+1);
-        // Decodificar ese string y devolver los datos de la imagen        
-        $image = base64_decode($image_service_str);   
+        // Decodificar ese string y devolver los datos de la imagen
+        $image = base64_decode($image_service_str);
         // Retornamos el string decodificado
-        return $image; 
+        return $image;
    }
 
-    public function getB64Extension($base64_image){  
+    public function getB64Extension($base64_image){
         // Obtener mediante una expresión regular la extensión imagen y guardarla
-        // en la variable "img_extension"        
-        preg_match("/^data:image\/(.*);base64/i",$base64_image, $img_extension);   
+        // en la variable "img_extension"
+        preg_match("/^data:image\/(.*);base64/i",$base64_image, $img_extension);
         // Dependiendo si se pide la extensión completa o no retornar el arreglo con
-        // los datos de la extensión en la posición 0 - 1        
-        return $img_extension[1];  
+        // los datos de la extensión en la posición 0 - 1
+        return $img_extension[1];
     }
 
     /**
@@ -190,8 +190,8 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
-        try {            
+    {
+        try {
             $newEvent = new Events();
 
             $newEvent->idItalentt = $request->idItalentt;
@@ -206,7 +206,7 @@ class EventsController extends Controller
             $newEvent->address = json_encode($request->address);
             $newEvent->totalBudget = $request->totalBudget;
             $newEvent->dailyBudget = $request->dailyBudget;
-            
+
             $newEvent->save();
 
             return response()->json(['status' => 200,'statusText' => 'Evento Guardado'], 200);
@@ -222,7 +222,7 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function show($idItalentt)
-    {        
+    {
         $event = Events::where('idItalentt',$idItalentt)->first();
         $data=[
             'id'=>$event->id,
@@ -252,13 +252,13 @@ class EventsController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
-    {        
+    {
         try {
-            $newEvent = Events::findOrFail($id);            
-            
-            $newEvent->banner = $request->banner;            
+            $newEvent = Events::findOrFail($id);
+
+            $newEvent->banner = $request->banner;
             $newEvent->idItalentt = $request->idItalentt;
-            $newEvent->name = $request->name;            
+            $newEvent->name = $request->name;
             $newEvent->typePersonal = json_encode($request->aboutPersonal);
             $newEvent->initialDate = $request->initialDate;
             $newEvent->endDate = $request->endDate;
@@ -268,7 +268,7 @@ class EventsController extends Controller
             $newEvent->address = json_encode($request->address);
             $newEvent->totalBudget = $request->totalBudget;
             $newEvent->dailyBudget = $request->dailyBudget;
-            
+
             $newEvent->save();
 
             return response()->json(['status' => 200,'statusText' => 'Evento Actualizado'], 200);

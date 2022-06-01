@@ -23,7 +23,7 @@
                         </div>
                     </div>
                 </div>
-            </div>            
+            </div>
             <div v-else>
                 <dashboardComponent :user="user" :logout="logout"/>
             </div>
@@ -31,21 +31,21 @@
     </div>
 </template>
 
-<script>    
+<script>
     import dashboardComponent from '../adminDashboard/index.vue';
-    export default {        
+    export default {
         components:{
             dashboardComponent,
         },
         data(){
             return{
-                email:"",
-                password:"",
+                email:"administrador@gmail.com",
+                password:"Talentos@2020!Bogota",
                 user:null,
             }
         },
         mounted(){
-            axios.get('api/getMyUser').then((response) => {                
+            axios.get('api/getMyUser').then((response) => {
                 this.user = response.data.data;
             }).catch((error)=>{
                 console.log(error);
@@ -56,7 +56,7 @@
                 let data={
                     email: this.email,
                     password: this.password
-                }                
+                }
                 axios.post('api/login',data).then((response)=>{
                     this.user = response.data.data;
                 }).catch((error)=>{
@@ -67,7 +67,7 @@
             logout(){
                 axios.post('api/logout').then((response)=>{
                     this.cleanData();
-                    console.log(response.data);                    
+                    console.log(response.data);
                 })
             },
             cleanData(){

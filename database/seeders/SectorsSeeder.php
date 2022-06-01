@@ -16,7 +16,7 @@ class SectorsSeeder extends Seeder
     public function run()
     {
         DB::table('sectors')->insert([
-            'label' => 'Televesión',
+            'label' => 'Televisión',
             'value' => 'TV',
         ]);
 
@@ -41,7 +41,7 @@ class SectorsSeeder extends Seeder
         ]);
 
         DB::table('sectors')->insert([
-            'label' => 'Musica',
+            'label' => 'Música',
             'value' => 'music',
         ]);
     }

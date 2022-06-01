@@ -23,7 +23,7 @@ class UsersSeeder extends Seeder
             'password' => Hash::make('Talentos@2020!Bogota'),
             'autorization' => true,
             'terms_conditions' => true,
-            'contact' => "{'phone':'3144459146'}"
+            'contact' => "{'phone':'3144459146'}",
         ]);
     }
 }

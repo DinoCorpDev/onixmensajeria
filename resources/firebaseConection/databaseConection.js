@@ -2,13 +2,13 @@ import firebase from 'firebase/compat/app';
 import 'firebase/compat/auth';
 import 'firebase/compat/firestore';
 
-const config= {
-    apiKey: "AIzaSyDqqjmXP9GB4p0oo3RZQ81b80O8FRvsB68",
-    authDomain: "testuploadimages-6c250.firebaseapp.com",
-    projectId: "testuploadimages-6c250",
-    storageBucket: "testuploadimages-6c250.appspot.com",
-    messagingSenderId: "348891363162",
-    appId: "1:348891363162:web:65931ff4d096cba7d36563"
+const config = {
+    apiKey: "AIzaSyCDiAn_6bElOwummaO3cm0qzTP_iQu2Xmw",
+    authDomain: "italent-6fbfc.firebaseapp.com",
+    projectId: "italent-6fbfc",
+    storageBucket: "italent-6fbfc.appspot.com",
+    messagingSenderId: "772197136865",
+    appId: "1:772197136865:web:eeafd6b99e1b59493a3aa0"
 };
 
 firebase.initializeApp(config);

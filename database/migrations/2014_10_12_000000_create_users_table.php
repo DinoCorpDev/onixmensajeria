@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string("lastname",255);
             $table->string("contact",255);
             $table->string("email",255)->unique();
-            $table->string("password",255);     
+            $table->string("password",255);
             $table->string("nickname",255)->nullable();
             $table->date("birthday")->nullable();
             $table->string("gender",255)->nullable();
@@ -31,6 +31,7 @@ return new class extends Migration
             $table->string("identification",255)->nullable();
             $table->string("address",255)->nullable();
             $table->string("city",255)->nullable();
+            $table->string("country",255)->nullable();
             $table->string("profile",255)->nullable();
             $table->string("photos",255)->nullable();
             $table->string("video",255)->nullable();
