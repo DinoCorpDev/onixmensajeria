@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\CreateEvents;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,5 +19,6 @@ Route::get('/', function () {
 });
 
 Route::get('/tests', function () {
-    return \App\Models\User::all();
+    event(new CreateEvents());
+    return "Se escucho 2";
 });

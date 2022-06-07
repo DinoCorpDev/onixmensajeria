@@ -11,6 +11,8 @@ class Events extends Model
 
     protected $guarded = ['id'];
 
+    protected $casts = ['hourly' => 'array'];
+
     protected $fillable = [
         'idItalentt',
         'name',
@@ -27,7 +29,8 @@ class Events extends Model
         'status',
     ];
 
-    public function eventsOfUsers(){
+    public function eventsOfUsers()
+    {
         return $this->belongsTo(EventsUsers::class);
     }
 }

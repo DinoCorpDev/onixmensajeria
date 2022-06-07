@@ -9,6 +9,7 @@ window.$ = JQuery;
 require('./bootstrap');
 import '../firebaseConection/databaseConection';
 import * as VueGoogleMaps from 'vue2-google-maps';
+import './plugins/index';
 
 Vue.use(VueGoogleMaps, {
     load: {

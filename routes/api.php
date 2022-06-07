@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EventsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,11 +26,11 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::group(['middleware' => ['auth']], function () {
     //Ruta de usuarios, actualizacion, muestra y deshabilitacion
     Route::put('disableUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'disableUser']);
-    Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
-    Route::patch('updateUserInAdmin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);    
-    Route::post('adminRegisterUser',[App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);    
-    
-    Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);    
+    Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);
+    Route::patch('updateUserInAdmin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);
+    Route::post('adminRegisterUser',[App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);
+
+    Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);
 
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
 
@@ -37,13 +38,18 @@ Route::group(['middleware' => ['auth']], function () {
     Route::post('importUsersCSV',[App\Http\Controllers\ProfileUserController::class, 'importUsersCSV']);
 
     //Ruta de crud de eventos
-    Route::resource('convocations', 'App\Http\Controllers\EventsController');    
+    Route::resource('convocations', 'App\Http\Controllers\EventsController');
 
     //Ruta de crud de eventos a los que el usuario se postuló
-    Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');  
-    
+    Route::resource('postulationEvents','App\Http\Controllers\EventsUsersController');
+
     Route::post('getPostulations',[App\Http\Controllers\EventsUsersController::class, 'getPostulations']);
-    Route::get('getAllConvocations',[App\Http\Controllers\EventsUsersController::class, 'getAllConvocations']);    
+    Route::get('getAllConvocations',[App\Http\Controllers\EventsUsersController::class, 'getAllConvocations']);
+
+    Route::get('events',[EventsController::class,'index']);
+
+
+
 });
 
 Route::resource('gender',App\Http\Controllers\GenderController::class);

@@ -1,6 +1,6 @@
 <template>
     <div class="mt-3">
-        <div :class="changeActive ? 'content navigation open' : 'content navigation'">        
+        <div :class="changeActive ? 'content navigation open' : 'content navigation'">
             <div class="menuToggle" v-on:click="activateMenu"></div>
             <ul>
                 <li class="list" style="--clr:#f44336">
@@ -49,7 +49,7 @@
                 </li>
             </ul>
         </div>
-        <div v-if="user">        
+        <div v-if="user">
             <div v-if="showUsers">
                 <UsersComponent :changeActive="changeActive"/>
             </div>
@@ -77,6 +77,7 @@ import RolesComponent from '../Roles/index.vue';
 import SectoresComponent from '../Sectores/index.vue';
 import UsersComponent from '../Users/index.vue';
 import Postulations from '../Postulations/index.vue';
+// import Postulations from '../PostulationsDraft/index.vue';
 
 export default {
     props:['user','logout'],
@@ -98,14 +99,14 @@ export default {
             logoutActive: false,
 
             showUsers:true,
-            shoAttitudes:false,   
+            shoAttitudes:false,
             showRoles:false,
             showSectores: false,
             showPostulations:false,
         }
     },
     methods:{
-        activateMenu(){  
+        activateMenu(){
             if(this.changeActive === false){
                 this.changeActive = true
             }else{
@@ -162,16 +163,16 @@ export default {
                     this.usersActive = false;
                     this.rolesActive = false;
                     this.attitudesActive = false;
-                    this.sectorsActive = true;  
-                    this.logoutActive = false; 
-                    this.postulationsActive = false;                
-                    
+                    this.sectorsActive = true;
+                    this.logoutActive = false;
+                    this.postulationsActive = false;
+
                     this.showUsers = false;
                     this.shoAttitudes = false;
                     this.showRoles= false;
                     this.showSectores= true;
                     this.showPostulations = false;
-                    break; 
+                    break;
                 case 'postulations':
                     this.usersActive = false;
                     this.rolesActive = false;
@@ -185,7 +186,7 @@ export default {
                     this.showRoles= false;
                     this.showSectores= false;
                     this.showPostulations = true;
-                    break;                   
+                    break;
                 case 'logout':
                     this.usersActive = false;
                     this.rolesActive = false;
@@ -213,7 +214,7 @@ export default {
     margin:0;
     padding:0;
     box-sizing: border-box;
-    font-family: 'Poppins', sans-serif;    
+    font-family: 'Poppins', sans-serif;
 }
 .content{
     width: 250px;
