@@ -21,7 +21,7 @@ class EventsUsersController extends Controller
                 "birthday"=>$postulation->birthday,
                 "city"=>$postulation->city,
                 "competences"=>json_decode($postulation->competences),
-                "contact"=>json_decode($postulation->contact),                
+                "contact"=>$postulation->contact,                
                 "education"=>json_decode($postulation->education),
                 "email"=>$postulation->email,
                 "experience"=>json_decode($postulation->experience),
@@ -121,6 +121,8 @@ class EventsUsersController extends Controller
             $eventUsers->id_user = $user_id;
             $eventUsers->status = $request->status;
             $eventUsers->save();
+
+            
             return response()->json(['message'=>'Registro Creado'],200);
 
         } catch (\Throwable $th) {            

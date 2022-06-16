@@ -43899,6 +43899,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['changeActive'],
@@ -43906,7 +43914,6 @@ __webpack_require__.r(__webpack_exports__);
     return {
       users: [],
       user: {
-        contact: {},
         autorization: true,
         terms_conditions: true
       },
@@ -43990,7 +43997,6 @@ __webpack_require__.r(__webpack_exports__);
     cleanData: function cleanData() {
       this.modal.hide();
       this.user = {
-        contact: {},
         autorization: true,
         terms_conditions: true
       };
@@ -43999,27 +44005,48 @@ __webpack_require__.r(__webpack_exports__);
     importFile: function importFile(data) {
       this.file = data[0];
     },
-    saveFile: function saveFile() {
+    saveUserStatus: function saveUserStatus(data, event) {
       var _this4 = this;
+
+      this.loader = true;
+      this.user = data;
+      this.id = data.id;
+      this.status = event.target.value;
+      axios.patch("api/updateUserStatus/".concat(this.id), {
+        'status': this.status
+      }).then(function (response) {
+        console.log(response.data);
+        toastr.success('Status Actualizado');
+
+        _this4.cleanData();
+
+        _this4.getUsers();
+      })["catch"](function (error) {
+        toastr.error('Intenta de nuevo mas Tarde');
+        console.log(error);
+      });
+    },
+    saveFile: function saveFile() {
+      var _this5 = this;
 
       this.loader = true;
       var data = new FormData();
       data.append('file', this.file);
       data.append('_method', 'POST');
       axios.post('api/importUsersCSV', data).then(function (response) {
-        _this4.loader = false;
+        _this5.loader = false;
         toastr.success('Usuarios Importados');
 
-        _this4.cleanData();
+        _this5.cleanData();
 
-        _this4.getUsers();
+        _this5.getUsers();
       })["catch"](function (error) {
-        _this4.loader = false;
+        _this5.loader = false;
         toastr.error('Revisa que los campos estén completos e intenta de nuevo mas tarde');
 
-        _this4.cleanData();
+        _this5.cleanData();
 
-        _this4.getUsers();
+        _this5.getUsers();
 
         console.log(error);
       });
@@ -49483,7 +49510,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large{\r\n    margin-left:118px; \r\n    transition: 0.5s;\n}\n.content-short{\r\n    margin-left: 19px; \r\n    transition: 0.5s;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large{\n    margin-left:118px; \n    transition: 0.5s;\n}\n.content-short{\n    margin-left: 19px; \n    transition: 0.5s;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -49507,7 +49534,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large {\r\n  margin-left: 118px;\r\n  transition: 0.5s;\n}\n.content-short {\r\n  margin-left: 19px;\r\n  transition: 0.5s;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large {\n  margin-left: 118px;\n  transition: 0.5s;\n}\n.content-short {\n  margin-left: 19px;\n  transition: 0.5s;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -49531,7 +49558,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large{\r\n    margin-left:118px; \r\n    transition: 0.5s;\n}\n.content-short{\r\n    margin-left: 19px; \r\n    transition: 0.5s;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large{\n    margin-left:118px; \n    transition: 0.5s;\n}\n.content-short{\n    margin-left: 19px; \n    transition: 0.5s;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -49555,7 +49582,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large{\r\n    margin-left:118px; \r\n    transition: 0.5s;\n}\n.content-short{\r\n    margin-left: 19px; \r\n    transition: 0.5s;\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.content-large{\n    margin-left:118px; \n    transition: 0.5s;\n}\n.content-short{\n    margin-left: 19px; \n    transition: 0.5s;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -49581,7 +49608,7 @@ var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBP
 ___CSS_LOADER_EXPORT___.push([module.id, "@import url(https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css);"]);
 ___CSS_LOADER_EXPORT___.push([module.id, "@import url(https://fonts.googleapis.com/css?family=Poppins:200,300,400,500,600,700,800,900&display=swap);"]);
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n*{\r\n    margin:0;\r\n    padding:0;\r\n    box-sizing: border-box;\r\n    font-family: 'Poppins', sans-serif;\n}\n.content{\r\n    width: 250px;\n}\n.navigation{\r\n    position: fixed;\r\n    inset: 55px 0 20px 0;\r\n    width: 75px;\r\n    background: #3d4152;\r\n    transition: 0.5s;\r\n    display:flex;\r\n    grid-template-columns: 110px 110px 110px 110px;\r\n    justify-content: center;\r\n    align-items: center;\n}\n.navigation.open{\r\n    width: 250px;\n}\n.navigation .menuToggle{\r\n    position: absolute;\r\n    top: 0;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 60px;\r\n    border-bottom: 1px solid rgba(0, 0, 0, 0.25);\r\n    cursor:pointer;\r\n    display:flex;\r\n    align-items: center;\r\n    justify-content: flex-start;\r\n    padding: 0 23px;\n}\n.navigation .menuToggle::before{\r\n    content: '';\r\n    position: absolute;\r\n    width: 30px;\r\n    height: 2px;\r\n    background: #fff;\r\n    transform: translateY(-8px);\r\n    transition: 0.5s;\n}\n.navigation .menuToggle::after{\r\n    content: '';\r\n    position: absolute;\r\n    width: 30px;\r\n    height: 2px;\r\n    background: #fff;\r\n    transform: translateY(8px);\r\n    transition: 0.5s;\r\n    box-shadow: 0 -8px 0 #fff;\n}\n.navigation.open .menuToggle::before{\r\n    transform: translateY(0px) rotate(45deg);\n}\n.navigation.open .menuToggle::after{\r\n    transform: translateY(0px) rotate(-45deg);\r\n    box-shadow: 0 0 0 #fff;\n}\n.navigation ul{\r\n    display:flex;\r\n    flex-direction: column;\r\n    /* gap: 10px; */\r\n    width: 100%;\n}\nul{\r\n    padding-left: 0.6rem;\n}\n.navigation ul li{\r\n    list-style: none;\r\n    position: relative;\r\n    width: 100%;\r\n    height: 60px;\r\n    padding: 0 2px;\r\n    transition: 0.5s;\n}\n.navigation ul li.active{\r\n    transform: translateX(30px);\n}\n.navigation.open ul li.active{\r\n    transform: translateX(10px);\n}\n.navigation ul li a{\r\n    position: relative;\r\n    display:flex;\r\n    align-items: center;\r\n    justify-content: flex-start;\r\n    text-align: center;\r\n    text-decoration: none;\n}\n.navigation ul li a .icon{\r\n    position: relative;\r\n    display:block;\r\n    min-width: 55px;\r\n    height: 55px;\r\n    line-height: 60px;\r\n    transition: 0.5s;\r\n    border-radius: 10px;\r\n    font-size: 1.75em;\r\n    color: #fff;\n}\n.navigation ul li.active a .icon{\r\n    color:#fff;\r\n    background: var(--clr);\n}\n.navigation ul li a .icon::before{\r\n    content: '';\r\n    position: absolute;\r\n    top: 10px;\r\n    left: 0;\r\n    width: 100%;\r\n    height: 100%;\r\n    background: var(--clr);\r\n    filter: blur(8px);\r\n    opacity: 0;\r\n    transition: 0.5s;\n}\n.navigation ul li.active a .icon::before{\r\n    opacity: 0.5;\n}\n.navigation ul li a .text{\r\n    position: relative;\r\n    padding: 0 15px;\r\n    height: 60px;\r\n    display:flex;\r\n    align-items: center;\r\n    color: #fff;\r\n    opacity: 0;\r\n    visibility: hidden;\r\n    transition: 0.5s;\n}\n.navigation.open ul li a .text{\r\n    opacity: 1;\r\n    visibility:visible;\n}\n.navigation ul li.active a .text{\r\n    color: var(--clr);\n}\r\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n*{\n    margin:0;\n    padding:0;\n    box-sizing: border-box;\n    font-family: 'Poppins', sans-serif;\n}\n.content{\n    width: 250px;\n}\n.navigation{\n    position: fixed;\n    inset: 55px 0 20px 0;\n    width: 75px;\n    background: #3d4152;\n    transition: 0.5s;\n    display:flex;\n    grid-template-columns: 110px 110px 110px 110px;\n    justify-content: center;\n    align-items: center;\n}\n.navigation.open{\n    width: 250px;\n}\n.navigation .menuToggle{\n    position: absolute;\n    top: 0;\n    left: 0;\n    width: 100%;\n    height: 60px;\n    border-bottom: 1px solid rgba(0, 0, 0, 0.25);\n    cursor:pointer;\n    display:flex;\n    align-items: center;\n    justify-content: flex-start;\n    padding: 0 23px;\n}\n.navigation .menuToggle::before{\n    content: '';\n    position: absolute;\n    width: 30px;\n    height: 2px;\n    background: #fff;\n    transform: translateY(-8px);\n    transition: 0.5s;\n}\n.navigation .menuToggle::after{\n    content: '';\n    position: absolute;\n    width: 30px;\n    height: 2px;\n    background: #fff;\n    transform: translateY(8px);\n    transition: 0.5s;\n    box-shadow: 0 -8px 0 #fff;\n}\n.navigation.open .menuToggle::before{\n    transform: translateY(0px) rotate(45deg);\n}\n.navigation.open .menuToggle::after{\n    transform: translateY(0px) rotate(-45deg);\n    box-shadow: 0 0 0 #fff;\n}\n.navigation ul{\n    display:flex;\n    flex-direction: column;\n    /* gap: 10px; */\n    width: 100%;\n}\nul{\n    padding-left: 0.6rem;\n}\n.navigation ul li{\n    list-style: none;\n    position: relative;\n    width: 100%;\n    height: 60px;\n    padding: 0 2px;\n    transition: 0.5s;\n}\n.navigation ul li.active{\n    transform: translateX(30px);\n}\n.navigation.open ul li.active{\n    transform: translateX(10px);\n}\n.navigation ul li a{\n    position: relative;\n    display:flex;\n    align-items: center;\n    justify-content: flex-start;\n    text-align: center;\n    text-decoration: none;\n}\n.navigation ul li a .icon{\n    position: relative;\n    display:block;\n    min-width: 55px;\n    height: 55px;\n    line-height: 60px;\n    transition: 0.5s;\n    border-radius: 10px;\n    font-size: 1.75em;\n    color: #fff;\n}\n.navigation ul li.active a .icon{\n    color:#fff;\n    background: var(--clr);\n}\n.navigation ul li a .icon::before{\n    content: '';\n    position: absolute;\n    top: 10px;\n    left: 0;\n    width: 100%;\n    height: 100%;\n    background: var(--clr);\n    filter: blur(8px);\n    opacity: 0;\n    transition: 0.5s;\n}\n.navigation ul li.active a .icon::before{\n    opacity: 0.5;\n}\n.navigation ul li a .text{\n    position: relative;\n    padding: 0 15px;\n    height: 60px;\n    display:flex;\n    align-items: center;\n    color: #fff;\n    opacity: 0;\n    visibility: hidden;\n    transition: 0.5s;\n}\n.navigation.open ul li a .text{\n    opacity: 1;\n    visibility:visible;\n}\n.navigation ul li.active a .text{\n    color: var(--clr);\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
@@ -83196,6 +83223,54 @@ var render = function () {
                     _vm._v(" "),
                     _c("td", [
                       _c(
+                        "select",
+                        {
+                          staticClass: "form-select selectStatus",
+                          on: {
+                            change: function ($event) {
+                              return _vm.saveUserStatus(user, $event)
+                            },
+                          },
+                        },
+                        [
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "1" },
+                              domProps: {
+                                selected: user.statusid == 1 ? "selected" : "",
+                              },
+                            },
+                            [_vm._v("Activo")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "2" },
+                              domProps: {
+                                selected: user.statusid == 2 ? "selected" : "",
+                              },
+                            },
+                            [_vm._v("Pendiente")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "3" },
+                              domProps: {
+                                selected: user.statusid == 3 ? "selected" : "",
+                              },
+                            },
+                            [_vm._v("Inactivo")]
+                          ),
+                        ]
+                      ),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
                         "button",
                         {
                           staticClass: "btn btn-primary",
@@ -83390,19 +83465,19 @@ var render = function () {
                       {
                         name: "model",
                         rawName: "v-model",
-                        value: _vm.user.contact.phone,
-                        expression: "user.contact.phone",
+                        value: _vm.user.contact,
+                        expression: "user.contact",
                       },
                     ],
                     staticClass: "form-control",
                     attrs: { type: "number", id: "phone" },
-                    domProps: { value: _vm.user.contact.phone },
+                    domProps: { value: _vm.user.contact },
                     on: {
                       input: function ($event) {
                         if ($event.target.composing) {
                           return
                         }
-                        _vm.$set(_vm.user.contact, "phone", $event.target.value)
+                        _vm.$set(_vm.user, "contact", $event.target.value)
                       },
                     },
                   }),
@@ -83704,11 +83779,13 @@ var staticRenderFns = [
     var _c = _vm._self._c || _h
     return _c("thead", [
       _c("tr", [
-        _c("th", [_vm._v("Nombre")]),
+        _c("th", [_vm._v("Nombre331")]),
         _vm._v(" "),
         _c("th", [_vm._v("Apellido")]),
         _vm._v(" "),
         _c("th", [_vm._v("Correo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
         _vm._v(" "),
         _c("th"),
       ]),

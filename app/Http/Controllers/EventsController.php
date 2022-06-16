@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+use DB;
 
 use App\Models\Events;
 use App\Models\EventsUsers;
@@ -208,6 +209,20 @@ class EventsController extends Controller
             $newEvent->dailyBudget = $request->dailyBudget;
 
             $newEvent->save();
+
+            $create_dt = date("Y-m-d H:i:s");
+            DB::table('notificaciones')->insert([
+                'idevento' => $request->idItalentt,
+                'titulo' => $request->name,
+                'banner' => $request->banner,
+                'detalle' => $request->aboutPersonal['description'],
+                'status' => 2,
+                'created_at' => $create_dt,
+                'updated_at' => $create_dt,
+            ]);
+            /*/
+            insert('insert into notificaciones (titulo,detalle,token,status,created_at,updated_at) values ()', [1, 'Dayle']);
+            */
 
             return response()->json(['status' => 200,'statusText' => 'Evento Guardado'], 200);
         } catch (\Throwable $th) {

@@ -36,13 +36,13 @@ class ProfileUserController extends Controller
     public function getAllUsers(){
         try {
             $data=[];
-            $users = User::orderBy('id','DESC')->paginate(20);
+            $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->orderBy('users.id','DESC')->paginate(20);
             foreach ($users as $key => $users) {
                 $dataToPush=[
                     "id"=>$users->id,
                     "name" => $users->name,
                     "lastname" => $users->lastname,
-                    "contact" => json_decode($users->contact),
+                    "contact" => $users->contact,
                     "email" => $users->email,
                     "nickname" => $users->nickname,
                     "birthday" => $users->birthday,
@@ -65,6 +65,8 @@ class ProfileUserController extends Controller
                     "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
                     "firstLogin" =>$users->firstLogin === "1" ? true : false,
                     "verified" =>$users->verified === "1" ? true : false,
+                    "statusid" =>$users->status,
+                    "status" =>$users->nombre,
                 ];
                 array_push($data, $dataToPush);
             }
@@ -82,7 +84,7 @@ class ProfileUserController extends Controller
                 "id"=>$user->id,
                 "name" => $user->name,
                 "lastname" => $user->lastname,
-                "contact" => json_decode($user->contact),
+                "contact" => $user->contact,
                 "email" => $user->email,
                 "nickname" => $user->nickname,
                 "birthday" => $user->birthday,
@@ -139,7 +141,7 @@ class ProfileUserController extends Controller
                     "id"=>$users->id,
                     "name" => $users->name,
                     "lastname" => $users->lastname,
-                    "contact" => json_decode($users->contact),
+                    "contact" => $users->contact,
                     "email" => $users->email,
                     "nickname" => $users->nickname,
                     "birthday" => $users->birthday,
@@ -208,7 +210,7 @@ class ProfileUserController extends Controller
             $user = User::findOrFail($id);
             $user->name = $request->name;
             $user->lastname = $request->lastname;
-            $user->contact = json_encode($request->contact);
+            $user->contact = $request->contact["phone"];
             $user->nickname = $request->nickname;
             $user->address = $request->address;
             $user->city = $request->city;
@@ -220,15 +222,26 @@ class ProfileUserController extends Controller
         }
     }
 
+    public function updateUserStatus(Request $request, $id){
+        try {
+            $user = User::findOrFail($id);
+            $user->status = $request->status;
+            $user->save();
+            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 400,'statusText' =>$th], 400);
+        }
+    }
+
     public function adminRegisterUser(Request $request){
+        $create_dt = date("Y-m-d H:i:s A");
         try {
             $user = User::create([
                 "name" => $request->name,
                 "lastname" => $request->lastname,
-                "contact" => json_encode($request->contact),
+                "contact" => $request->contact["phone"],
                 "email" => $request->email,
                 "password" => Hash::make($request->password),
-
                 "autorization" => $request->autorization,
                 "terms_conditions" =>$request->terms_conditions,
             ]);
@@ -267,7 +280,7 @@ class ProfileUserController extends Controller
 
             $user->name = $request->name;
             $user->lastname = $request->lastname;
-            $user->contact = json_encode($request->contact);
+            $user->contact = $request->contact["phone"];
             $user->nickname = $request->nickname;
             $user->birthday = $request->birthday;
             $user->gender = $request->gender;
@@ -285,7 +298,7 @@ class ProfileUserController extends Controller
                 "id"=>$user->id,
                 "name" => $user->name,
                 "lastname" => $user->lastname,
-                "contact" => json_decode($user->contact),
+                "contact" => $user->contact,
                 "email" => $user->email,
                 "nickname" => $user->nickname,
                 "birthday" => $user->birthday,

@@ -18,6 +18,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 
+Route::patch('Notificaciones/{password}',[App\Http\Controllers\NotificacionesController::class, 'index']);
+ 
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
@@ -28,6 +30,8 @@ Route::group(['middleware' => ['auth']], function () {
     Route::put('userUpdate/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUser']);    
     Route::patch('updateUserInAdmin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);    
     Route::post('adminRegisterUser',[App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);    
+    Route::patch('updateUserStatus/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserStatus']); 
+
     
     Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);    
 
