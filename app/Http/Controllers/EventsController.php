@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Events;
 use App\Models\EventsUsers;
+use App\Models\User;
 use Auth;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
@@ -209,6 +210,40 @@ class EventsController extends Controller
 
             $newEvent->save();
 
+            $notificaciones=User::select('api_token')->where('api_token','!=',NULL)->get();
+
+            $title=$request->name.' - '.$request->city;
+            $body=$request->initialDate.' - '.$request->endDate;
+            foreach ($notificaciones as $notificacion) {
+                $url = "https://exp.host/--/api/v2/push/send";
+                $curl = curl_init($url);
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                $headers = array(
+                   "Content-Type: application/json",
+                );
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+                $data = '
+                {
+                  "to": "ExponentPushToken['.$notificacion->api_token.']",
+                  "title":"'.$title.'",
+                  "body": "'.$body.'"
+                }';
+
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+
+                //for debug only!
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+                $resp = curl_exec($curl);
+                curl_close($curl);
+                var_dump($resp);
+            }
+
             return response()->json(['status' => 200,'statusText' => 'Evento Guardado'], 200);
         } catch (\Throwable $th) {
             return response()->json(['status' => 400,'statusText' => $th], 400);
@@ -270,6 +305,40 @@ class EventsController extends Controller
             $newEvent->dailyBudget = $request->dailyBudget;
 
             $newEvent->save();
+
+            $notificaciones=User::select('api_token')->where('api_token','!=',NULL)->get();
+
+            $title=$request->name.' - '.$request->city;
+            $body=$request->initialDate.' - '.$request->endDate;
+            foreach ($notificaciones as $notificacion) {
+                $url = "https://exp.host/--/api/v2/push/send";
+                $curl = curl_init($url);
+                curl_setopt($curl, CURLOPT_URL, $url);
+                curl_setopt($curl, CURLOPT_POST, true);
+                curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
+
+                $headers = array(
+                   "Content-Type: application/json",
+                );
+                curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
+
+                $data = '
+                {
+                  "to": "ExponentPushToken['.$notificacion->api_token.']",
+                  "title":"'.$title.'",
+                  "body": "'.$body.'"
+                }';
+
+                curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
+
+                //for debug only!
+                curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
+                curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+
+                $resp = curl_exec($curl);
+                curl_close($curl);
+                var_dump($resp);
+            }
 
             return response()->json(['status' => 200,'statusText' => 'Evento Actualizado'], 200);
         } catch (\Throwable $th) {

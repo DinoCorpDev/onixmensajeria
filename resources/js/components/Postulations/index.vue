@@ -188,14 +188,12 @@
             <div class="row">
               <div class="col">
                 <div class="form-group">
-                  <label for="name_user">Nombre y Apellido Postulado</label>
-                  <input type="text" id="name_user" disabled :value="postulate.name+' '+postulate.lastname"
-                         class="form-control">
+                  <label for="id_postulate">Id Italentt</label>
+                  <input type="text" id="id_postulate" disabled :value="postulate.idItalentt" class="form-control">
                 </div>
                 <div class="form-group">
-                  <label for="identification_user">Documento Postulado</label>
-                  <input type="text" id="identification_user" disabled :value="postulate.identification"
-                         class="form-control">
+                  <label for="name_postulate">Nombre</label>
+                  <input type="text" id="name_postulate" disabled :value="postulate.name" class="form-control">
                 </div>
               </div>
             </div>
@@ -203,13 +201,17 @@
             <div class="row mt-5 mb-5">
               <div class="col">
                 <div class="form-group">
-                  <label for="lastname_user">Nombre Artistico</label>
-                  <input type="text" id="lastname_user" :value="postulate.nickname" disabled class="form-control">
+                  <label for="type_postulate">Tipo de Personal</label>
+                  <input type="text" id="type_postulate" :value="postulate.typePersonal.type" disabled class="form-control">
                 </div>
 
                 <div class="form-group">
-                  <label for="birthday_user">Fecha de Nacimiento</label>
-                  <input type="text" id="birthday_user" :value="postulate.birthday" disabled class="form-control">
+                  <label for="quantity_postulate">Cantidad</label>
+                  <input type="text" id="quantity_postulate" :value="postulate.typePersonal.quantity" disabled class="form-control">
+                </div>
+                <div class="form-group">
+                  <label for="description_postulate">Descripción</label>
+                  <input type="text" id="description_postulate" :value="postulate.typePersonal.description" disabled class="form-control">
                 </div>
               </div>
             </div>
@@ -217,15 +219,15 @@
             <div class="row mt-5">
               <div class="col">
                 <div class="form-group">
-                  <label for="city_user">Ciudad Postulado</label>
-                  <input type="text" id="city_user" disabled :value="postulate.city" class="form-control">
+                  <label for="initialDate_postulate">Fecha Inicial</label>
+                  <input type="date" id="initialDate_postulate" :value="postulate.initialDate" name="label" class="form-control" disabled/>
                 </div>
               </div>
 
               <div class="col">
-                <div class="form-group" v-if="postulate.gender">
-                  <label for="gender_user">Genero Postulado</label>
-                  <input type="text" id="city_user" disabled :value="postulate.gender.label" class="form-control">
+                <div class="form-group">
+                  <label for="endDate_postulate">Fecha Final</label>
+                  <input type="date" id="endDate_postulate" :value="postulate.endDate" name="label" class="form-control" disabled/>
                 </div>
               </div>
             </div>
@@ -233,83 +235,57 @@
             <div class="row mb-5">
               <div class="col">
                 <div class="form-group">
-                  <label for="gender_user">Foto Postulado</label>
-                  <div v-for="(photo, key) in postulate.photos" :key="key">
-                    <a :href="photo.uri" target="_blank">Link {{ key }}</a>
-                  </div>
+                  <label for="day_postulate">Dia</label>
+                  <input type="text" id="day_postulate" :value="postulate.hourly[key].day" name="label" class="form-control" disabled/>
                 </div>
               </div>
 
               <div class="col">
                 <div class="form-group">
-                  <label for="video_user">Video Postulado</label>
-                  <a :href="postulate.video" target="_blank">Video</a>
+                  <label for="hourly_postulate">Hora</label>
+                  <input type="text" id="hourly_postulate" :value="postulate.hourly[key].hourly" name="label" class="form-control" disabled/>
                 </div>
               </div>
             </div>
 
             <div class="row">
               <div class="col">
-                <div class="form-group" v-if="postulate.contact">
-                  <label for="contact_user">Contacto Postulado</label>
-                  <div v-if="postulate.contact">
-                    <input type="text" class="form-control" :value="'Celular: '+postulate.contact.phone"/>
-                    <input type="text" class="form-control" :value="'Facebook: '+postulate.contact.facebook"/>
-                    <input type="text" class="form-control" :value="'Instagram: '+postulate.contact.instagram"/>
-                    <input type="text" class="form-control" :value="'Snapchat: '+postulate.contact.snapchat"/>
-                    <input type="text" class="form-control" :value="'Twitter: '+postulate.contact.twitter"/>
-                    <input type="text" class="form-control" :value="'Spotify: '+postulate.contact.spotify"/>
-                    <input type="text" class="form-control" :value="'Youtube: '+postulate.contact.youtube"/>
-                  </div>
+                <div class="form-group">
+                  <label for="city_postulate">Ciudad</label>
+                  <input type="text" id="city_postulate" :value="postulate.city" name="label" class="form-control" disabled/>
                 </div>
 
-                <div class="form-group" v-if="postulate.competences && postulate.competences.length > 0">
-                  <label for="competences_user">Competencias Postulado</label>
-                  <div v-for="(competence, key) in postulate.competences" :key="key">
-                    <input type="text" class="form-control" :value="competence.label"/>
-                  </div>
-                </div>
 
-                <div class="form-group" v-if="postulate.education && postulate.education.length > 0">
-                  <label for="education_user">Educación Postulado</label>
-                  <div v-for="(education, key) in postulate.education" :key="key">
-                    <input type="text" class="form-control" :value="'Titulo: '+education.title"/>
-                    <input type="text" class="form-control" :value="'Institución: '+education.institution"/>
-                    <input type="text" class="form-control" :value="'Fecha Inicial: '+education.initialDate"/>
-                  </div>
+                <div class="form-group">
+                  <label for="location_postulate">Ubicación</label>
+                  <input type="text" id="location_postulate" :value="postulate.location" name="label"
+                         class="form-control" disabled/>
                 </div>
               </div>
             </div>
 
             <div class="row">
               <div class="col">
-                <div class="form-group" v-if="postulate.roles && postulate.roles.length > 0"></div>
-                <label for="roles_user">Roles Postulado</label>
-                <div v-for="(role, key) in postulate.roles" :key="key">
-                  <input class="form-control" type="text" :value="role.name"/>
+                <div class="form-group">
+                  <label for="address_postulate">Dirección</label>
+                  <input type="text" id="address_postulate" :value="postulate.address" name="label" class="form-control" disabled/>
+                </div>
+                <div class="form-group">
+                  <label for="totalBudget_postulate">Presupuesto Total</label>
+                  <input type="number" id="totalBudget_postulate" :value="postulate.totalBudget" name="label"
+                         class="form-control" disabled/>
+                </div>
+
+                <div class="form-group">
+                  <label for="dailyBudget_postulate">Presupuesto Diario</label>
+                  <input type="number" id="dailyBudget_postulate" :value="postulate.dailyBudget" name="label" class="form-control" disabled/>
                 </div>
               </div>
-              <div class="form-group">
-                <label for="pyshical_user">Atributos Fisicos Postulado</label>
-                <div v-if="postulate.pyshical">
-                  <input type="text" class="form-control" :value="'Ojos: '+postulate.pyshical.eyesColor"/>
-                  <input type="text" class="form-control" :value="'Cabello: '+postulate.pyshical.hairColor"/>
-                  <input type="text" class="form-control" :value="'Altura: '+postulate.pyshical.height"/>
-                  <input type="text" class="form-control" v-if="postulate.pyshical.pantSize"
-                         :value="'Pantalon: '+postulate.pyshical.pantSize.label"/>
-                  <input type="text" class="form-control" v-if="postulate.pyshical.shirtSize"
-                         :value="'Camisa: '+postulate.pyshical.shirtSize.label"/>
-                  <input type="text" class="form-control" :value="'Zapatos: '+postulate.pyshical.shoes"/>
-                  <input type="text" class="form-control" :value="'Peso: '+postulate.pyshical.weight"/>
-                </div>
-              </div>
-              <GmapMap :center="center" :zoom='12' style='width:100%;  height: 400px;'/>
             </div>
           </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-          <button type="button" class="btn btn-primary" v-on:click="savePostulation">Guardar Cambios</button>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
         </div>
       </div>
     </div>
