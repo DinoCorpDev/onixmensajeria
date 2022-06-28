@@ -29,7 +29,9 @@ Route::group(['middleware' => ['auth']], function () {
     Route::patch('updateUserInAdmin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);    
     Route::post('adminRegisterUser',[App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);    
     
-    Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);    
+    Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);
+    Route::patch('updateStatusUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateStatusUser']); 
+  
 
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
 

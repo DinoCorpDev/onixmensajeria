@@ -43899,6 +43899,14 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: ['changeActive'],
@@ -43999,27 +44007,48 @@ __webpack_require__.r(__webpack_exports__);
     importFile: function importFile(data) {
       this.file = data[0];
     },
-    saveFile: function saveFile() {
+    saveUserStatus: function saveUserStatus(data, event) {
       var _this4 = this;
+
+      this.loader = true;
+      this.user = data;
+      this.id = data.id;
+      this.status = event.target.value;
+      axios.patch("api/updateStatusUser/".concat(this.id), {
+        'status': this.status
+      }).then(function (response) {
+        console.log(response.data);
+        toastr.success('Status Actualizado');
+
+        _this4.cleanData();
+
+        _this4.getUsers();
+      })["catch"](function (error) {
+        toastr.error('Intenta de nuevo mas Tarde');
+        console.log(error);
+      });
+    },
+    saveFile: function saveFile() {
+      var _this5 = this;
 
       this.loader = true;
       var data = new FormData();
       data.append('file', this.file);
       data.append('_method', 'POST');
       axios.post('api/importUsersCSV', data).then(function (response) {
-        _this4.loader = false;
+        _this5.loader = false;
         toastr.success('Usuarios Importados');
 
-        _this4.cleanData();
+        _this5.cleanData();
 
-        _this4.getUsers();
+        _this5.getUsers();
       })["catch"](function (error) {
-        _this4.loader = false;
+        _this5.loader = false;
         toastr.error('Revisa que los campos estén completos e intenta de nuevo mas tarde');
 
-        _this4.cleanData();
+        _this5.cleanData();
 
-        _this4.getUsers();
+        _this5.getUsers();
 
         console.log(error);
       });
@@ -83196,6 +83225,54 @@ var render = function () {
                     _vm._v(" "),
                     _c("td", [
                       _c(
+                        "select",
+                        {
+                          staticClass: "form-select selectStatus",
+                          on: {
+                            change: function ($event) {
+                              return _vm.saveUserStatus(user, $event)
+                            },
+                          },
+                        },
+                        [
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "1" },
+                              domProps: {
+                                selected: user.statusid == 1 ? "selected" : "",
+                              },
+                            },
+                            [_vm._v("Activo")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "2" },
+                              domProps: {
+                                selected: user.statusid == 2 ? "selected" : "",
+                              },
+                            },
+                            [_vm._v("Pendiente")]
+                          ),
+                          _vm._v(" "),
+                          _c(
+                            "option",
+                            {
+                              attrs: { value: "3" },
+                              domProps: {
+                                selected: user.statusid == 3 ? "selected" : "",
+                              },
+                            },
+                            [_vm._v("Inactivo")]
+                          ),
+                        ]
+                      ),
+                    ]),
+                    _vm._v(" "),
+                    _c("td", [
+                      _c(
                         "button",
                         {
                           staticClass: "btn btn-primary",
@@ -83709,6 +83786,8 @@ var staticRenderFns = [
         _c("th", [_vm._v("Apellido")]),
         _vm._v(" "),
         _c("th", [_vm._v("Correo")]),
+        _vm._v(" "),
+        _c("th", [_vm._v("Status")]),
         _vm._v(" "),
         _c("th"),
       ]),

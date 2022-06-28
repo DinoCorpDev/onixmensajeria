@@ -36,7 +36,7 @@ class ProfileUserController extends Controller
     public function getAllUsers(){
         try {
             $data=[];
-            $users = User::orderBy('id','DESC')->paginate(20);
+           $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->orderBy('users.id','DESC')->paginate(20);
             foreach ($users as $key => $users) {
                 $dataToPush=[
                     "id"=>$users->id,
@@ -65,6 +65,9 @@ class ProfileUserController extends Controller
                     "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
                     "firstLogin" =>$users->firstLogin === "1" ? true : false,
                     "verified" =>$users->verified === "1" ? true : false,
+                    "statusid" =>$users->status,
+                    "status" =>$users->nombre,
+                    "api_token" =>$users->api_token,
                 ];
                 array_push($data, $dataToPush);
             }
@@ -133,7 +136,7 @@ class ProfileUserController extends Controller
     {
         try {
             $data=[];
-            $users = User::where('name','LIKE','%'.$searchParam.'%')->orWhere('lastname','LIKE','%'.$searchParam.'%')->orWhere('email','LIKE','%'.$searchParam.'%')->get();
+            $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->where('name','LIKE','%'.$searchParam.'%')->orWhere('lastname','LIKE','%'.$searchParam.'%')->orWhere('email','LIKE','%'.$searchParam.'%')->get();
             foreach ($users as $key => $users) {
                 $dataToPush=[
                     "id"=>$users->id,
@@ -162,6 +165,8 @@ class ProfileUserController extends Controller
                     "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
                     "firstLogin" =>$users->firstLogin === "1" ? true : false,
                     "verified" =>$users->verified === "1" ? true : false,
+                    "statusid" =>$users->status,
+                    "status" =>$users->nombre,
                 ];
                 array_push($data, $dataToPush);
             }
@@ -352,6 +357,17 @@ class ProfileUserController extends Controller
             }
         }else{
             return response()->json(['status'=>400,'statusMessage'=>'El correo No Existe']);
+        }
+    }
+
+    public function updateStatusUser(Request $request, $id){
+        try {
+            $user = User::findOrFail($id);
+            $user->status = $request->status;
+            $user->save();
+            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 400,'statusText' =>$th], 400);
         }
     }
 

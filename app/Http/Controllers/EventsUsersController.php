@@ -13,30 +13,24 @@ class EventsUsersController extends Controller
 {
     public function getPostulations(Request $request){ 
         $data=[];
-        $postulations = DB::select('call getAllPostulations('.$request->id_event.')');
+        $postulations = Events::where('id','=',$request->id_event)
+        ->get();
         foreach ($postulations as $key => $postulation) {
             $data[$key]=[
                 "id"=>$postulation->id,
-                "address"=>$postulation->address,                
-                "birthday"=>$postulation->birthday,
-                "city"=>$postulation->city,
-                "competences"=>json_decode($postulation->competences),
-                "contact"=>json_decode($postulation->contact),                
-                "education"=>json_decode($postulation->education),
-                "email"=>$postulation->email,
-                "experience"=>json_decode($postulation->experience),
-                "gender"=>json_decode($postulation->gender),                
-                "identification"=>$postulation->identification,
-                "lastname"=>$postulation->lastname,
+                "idItalentt"=>$postulation->idItalentt,                
                 "name"=>$postulation->name,
-                "nickname"=>$postulation->nickname,                
-                "photos"=>json_decode($postulation->photos),
-                "profile"=>$postulation->profile,
-                "provisionalPassword"=>$postulation->provisionalPassword,
-                "pyshical"=>json_decode($postulation->pyshical),
-                "roles"=>json_decode($postulation->roles),                
-                "status"=>$postulation->status,                               
-                "video"=>$postulation->video,
+                "banner"=>$postulation->banner,
+                "typePersonal"=>json_decode($postulation->typePersonal), 
+                "initialDate"=>$postulation->initialDate,    
+                "endDate"=>$postulation->endDate,         
+                "hourly"=>json_decode($postulation->hourly),                
+                "city"=>$postulation->city,
+                "location"=>$postulation->location,
+                "address"=>$postulation->address,              
+                "totalBudget"=>$postulation->totalBudget,
+                "dailyBudget"=>$postulation->dailyBudget,
+                "status"=>$postulation->status,
             ];
         }
         return response()->json($data);

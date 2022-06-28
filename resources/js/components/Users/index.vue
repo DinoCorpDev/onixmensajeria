@@ -26,6 +26,7 @@
             <th>Nombre</th>
             <th>Apellido</th>
             <th>Correo</th>
+            <th>Status</th>
             <th></th>
           </tr>
           </thead>
@@ -34,6 +35,13 @@
             <td>{{ user.name }}</td>
             <td>{{ user.lastname }}</td>
             <td>{{ user.email }}</td>
+            <td>
+              <select class="form-select selectStatus" v-on:change="saveUserStatus(user,$event)">
+                <option value="1" :selected=" user.statusid  == 1 ? 'selected' : ''">Activo</option>
+                <option value="2" :selected=" user.statusid  == 2 ? 'selected' : ''">Pendiente</option>
+                <option value="3" :selected=" user.statusid  == 3 ? 'selected' : ''">Inactivo</option>
+              </select>
+            </td>
             <td>
               <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
                       v-on:click="editUser(user)">Editar
@@ -236,6 +244,23 @@ export default {
     },
     importFile(data) {
       this.file = data[0];
+    },
+
+    saveUserStatus(data,event) {
+      this.loader = true;
+      this.user = data;
+      this.id = data.id;
+      this.status=event.target.value;
+
+      axios.patch(`api/updateStatusUser/${this.id}`, {'status': this.status}).then((response) => {
+        console.log(response.data);
+        toastr.success('Status Actualizado');
+        this.cleanData();
+        this.getUsers();
+      }).catch((error) => {
+        toastr.error('Intenta de nuevo mas Tarde');
+        console.log(error);
+      })
     },
 
     saveFile() {
