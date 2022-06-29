@@ -43,6 +43,7 @@ class User extends Authenticatable
         "terms_conditions",
         "roles",
         "status",
+        "api_token",
         "provisionalPassword",
         "firstLogin",
         "verified",

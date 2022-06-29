@@ -360,6 +360,17 @@ class ProfileUserController extends Controller
         }
     }
 
+    public function updateTokenUSer(Request $request, $id){
+        try {
+            $user = User::findOrFail($id);
+            $user->api_token = $request->api_token;
+            $user->save();
+            return response()->json(['status' => 200,'statusText' => 'Token guardado Exitosamente'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['status' => 400,'statusText' =>$th], 400);
+        }
+    }
+
     public function updateStatusUser(Request $request, $id){
         try {
             $user = User::findOrFail($id);

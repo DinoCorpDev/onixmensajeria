@@ -31,6 +31,7 @@ Route::group(['middleware' => ['auth']], function () {
     
     Route::patch('updateFirstLogin/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);
     Route::patch('updateStatusUser/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateStatusUser']); 
+    Route::patch('updateTokenUSer/{user_id}',[App\Http\Controllers\ProfileUserController::class, 'updateTokenUSer']); 
   
 
     Route::get('showUser',[App\Http\Controllers\ProfileUserController::class, 'index']);
