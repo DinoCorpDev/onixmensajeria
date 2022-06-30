@@ -108,6 +108,9 @@ class ProfileUserController extends Controller
                 "provisionalPassword" => $user->provisionalPassword === "1" ? true : false,
                 "firstLogin" =>$user->firstLogin === "1" ? true : false,
                 "verified" =>$user->verified === "1" ? true : false,
+                "statusid" =>$users->status,
+                "status" =>$users->nombre,
+                "api_token" =>$users->api_token,
             ];
             return response()->json($data);
         } catch (\Throwable $th) {
@@ -167,6 +170,7 @@ class ProfileUserController extends Controller
                     "verified" =>$users->verified === "1" ? true : false,
                     "statusid" =>$users->status,
                     "status" =>$users->nombre,
+                    "api_token" =>$users->api_token,
                 ];
                 array_push($data, $dataToPush);
             }
