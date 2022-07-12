@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
+        Artisan::call('passport:install --force');
         $this->call([
             RolesSeeder::class,
             CompetencesSeeder::class,

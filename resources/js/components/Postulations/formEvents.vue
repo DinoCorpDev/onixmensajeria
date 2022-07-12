@@ -2,9 +2,9 @@
   <ValidationObserver v-slot="{ handleSubmit }">
     <b-form @submit.prevent="handleSubmit(submit)">
 
-      <b-alert show variant="warning">
-        <pre><code>{{ event.hourly }}</code></pre>
-      </b-alert>
+<!--      <b-alert show variant="warning">-->
+<!--        <pre><code>{{ event.hourly }}</code></pre>-->
+<!--      </b-alert>-->
 
       <b-form-group
           label="idItalentt"

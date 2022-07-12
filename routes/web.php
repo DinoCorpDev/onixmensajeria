@@ -19,6 +19,5 @@ Route::get('/', function () {
 });
 
 Route::get('/tests', function () {
-    event(new CreateEvents());
-    return "Se escucho 2";
+    return bcrypt('password');
 });
