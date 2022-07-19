@@ -18,11 +18,11 @@ use App\Http\Controllers\AuthController;
  * METODOS MOVIL
  *================================**/
 
-Route::get('/passport/login', [AuthController::class, 'login']);
+Route::post('/passport/login', [AuthController::class, 'login']);
 
 Route::group(['middleware' => ['auth:api']], function () {
 
-    Route::get('/passport/logout', [AuthController::class, 'logout']);
+    Route::post('/passport/logout', [AuthController::class, 'logout']);
 
     //Ruta de crud de eventos
     Route::get('personalType-passport', [App\Http\Controllers\PersonalTypeController::class, 'index']);

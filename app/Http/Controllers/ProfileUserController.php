@@ -78,7 +78,7 @@ class ProfileUserController extends Controller
     }
     public function index()
     {
-        try {
+
             $user_id = Auth::user()->id;
             $user = User::findOrFail($user_id);
             $data=[
@@ -108,14 +108,14 @@ class ProfileUserController extends Controller
                 "provisionalPassword" => $user->provisionalPassword === "1" ? true : false,
                 "firstLogin" =>$user->firstLogin === "1" ? true : false,
                 "verified" =>$user->verified === "1" ? true : false,
-                "statusid" =>$users->status,
-                "status" =>$users->nombre,
-                "api_token" =>$users->api_token,
+                "statusid" =>$user->status,
+                "status" =>$user->nombre,
+                "api_token" =>$user->api_token,
             ];
+
             return response()->json($data);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->errorInfo[2]],400);
-        }
+
+
     }
 
     /**
