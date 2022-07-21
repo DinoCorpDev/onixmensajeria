@@ -44,7 +44,7 @@
                 <li :class="logoutActive ? 'list active' : 'list' " style="--clr:#d321f3">
                     <a href="#" v-on:click="activeLink('logout')">
                         <span class="icon"><i class="bi bi-x-octagon-fill"></i></span>
-                        <span class="text">Cerrar Sesion</span>
+                        <span class="text">Cerrar Sesión</span>
                     </a>
                 </li>
             </ul>
