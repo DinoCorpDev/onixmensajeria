@@ -20,7 +20,7 @@ class UsersSeeder extends Seeder
             'name' => 'Administrador',
             'lastname' => '1',
             'email' => 'administrador@gmail.com',
-            'password' => Hash::make('Talentos@2020!Bogota'),
+            'password' => Hash::make('password'),
             'autorization' => true,
             'terms_conditions' => true,
             'contact' => "{'phone':'3144459146'}",

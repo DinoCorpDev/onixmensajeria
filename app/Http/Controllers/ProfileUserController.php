@@ -78,7 +78,7 @@ class ProfileUserController extends Controller
     }
     public function index()
     {
-        try {
+
             $user_id = Auth::user()->id;
             $user = User::findOrFail($user_id);
             $data=[
@@ -112,10 +112,10 @@ class ProfileUserController extends Controller
                 "status" =>$user->nombre,
                 "api_token" =>$user->api_token,
             ];
+
             return response()->json($data);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->errorInfo[2]],400);
-        }
+
+
     }
 
     /**
