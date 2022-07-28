@@ -16,7 +16,7 @@ class RolesSeeder extends Seeder
     public function run()
     {
         DB::table('roles')->insert([
-            'label' => 'Cantante',
+            'label' => 'Músico - Cantante ',
             'value' => 'singer',
         ]);
 
@@ -26,12 +26,12 @@ class RolesSeeder extends Seeder
         ]);
 
         DB::table('roles')->insert([
-            'label' => 'Presentador',
+            'label' => 'Presentador(a)',
             'value' => 'host'
         ]);
 
         DB::table('roles')->insert([
-            'label' => 'Actor',
+            'label' => 'Actor - Actriz',
             'value' => 'actor'
         ]);
     }
