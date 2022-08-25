@@ -27,7 +27,8 @@ class Events extends Model
         'status',
     ];
 
-    public function eventsOfUsers(){
+    public function eventsOfUsers()
+    {
         return $this->belongsTo(EventsUsers::class);
     }
 }

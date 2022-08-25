@@ -34,8 +34,8 @@ class RolesController extends Controller
 
             return response()->json('Rol Created');
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
-        }        
+            return response()->json(['message' => $th->errorInfo[2]], 400);
+        }
     }
 
     /**
@@ -67,8 +67,8 @@ class RolesController extends Controller
 
             return response()->json('Rol Updated');
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
-        }        
+            return response()->json(['message' => $th->errorInfo[2]], 400);
+        }
     }
 
     public function destroy($id)
@@ -77,9 +77,9 @@ class RolesController extends Controller
             $sector = Roles::findOrFail($id);
             $sector->delete();
 
-            return response()->json(['message'=>'Rol Eliminado'],200);
+            return response()->json(['message' => 'Rol Eliminado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th],400);
+            return response()->json(['message' => $th], 400);
         }
     }
 }

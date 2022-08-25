@@ -11,26 +11,27 @@ use DB;
 
 class EventsUsersController extends Controller
 {
-    public function getPostulations(Request $request){ 
-        $data=[];
-        $postulations = Events::where('id','=',$request->id_event)
-        ->get();
+    public function getPostulations(Request $request)
+    {
+        $data = [];
+        $postulations = Events::where('id', '=', $request->id_event)
+            ->get();
         foreach ($postulations as $key => $postulation) {
-            $data[$key]=[
-                "id"=>$postulation->id,
-                "idItalentt"=>$postulation->idItalentt,                
-                "name"=>$postulation->name,
-                "banner"=>$postulation->banner,
-                "typePersonal"=>json_decode($postulation->typePersonal), 
-                "initialDate"=>$postulation->initialDate,    
-                "endDate"=>$postulation->endDate,         
-                "hourly"=>json_decode($postulation->hourly),                
-                "city"=>$postulation->city,
-                "location"=>$postulation->location,
-                "address"=>$postulation->address,              
-                "totalBudget"=>$postulation->totalBudget,
-                "dailyBudget"=>$postulation->dailyBudget,
-                "status"=>$postulation->status,
+            $data[$key] = [
+                "id" => $postulation->id,
+                "idItalentt" => $postulation->idItalentt,
+                "name" => $postulation->name,
+                "banner" => $postulation->banner,
+                "typePersonal" => json_decode($postulation->typePersonal),
+                "initialDate" => $postulation->initialDate,
+                "endDate" => $postulation->endDate,
+                "hourly" => json_decode($postulation->hourly),
+                "city" => $postulation->city,
+                "location" => $postulation->location,
+                "address" => $postulation->address,
+                "totalBudget" => $postulation->totalBudget,
+                "dailyBudget" => $postulation->dailyBudget,
+                "status" => $postulation->status,
             ];
         }
         return response()->json($data);
@@ -40,59 +41,60 @@ class EventsUsersController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getAllConvocations(){
-        $data=[];
-        $events = Events::all();        
+    public function getAllConvocations()
+    {
+        $data = [];
+        $events = Events::all();
 
         foreach ($events as $key => $event) {
-            $data[$key]=[
-                "id"=>$event->id,
-                "idItalentt"=>$event->idItalentt,
-                "name"=>$event->name,
-                "banner"=>$event->banner,
-                "aboutPersonal"=>json_decode($event->typePersonal),
-                "initialDate"=>$event->initialDate,
-                "endDate"=>$event->endDate,
-                "hourly"=>json_decode($event->hourly),
-                "city"=>$event->city,
-                "location"=>$event->location,
-                "address"=>json_decode($event->address),
-                "totalBudget"=>$event->totalBudget,
-                "dailyBudget"=>$event->dailyBudget,
-                "status"=>$event->status        
+            $data[$key] = [
+                "id" => $event->id,
+                "idItalentt" => $event->idItalentt,
+                "name" => $event->name,
+                "banner" => $event->banner,
+                "aboutPersonal" => json_decode($event->typePersonal),
+                "initialDate" => $event->initialDate,
+                "endDate" => $event->endDate,
+                "hourly" => json_decode($event->hourly),
+                "city" => $event->city,
+                "location" => $event->location,
+                "address" => json_decode($event->address),
+                "totalBudget" => $event->totalBudget,
+                "dailyBudget" => $event->dailyBudget,
+                "status" => $event->status
             ];
         }
         return response()->json($data);
     }
     public function index()
     {
-        $data=[];
-        $user_id = Auth::user()->id;        
-        
-        $eventsUsers = EventsUsers::where('id_user',$user_id)->with('events')->get();        
+        $data = [];
+        $user_id = Auth::user()->id;
+
+        $eventsUsers = EventsUsers::where('id_user', $user_id)->with('events')->get();
 
         foreach ($eventsUsers as $key => $eventsUser) {
-            $data[$key]=[
-                "id"=>$eventsUser->id,
-                "idTalent"=>$eventsUser->idTalent,
-                "status"=>$eventsUser->status,
-                "id_event"=>$eventsUser->id_event,
-                "id_user"=>$eventsUser->id_user,
-                "events"=>[
-                    "id"=>$eventsUser->events->id,
-                    "idItalentt"=>$eventsUser->events->idItalentt,
-                    "name"=>$eventsUser->events->name,
-                    "banner"=>$eventsUser->events->banner,
-                    "aboutPersonal"=>json_decode($eventsUser->events->typePersonal),
-                    "initialDate"=>$eventsUser->events->initialDate,
-                    "endDate"=>$eventsUser->events->endDate,
-                    "houry"=>json_decode($eventsUser->events->houry),
-                    "city"=>$eventsUser->events->city,
-                    "location"=>$eventsUser->events->location,
-                    "address"=>json_decode($eventsUser->events->address),
-                    "totalBudget"=>$eventsUser->events->totalBudget,
-                    "dailyBudget"=>$eventsUser->events->dailyBudget,
-                    "status"=>$eventsUser->events->status
+            $data[$key] = [
+                "id" => $eventsUser->id,
+                "idTalent" => $eventsUser->idTalent,
+                "status" => $eventsUser->status,
+                "id_event" => $eventsUser->id_event,
+                "id_user" => $eventsUser->id_user,
+                "events" => [
+                    "id" => $eventsUser->events->id,
+                    "idItalentt" => $eventsUser->events->idItalentt,
+                    "name" => $eventsUser->events->name,
+                    "banner" => $eventsUser->events->banner,
+                    "aboutPersonal" => json_decode($eventsUser->events->typePersonal),
+                    "initialDate" => $eventsUser->events->initialDate,
+                    "endDate" => $eventsUser->events->endDate,
+                    "houry" => json_decode($eventsUser->events->houry),
+                    "city" => $eventsUser->events->city,
+                    "location" => $eventsUser->events->location,
+                    "address" => json_decode($eventsUser->events->address),
+                    "totalBudget" => $eventsUser->events->totalBudget,
+                    "dailyBudget" => $eventsUser->events->dailyBudget,
+                    "status" => $eventsUser->events->status
                 ]
             ];
         }
@@ -106,7 +108,7 @@ class EventsUsersController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
-    {        
+    {
         try {
             $user_id = Auth::user()->id;
             $eventUsers = new EventsUsers();
@@ -115,12 +117,10 @@ class EventsUsersController extends Controller
             $eventUsers->id_user = $user_id;
             $eventUsers->status = $request->status;
             $eventUsers->save();
-            return response()->json(['message'=>'Registro Creado'],200);
-
-        } catch (\Throwable $th) {            
-            return response()->json(['message' => $th->errorInfo[2]],400);
-        }        
-
+            return response()->json(['message' => 'Registro Creado'], 200);
+        } catch (\Throwable $th) {
+            return response()->json(['message' => $th->errorInfo[2]], 400);
+        }
     }
 
     /**
@@ -131,9 +131,8 @@ class EventsUsersController extends Controller
      */
     public function show($name_event)
     {
-
     }
-    
+
     /**
      * Update the specified resource in storage.
      *
@@ -151,10 +150,10 @@ class EventsUsersController extends Controller
             $updateEventUsers->id_user = $user_id;
             $updateEventUsers->status = $request->status;
             $updateEventUsers->save();
-            return response()->json(['message'=>'Registro Actualizado'],200);
+            return response()->json(['message' => 'Registro Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
-        }        
+            return response()->json(['message' => $th->errorInfo[2]], 400);
+        }
     }
 
     /**
@@ -168,9 +167,9 @@ class EventsUsersController extends Controller
         try {
             $eventUsers = EventsUsers::findOrFail($id);
             $eventUsers->delete();
-            return response()->json('Postulación Eliminada');
+            return response()->json('Convocatoria Eliminada');
         } catch (\Throwable $th) {
-            return response()->json(['message'=>$th->errorInfo[2]],400);
-        }        
+            return response()->json(['message' => $th->errorInfo[2]], 400);
+        }
     }
 }
