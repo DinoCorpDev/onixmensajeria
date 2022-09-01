@@ -14,8 +14,8 @@ class EventsUsersController extends Controller
     public function getPostulations(Request $request)
     {
         $data = [];
-        $postulations = Events::where('id', '=', $request->id_event)
-            ->get();
+        $postulations = Events::where('id', '=', $request->id_event)->get();
+
         foreach ($postulations as $key => $postulation) {
             $data[$key] = [
                 "id" => $postulation->id,
@@ -88,7 +88,7 @@ class EventsUsersController extends Controller
                     "aboutPersonal" => json_decode($eventsUser->events->typePersonal),
                     "initialDate" => $eventsUser->events->initialDate,
                     "endDate" => $eventsUser->events->endDate,
-                    "houry" => json_decode($eventsUser->events->houry),
+                    "hourly" => json_decode($eventsUser->events->hourly),
                     "city" => $eventsUser->events->city,
                     "location" => $eventsUser->events->location,
                     "address" => json_decode($eventsUser->events->address),
