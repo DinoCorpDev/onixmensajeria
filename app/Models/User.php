@@ -13,7 +13,7 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
-//    protected $appends = ['city'];
+    //    protected $appends = ['city'];
 
     /**
      * The attributes that are mass assignable.
@@ -29,7 +29,7 @@ class User extends Authenticatable
         "nickname",
         "birthday",
         "gender",
-        "pyshical",
+        "physical",
         "competences",
         "education",
         "experience",
@@ -68,12 +68,12 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    protected function city(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => ['label' => $value, 'string' => $value]
-        );
-    }
+    // protected function city(): Attribute
+    // {
+    //     return Attribute::make(
+    //         get: fn ($value) => ['label' => $value, 'string' => $value]
+    //     );
+    // }
 
     protected function country(): Attribute
     {
@@ -82,35 +82,43 @@ class User extends Authenticatable
         );
     }
 
-    public function gender(){
-        return $this->hasMany(Genders::class,'id','id_user');
+    public function gender()
+    {
+        return $this->hasMany(Genders::class, 'id', 'id_user');
     }
 
-    public function contacts(){
-        return $this->hasMany(Contacts::class,'id','id_user');
+    public function contacts()
+    {
+        return $this->hasMany(Contacts::class, 'id', 'id_user');
     }
 
-    public function pyshical(){
-        return $this->hasOne(Pyshicals::class,'id','id_user');
+    public function physical()
+    {
+        return $this->hasOne(Physicals::class, 'id', 'id_user');
     }
 
-    public function competences(){
-        return $this->hasMany(Competences::class, 'id','id_user');
+    public function competences()
+    {
+        return $this->hasMany(Competences::class, 'id', 'id_user');
     }
 
-    public function educations(){
-        return $this->hasMany(Educations::class,'id','id_user');
+    public function educations()
+    {
+        return $this->hasMany(Educations::class, 'id', 'id_user');
     }
 
-    public function experiences(){
-        return $this->hasMany(Experiences::class, 'id','id_user');
+    public function experiences()
+    {
+        return $this->hasMany(Experiences::class, 'id', 'id_user');
     }
 
-    public function sectors(){
-        return $this->hasMany(Sectors::class, 'id','id_user');
+    public function sectors()
+    {
+        return $this->hasMany(Sectors::class, 'id', 'id_user');
     }
 
-    public function roles(){
-        return $this->hasMany(UsersRoles::class, 'id','id_user');
+    public function roles()
+    {
+        return $this->hasMany(UsersRoles::class, 'id', 'id_user');
     }
 }

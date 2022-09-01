@@ -250,6 +250,7 @@ export default {
   grid-template-columns: 110px 110px 110px 110px;
   justify-content: center;
   align-items: center;
+  height: 100%;
 }
 .navigation.open {
   width: 250px;

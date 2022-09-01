@@ -24,22 +24,24 @@ class ProfileUserController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function getMyUser(){
+    public function getMyUser()
+    {
         $user = Auth::user();
-        if($user) {
-            return response()->json(['data'=>$user],200);
-        }else{
-            return response()->json(['status'=>500, 'statusText'=>'Sin Usuario'],500);
+        if ($user) {
+            return response()->json(['data' => $user], 200);
+        } else {
+            return response()->json(['status' => 500, 'statusText' => 'Sin Usuario'], 500);
         }
     }
 
-    public function getAllUsers(){
+    public function getAllUsers()
+    {
         try {
-            $data=[];
-           $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->orderBy('users.id','DESC')->paginate(20);
+            $data = [];
+            $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->orderBy('users.id', 'DESC')->paginate(20);
             foreach ($users as $key => $users) {
-                $dataToPush=[
-                    "id"=>$users->id,
+                $dataToPush = [
+                    "id" => $users->id,
                     "name" => $users->name,
                     "lastname" => $users->lastname,
                     "contact" => json_decode($users->contact),
@@ -47,75 +49,73 @@ class ProfileUserController extends Controller
                     "nickname" => $users->nickname,
                     "birthday" => $users->birthday,
                     "gender" => $users->gender,
-                    "physical" =>json_decode($users->pyshical),
-                    "competences" =>json_decode($users->competences),
-                    "education" =>json_decode($users->education),
-                    "experience" =>json_decode($users->experience),
+                    "physical" => json_decode($users->physical),
+                    "competences" => json_decode($users->competences),
+                    "education" => json_decode($users->education),
+                    "experience" => json_decode($users->experience),
                     "identification" => $users->identification,
                     "address" => $users->address,
                     "city" => $users->city,
 
                     "profile" => $users->profile,
                     "photos" => $users->photos,
-                    "video" =>$users->video,
+                    "video" => $users->video,
 
                     "autorization" => $users->autorization === "1" ? true : false,
-                    "terms_conditions" =>$users->terms_conditions === "1" ? true : false,
-                    "roles" =>json_decode($users->roles),
+                    "terms_conditions" => $users->terms_conditions === "1" ? true : false,
+                    "roles" => json_decode($users->roles),
                     "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
-                    "firstLogin" =>$users->firstLogin === "1" ? true : false,
-                    "verified" =>$users->verified === "1" ? true : false,
-                    "statusid" =>$users->status,
-                    "status" =>$users->nombre,
-                    "api_token" =>$users->api_token,
+                    "firstLogin" => $users->firstLogin === "1" ? true : false,
+                    "verified" => $users->verified === "1" ? true : false,
+                    "statusid" => $users->status,
+                    "status" => $users->nombre,
+                    "api_token" => $users->api_token,
                 ];
                 array_push($data, $dataToPush);
             }
-            return response()->json(['data'=>$data],200);
+            return response()->json(['data' => $data], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>500, 'statusText'=>throw $th],500);
+            return response()->json(['status' => 500, 'statusText' => throw $th], 500);
         }
     }
     public function index()
     {
+        $user_id = Auth::user()->id;
+        $user = User::findOrFail($user_id);
 
-            $user_id = Auth::user()->id;
-            $user = User::findOrFail($user_id);
-            $data=[
-                "id"=>$user->id,
-                "name" => $user->name,
-                "lastname" => $user->lastname,
-                "contact" => json_decode($user->contact),
-                "email" => $user->email,
-                "nickname" => $user->nickname,
-                "birthday" => $user->birthday,
-                "gender" => json_decode($user->gender),
-                "pyshical" =>json_decode($user->pyshical),
-                "competences" =>json_decode($user->competences),
-                "education" =>json_decode($user->education),
-                "experience" =>json_decode($user->experience),
-                "identification" => $user->identification,
-                "address" => $user->address,
-                "city" => $user->city,
+        $data = [
+            "id" => $user->id,
+            "name" => $user->name,
+            "lastname" => $user->lastname,
+            "contact" => json_decode($user->contact),
+            "email" => $user->email,
+            "nickname" => $user->nickname,
+            "birthday" => $user->birthday,
+            "gender" => json_decode($user->gender),
+            "physical" => json_decode($user->physical),
+            "competences" => json_decode($user->competences),
+            "education" => json_decode($user->education),
+            "experience" => json_decode($user->experience),
+            "identification" => $user->identification,
+            "address" => $user->address,
+            "city" => $user->city,
 
-                "profile" => $user->profile,
-                "photos" => json_decode($user->photos),
-                "video" =>$user->video,
+            "profile" => $user->profile,
+            "photos" => json_decode($user->photos),
+            "video" => $user->video,
 
-                "autorization" => $user->autorization === "1" ? true : false,
-                "terms_conditions" =>$user->terms_conditions === "1" ? true : false,
-                "roles" =>json_decode($user->roles),
-                "provisionalPassword" => $user->provisionalPassword === "1" ? true : false,
-                "firstLogin" =>$user->firstLogin === "1" ? true : false,
-                "verified" =>$user->verified === "1" ? true : false,
-                "statusid" =>$user->status,
-                "status" =>$user->nombre,
-                "api_token" =>$user->api_token,
-            ];
+            "autorization" => $user->autorization === "1" ? true : false,
+            "terms_conditions" => $user->terms_conditions === "1" ? true : false,
+            "roles" => json_decode($user->roles),
+            "provisionalPassword" => $user->provisionalPassword === "1" ? true : false,
+            "firstLogin" => $user->firstLogin === "1" ? true : false,
+            "verified" => $user->verified === "1" ? true : false,
+            "statusid" => $user->status,
+            "status" => $user->nombre,
+            "api_token" => $user->api_token,
+        ];
 
-            return response()->json($data);
-
-
+        return response()->json($data);
     }
 
     /**
@@ -138,11 +138,11 @@ class ProfileUserController extends Controller
     public function show($searchParam)
     {
         try {
-            $data=[];
-            $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->where('name','LIKE','%'.$searchParam.'%')->orWhere('lastname','LIKE','%'.$searchParam.'%')->orWhere('email','LIKE','%'.$searchParam.'%')->get();
+            $data = [];
+            $users = User::select('users.*', 'status.nombre')->join('status', 'status.id', '=', 'users.status')->where('name', 'LIKE', '%' . $searchParam . '%')->orWhere('lastname', 'LIKE', '%' . $searchParam . '%')->orWhere('email', 'LIKE', '%' . $searchParam . '%')->get();
             foreach ($users as $key => $users) {
-                $dataToPush=[
-                    "id"=>$users->id,
+                $dataToPush = [
+                    "id" => $users->id,
                     "name" => $users->name,
                     "lastname" => $users->lastname,
                     "contact" => json_decode($users->contact),
@@ -150,69 +150,73 @@ class ProfileUserController extends Controller
                     "nickname" => $users->nickname,
                     "birthday" => $users->birthday,
                     "gender" => $users->gender,
-                    "physical" =>json_decode($users->pyshical),
-                    "competences" =>json_decode($users->competences),
-                    "education" =>json_decode($users->education),
-                    "experience" =>json_decode($users->experience),
+                    "physical" => json_decode($users->physical),
+                    "competences" => json_decode($users->competences),
+                    "education" => json_decode($users->education),
+                    "experience" => json_decode($users->experience),
                     "identification" => $users->identification,
                     "address" => $users->address,
                     "city" => $users->city,
 
                     "profile" => $users->profile,
                     "photos" => $users->photos,
-                    "video" =>$users->video,
+                    "video" => $users->video,
 
                     "autorization" => $users->autorization === "1" ? true : false,
-                    "terms_conditions" =>$users->terms_conditions === "1" ? true : false,
-                    "roles" =>json_decode($users->roles),
+                    "terms_conditions" => $users->terms_conditions === "1" ? true : false,
+                    "roles" => json_decode($users->roles),
                     "provisionalPassword" => $users->provisionalPassword === 1 ? true : false,
-                    "firstLogin" =>$users->firstLogin === "1" ? true : false,
-                    "verified" =>$users->verified === "1" ? true : false,
-                    "statusid" =>$users->status,
-                    "status" =>$users->nombre,
-                    "api_token" =>$users->api_token,
+                    "firstLogin" => $users->firstLogin === "1" ? true : false,
+                    "verified" => $users->verified === "1" ? true : false,
+                    "statusid" => $users->status,
+                    "status" => $users->nombre,
+                    "api_token" => $users->api_token,
                 ];
                 array_push($data, $dataToPush);
             }
-            return response()->json(['data'=>$data],200);
+            return response()->json(['data' => $data], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>500, 'statusText'=>throw $th],500);
+            return response()->json(['status' => 500, 'statusText' => throw $th], 500);
         }
     }
 
-    public function saveImageB64(String $email, String $type, String $image_b64){
+    public function saveImageB64(String $email, String $type, String $image_b64)
+    {
         $img = $this->getB64Image($image_b64);
-            // Obtener la extensión de la Imagen
+        // Obtener la extensión de la Imagen
         $img_extension = $this->getB64Extension($image_b64);
-            // Crear un nombre aleatorio para la imagen
-        $img_name = $email.'-'.$type.'.'.$img_extension;
-            // Usando el Storage guardar en el disco creado anteriormente y pasandole a
-            // la función "put" el nombre de la imagen y los datos de la imagen como
-            // segundo parametro
+        // Crear un nombre aleatorio para la imagen
+        $img_name = $email . '-' . $type . '.' . $img_extension;
+        // Usando el Storage guardar en el disco creado anteriormente y pasandole a
+        // la función "put" el nombre de la imagen y los datos de la imagen como
+        // segundo parametro
         $imageSaved = Storage::disk('public')->put($img_name, $img);
         $url = Storage::disk('public')->url($img_name);
         return $url;
     }
 
-    public function getB64Image($base64_image){
+    public function getB64Image($base64_image)
+    {
         // Obtener el String base-64 de los datos
-        $image_service_str = substr($base64_image, strpos($base64_image, ",")+1);
+        $image_service_str = substr($base64_image, strpos($base64_image, ",") + 1);
         // Decodificar ese string y devolver los datos de la imagen
         $image = base64_decode($image_service_str);
         // Retornamos el string decodificado
         return $image;
-   }
+    }
 
-    public function getB64Extension($base64_image){
+    public function getB64Extension($base64_image)
+    {
         // Obtener mediante una expresión regular la extensión imagen y guardarla
         // en la variable "img_extension"
-        preg_match("/^data:image\/(.*);base64/i",$base64_image, $img_extension);
+        preg_match("/^data:image\/(.*);base64/i", $base64_image, $img_extension);
         // Dependiendo si se pide la extensión completa o no retornar el arreglo con
         // los datos de la extensión en la posición 0 - 1
         return $img_extension[1];
     }
 
-    public function updateUserInAdmin(Request $request, $id){
+    public function updateUserInAdmin(Request $request, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $user->name = $request->name;
@@ -223,13 +227,14 @@ class ProfileUserController extends Controller
             $user->city = $request->city;
             $user->country = $request->country;
             $user->save();
-            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
+            return response()->json(['status' => 200, 'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>$th], 400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 
-    public function adminRegisterUser(Request $request){
+    public function adminRegisterUser(Request $request)
+    {
         try {
             $user = User::create([
                 "name" => $request->name,
@@ -239,32 +244,32 @@ class ProfileUserController extends Controller
                 "password" => Hash::make($request->password),
 
                 "autorization" => $request->autorization,
-                "terms_conditions" =>$request->terms_conditions,
+                "terms_conditions" => $request->terms_conditions,
             ]);
 
-            return response()->json(['status' => 200,'statusText' => 'Usuario Creado'], 200);
+            return response()->json(['status' => 200, 'statusText' => 'Usuario Creado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>$th], 400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 
-    public function updateUser(Request $request, $id){
+    public function updateUser(Request $request, $id)
+    {
         try {
             $user = User::findOrFail($id);
-            $photosToSave=[];
-            $videosToSave=[];
+            $photosToSave = [];
+            $videosToSave = [];
 
             $user->profile = $request->profile;
 
-
-            if($request->video){
+            if ($request->video) {
                 $user->video = $request->video;
             }
 
-            if($request->photos){
+            if ($request->photos) {
                 $photosDelete = json_decode($user->photos);
 
-                if($request->photos){
+                if ($request->photos) {
                     $photos = $request->photos;
                     $arrPhotos = [];
                     foreach ($photos as $key => $photo) {
@@ -280,7 +285,7 @@ class ProfileUserController extends Controller
             $user->nickname = $request->nickname;
             $user->birthday = $request->birthday;
             $user->gender = $request->gender;
-            $user->pyshical = json_encode($request->physical);
+            $user->physical = json_encode($request->physical);
             $user->competences = json_encode($request->competences);
             $user->education = json_encode($request->education);
             $user->experience = json_encode($request->experience);
@@ -290,8 +295,8 @@ class ProfileUserController extends Controller
             $user->roles = json_encode($request->roles);
             $user->update();
 
-            $dataToPush=[
-                "id"=>$user->id,
+            $dataToPush = [
+                "id" => $user->id,
                 "name" => $user->name,
                 "lastname" => $user->lastname,
                 "contact" => json_decode($user->contact),
@@ -299,128 +304,135 @@ class ProfileUserController extends Controller
                 "nickname" => $user->nickname,
                 "birthday" => $user->birthday,
                 "gender" => $user->gender,
-                "pyshical" =>json_decode($user->pyshical),
-                "competences" =>json_decode($user->competences),
-                "education" =>json_decode($user->education),
-                "experience" =>json_decode($user->experience),
+                "physical" => json_decode($user->physical),
+                "competences" => json_decode($user->competences),
+                "education" => json_decode($user->education),
+                "experience" => json_decode($user->experience),
                 "identification" => $user->identification,
                 "address" => $user->address,
                 "city" => $user->city,
 
                 "profile" => $user->profile,
                 "photos" => $user->photos,
-                "video" =>$user->video,
+                "video" => $user->video,
 
                 "autorization" => $user->autorization === "1" ? true : false,
-                "terms_conditions" =>$user->terms_conditions === "1" ? true : false,
-                "roles" =>json_decode($user->roles),
+                "terms_conditions" => $user->terms_conditions === "1" ? true : false,
+                "roles" => json_decode($user->roles),
                 "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
-                "firstLogin" =>$user->firstLogin === "1" ? true : false,
-                "verified" =>$user->verified === "1" ? true : false,
+                "firstLogin" => $user->firstLogin === "1" ? true : false,
+                "verified" => $user->verified === "1" ? true : false,
             ];
 
-            return response()->json(['status' => 200,'data' => $dataToPush], 200);
+            return response()->json(['status' => 200, 'data' => $dataToPush], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>[$th]], 400);
+            return response()->json(['status' => 400, 'statusText' => [$th]], 400);
         }
     }
 
-    public function updateFirstLogin(Request $request, $id){
+    public function updateFirstLogin(Request $request, $id)
+    {
         $user = User::findOrFail($id);
         $user->firstLogin = $request->firstLogin;
         $user->update();
 
-        return response()->json(['status' => 200,'statusText' => 'Campo Actualizado'], 200);
+        return response()->json(['status' => 200, 'statusText' => 'Campo Actualizado'], 200);
     }
 
-    public function sendPassword(Request $request){
-        $dataUser = User::where('email',$request->email)->first();
-        if($dataUser){
+    public function sendPassword(Request $request)
+    {
+        $dataUser = User::where('email', $request->email)->first();
+        if ($dataUser) {
             $caracteres = '123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz-#!';
             $password = null;
 
             $aleatoria = substr(str_shuffle($caracteres), 0, 10);
             $password = $aleatoria;
 
-            $data=[
+            $data = [
                 $request->email,
                 $password,
             ];
             try {
-                $changeP = User::where('email',$request->email)->first();
+                $changeP = User::where('email', $request->email)->first();
                 $changeP->password = Hash::make($password);
                 $changeP->provisionalPassword = true;
                 $changeP->save();
 
                 Mail::to($request->email)->send(new NotifyMail($data));
 
-                return response()->json(['status'=>200,'statusMessage'=>'Correo con nueva contraseña enviada']);
+                return response()->json(['status' => 200, 'statusMessage' => 'Correo con nueva contraseña enviada']);
             } catch (\Throwable $th) {
                 //throw $th;
-                return response()->json(['status'=>400,'statusMessage'=>$th]);
+                return response()->json(['status' => 400, 'statusMessage' => $th]);
             }
-        }else{
-            return response()->json(['status'=>400,'statusMessage'=>'El correo No Existe']);
+        } else {
+            return response()->json(['status' => 400, 'statusMessage' => 'El correo No Existe']);
         }
     }
 
-    public function updateTokenUSer(Request $request, $id){
+    public function updateTokenUSer(Request $request, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $user->api_token = $request->api_token;
             $user->save();
-            return response()->json(['status' => 200,'statusText' => 'Token guardado Exitosamente'], 200);
+            return response()->json(['status' => 200, 'statusText' => 'Token guardado Exitosamente'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>$th], 400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 
-    public function updateStatusUser(Request $request, $id){
+    public function updateStatusUser(Request $request, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $user->status = $request->status;
             $user->save();
-            return response()->json(['status' => 200,'statusText' => 'Usuario Actualizado'], 200);
+            return response()->json(['status' => 200, 'statusText' => 'Usuario Actualizado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' =>$th], 400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 
-    public function updatePassword(Request $request){
+    public function updatePassword(Request $request)
+    {
         try {
             $user_email = $request->email;
-            $changeP = User::where('email',$user_email)->first();
+            $changeP = User::where('email', $user_email)->first();
             $changeP->password = Hash::make($request->password);
             $changeP->provisionalPassword = false;
             $changeP->save();
 
-            return response()->json(['status'=>200,'statusText'=>'Contraseña Actualizada'],200);
+            return response()->json(['status' => 200, 'statusText' => 'Contraseña Actualizada'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status'=>400,'statusText'=>$th],400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 
-    public function disableUser(Request $request, $id){
+    public function disableUser(Request $request, $id)
+    {
         try {
             $user = User::findOrFail($id);
             $user->delete();
 
-            return response()->json(['status' => 200,'statusText' => 'Usuario Desabilitado'], 200);
+            return response()->json(['status' => 200, 'statusText' => 'Usuario Desabilitado'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 
-    public function importUsersCSV(Request $request){
+    public function importUsersCSV(Request $request)
+    {
         set_time_limit(0);
         try {
-            if($request->hasFile('file')){
+            if ($request->hasFile('file')) {
                 $file = $request->file('file')->getRealPath();
                 $data = Excel::import(new UserImport, $file);
             }
-            return response()->json(['status' => 200,'statusText' => 'Usuarios Importados por Completo'], 200);
+            return response()->json(['status' => 200, 'statusText' => 'Usuarios Importados por Completo'], 200);
         } catch (\Throwable $th) {
-            return response()->json(['status' => 400,'statusText' => $th], 400);
+            return response()->json(['status' => 400, 'statusText' => $th], 400);
         }
     }
 }
