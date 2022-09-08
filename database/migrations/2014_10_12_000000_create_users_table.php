@@ -30,8 +30,8 @@ return new class extends Migration
             $table->longText("experience")->nullable();
             $table->string("identification", 255)->nullable();
             $table->string("address", 255)->nullable();
-            $table->string("city", 255)->nullable();
-            $table->string("country", 255)->nullable();
+            $table->json("city", 255)->nullable();
+            $table->json("country", 255)->nullable();
             $table->string("profile", 255)->nullable();
             $table->string("photos", 255)->nullable();
             $table->string("video", 255)->nullable();

@@ -44,8 +44,8 @@ class EventsController extends Controller
                         'endDate' => $event->endDate,
                         'hourly' => json_decode($event->hourly),
                         'city' => $event->city,
-                        'location' => $event->location,
-                        'address' => json_decode($event->address),
+                        'location' => json_decode($event->location),
+                        'address' => $event->address,
                         'totalBudget' => $event->totalBudget,
                         'dailyBudget' => $event->dailyBudget,
                         'status' => $event->status,
@@ -66,8 +66,8 @@ class EventsController extends Controller
                         'endDate' => $event->endDate,
                         'hourly' => json_decode($event->hourly),
                         'city' => $event->city,
-                        'location' => $event->location,
-                        'address' => json_decode($event->address),
+                        'location' => json_decode($event->location),
+                        'address' => $event->address,
                         'totalBudget' => $event->totalBudget,
                         'dailyBudget' => $event->dailyBudget,
                         'status' => $event->status,
@@ -89,8 +89,8 @@ class EventsController extends Controller
                         "endDate" => $eventsUser->events->endDate,
                         "hourly" => json_decode($eventsUser->events->hourly),
                         "city" => $eventsUser->events->city,
-                        "location" => $eventsUser->events->location,
-                        "address" => json_decode($eventsUser->events->address),
+                        "location" => json_decode($eventsUser->events->location),
+                        "address" => $eventsUser->events->address,
                         "totalBudget" => $eventsUser->events->totalBudget,
                         "dailyBudget" => $eventsUser->events->dailyBudget,
                         "status" => $eventsUser->events->status
@@ -113,8 +113,8 @@ class EventsController extends Controller
                         "endDate" => $eventsUser->events->endDate,
                         "hourly" => json_decode($eventsUser->events->hourly),
                         "city" => $eventsUser->events->city,
-                        "location" => $eventsUser->events->location,
-                        "address" => json_decode($eventsUser->events->address),
+                        "location" => json_decode($eventsUser->events->location),
+                        "address" => $eventsUser->events->address,
                         "totalBudget" => $eventsUser->events->totalBudget,
                         "dailyBudget" => $eventsUser->events->dailyBudget,
                         "status" => $eventsUser->events->status
@@ -137,8 +137,8 @@ class EventsController extends Controller
                         "endDate" => $eventsUser->events->endDate,
                         "hourly" => json_decode($eventsUser->events->hourly),
                         "city" => $eventsUser->events->city,
-                        "location" => $eventsUser->events->location,
-                        "address" => json_decode($eventsUser->events->address),
+                        "location" => json_decode($eventsUser->events->location),
+                        "address" => $eventsUser->events->address,
                         "totalBudget" => $eventsUser->events->totalBudget,
                         "dailyBudget" => $eventsUser->events->dailyBudget,
                         "status" => $eventsUser->events->status
@@ -206,8 +206,8 @@ class EventsController extends Controller
             $newEvent->endDate = $request->endDate;
             $newEvent->hourly = json_encode($request->hourly);
             $newEvent->city = $request->city;
-            $newEvent->location = $request->location;
-            $newEvent->address = json_encode($request->address);
+            $newEvent->location = json_encode($request->location);
+            $newEvent->address = $request->address;
             $newEvent->totalBudget = $request->totalBudget;
             $newEvent->dailyBudget = $request->dailyBudget;
 
@@ -272,8 +272,8 @@ class EventsController extends Controller
             'endDate' => $event->endDate,
             'hourly' => json_decode($event->hourly),
             'city' => $event->city,
-            'location' => $event->location,
-            'address' => json_decode($event->address),
+            'location' => json_decode($event->location),
+            'address' => $event->address,
             'totalBudget' => $event->totalBudget,
             'dailyBudget' => $event->dailyBudget,
             'status' => $event->status,
@@ -302,8 +302,8 @@ class EventsController extends Controller
             $newEvent->endDate = $request->endDate;
             $newEvent->hourly = json_encode($request->hourly);
             $newEvent->city = $request->city;
-            $newEvent->location = $request->location;
-            $newEvent->address = json_encode($request->address);
+            $newEvent->location = json_encode($request->location);
+            $newEvent->address = $request->address;
             $newEvent->totalBudget = $request->totalBudget;
             $newEvent->dailyBudget = $request->dailyBudget;
 

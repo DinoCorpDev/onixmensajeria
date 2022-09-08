@@ -68,20 +68,6 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    // protected function city(): Attribute
-    // {
-    //     return Attribute::make(
-    //         get: fn ($value) => ['label' => $value, 'string' => $value]
-    //     );
-    // }
-
-    protected function country(): Attribute
-    {
-        return Attribute::make(
-            get: fn ($value) => ['label' => $value, 'string' => $value]
-        );
-    }
-
     public function gender()
     {
         return $this->hasMany(Genders::class, 'id', 'id_user');

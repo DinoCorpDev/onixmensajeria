@@ -98,7 +98,8 @@ class ProfileUserController extends Controller
             "experience" => json_decode($user->experience),
             "identification" => $user->identification,
             "address" => $user->address,
-            "city" => $user->city,
+            "city" => json_decode($user->city),
+            'country' => json_decode($user->country),
 
             "profile" => $user->profile,
             "photos" => json_decode($user->photos),
@@ -292,6 +293,7 @@ class ProfileUserController extends Controller
             $user->identification = $request->identification;
             $user->address = $request->address;
             $user->city = $request->city;
+            $user->country = $request->country;
             $user->roles = json_encode($request->roles);
             $user->update();
 
@@ -311,6 +313,7 @@ class ProfileUserController extends Controller
                 "identification" => $user->identification,
                 "address" => $user->address,
                 "city" => $user->city,
+                "country" => $user->country,
 
                 "profile" => $user->profile,
                 "photos" => $user->photos,
@@ -322,6 +325,8 @@ class ProfileUserController extends Controller
                 "provisionalPassword" => $user->provisionalPassword === 1 ? true : false,
                 "firstLogin" => $user->firstLogin === "1" ? true : false,
                 "verified" => $user->verified === "1" ? true : false,
+
+                "statusid" => $user->status,
             ];
 
             return response()->json(['status' => 200, 'data' => $dataToPush], 200);
