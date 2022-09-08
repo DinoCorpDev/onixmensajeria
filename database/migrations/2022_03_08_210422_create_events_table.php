@@ -23,7 +23,7 @@ return new class extends Migration
             $table->date('endDate');
             $table->json('hourly');
             $table->string('city');
-            $table->string('location');
+            $table->json('location');
             $table->string('address');
             $table->bigInteger('totalBudget');
             $table->bigInteger('dailyBudget');

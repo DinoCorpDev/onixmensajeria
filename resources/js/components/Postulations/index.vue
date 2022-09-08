@@ -26,7 +26,7 @@
                 <th>Nombre del Evento</th>
                 <th>Dirección</th>
                 <th>Ciudad</th>
-                <th>Ubicación</th>
+                <!-- <th>Ubicación</th> -->
               </tr>
             </thead>
             <tbody>
@@ -35,13 +35,12 @@
                   <img
                     style="height: 74px; width: 117px"
                     :src="postulation.banner"
-                    alt=""
                   />
                 </td>
                 <td>{{ postulation.name }}</td>
                 <td>{{ postulation.address }}</td>
                 <td>{{ postulation.city }}</td>
-                <td>{{ postulation.location }}</td>
+                <!-- <td>{{ postulation.location }}</td> -->
                 <td>
                   <button
                     class="btn btn-outline-primary"
@@ -717,6 +716,8 @@ export default {
 
       if (this.postulation.banner) {
         this.postulation.totalBudget = this.getTotalBudget;
+        this.postulation.location = this.center;
+
         if (this.id === null) {
           axios
             .post("api/convocations", this.postulation)
@@ -733,7 +734,7 @@ export default {
             });
         } else {
           axios
-            .put(`api/convocations/${this.id}}`, this.postulation)
+            .put(`api/convocations/${this.id}`, this.postulation)
             .then((response) => {
               this.cleanData();
               toastr.success("Convocatoria Actualizada");
