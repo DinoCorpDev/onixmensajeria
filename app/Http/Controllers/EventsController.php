@@ -32,6 +32,16 @@ class EventsController extends Controller
         switch ($filterParam) {
             case 'open':
                 $events = Events::where('status', $filterParam)->orderBy('id', 'DESC')->get();
+
+                // delete id_event in events
+                foreach ($eventsUsers as $eventUser) {
+                    foreach ($events as $key => $event) {
+                        if ($event->id == $eventUser->id_event) {
+                            unset($events[$key]);
+                        }
+                    }
+                }
+
                 foreach ($events as $key => $event) {
                     // if(isset($eventsUsers[$key]) && ){
                     $data[$key] = [
