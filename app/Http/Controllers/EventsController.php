@@ -42,9 +42,8 @@ class EventsController extends Controller
                     }
                 }
 
-                foreach ($events as $key => $event) {
-                    // if(isset($eventsUsers[$key]) && ){
-                    $data[$key] = [
+                foreach ($events as $event) {
+                    $formatEvent = [
                         'id' => $event->id,
                         'idItalentt' => $event->idItalentt,
                         'name' => $event->name,
@@ -60,7 +59,7 @@ class EventsController extends Controller
                         'dailyBudget' => $event->dailyBudget,
                         'status' => $event->status,
                     ];
-                    // }
+                    array_push($data, $formatEvent);
                 }
                 break;
             case 'close':
@@ -159,6 +158,7 @@ class EventsController extends Controller
                 # code...
                 break;
         }
+
         return response()->json($data);
     }
 
