@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+class CreateUsersTable extends Migration
 {
     /**
      * Run the migrations.
@@ -15,33 +15,17 @@ return new class extends Migration
     {
         Schema::create('users', function (Blueprint $table) {
             $table->id();
-            $table->string("name", 255);
-            $table->string("lastname", 255);
-            $table->string("contact", 255);
-            $table->string("email", 255)->unique();
-            $table->string("password", 255);
-            $table->string("nickname", 255)->nullable();
-            $table->date("birthday")->nullable();
-            $table->string("gender", 255)->nullable();
-            $table->string("sectors", 255)->nullable();
-            $table->string("physical", 255)->nullable();
-            $table->string("competences", 255)->nullable();
-            $table->string("education", 255)->nullable();
-            $table->longText("experience")->nullable();
-            $table->string("identification", 255)->nullable();
-            $table->string("address", 255)->nullable();
-            $table->json("city", 255)->nullable();
-            $table->json("country", 255)->nullable();
-            $table->string("profile", 255)->nullable();
-            $table->string("photos", 255)->nullable();
-            $table->string("video", 255)->nullable();
-            $table->boolean("autorization");
-            $table->boolean("terms_conditions");
-            $table->string("roles", 255)->nullable();
+            $table->string('names');
+            $table->string('email')->unique()->nullable();
+            $table->string('phone')->unique()->nullable();
+            $table->timestamp('email_verified_at')->nullable();
             $table->boolean('provisionalPassword')->default(false);
-            $table->boolean('firstLogin')->default(true);
-            $table->boolean('verified')->default(true);
-            $table->boolean('status')->default(true);
+            $table->string('password');
+            $table->integer('id_rol')->default(3);
+            $table->string('dni')->nullable();
+            $table->string('doc_responsable')->nullable();
+            $table->boolean('is_adult')->default(false);
+            $table->boolean('policy_privacy')->default(false);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -56,4 +40,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('users');
     }
-};
+}

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Roles;
+use Illuminate\Http\Request;
 
 class RolesController extends Controller
 {
@@ -26,60 +26,51 @@ class RolesController extends Controller
      */
     public function store(Request $request)
     {
-        try {
-            $newRol = new Roles();
-            $newRol->label = $request->label;
-            $newRol->value = $request->value;
-            $newRol->save();
+        $roles = new Roles();
+        $roles->name = $request->name;
 
-            return response()->json('Rol Created');
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->errorInfo[2]], 400);
-        }
+        $roles->save();
+
+        return response()->json(['message'=>'Rol Guardado']);
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  int  $id
+     * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
-    public function show($name)
+    public function show(Roles $roles)
     {
-        $rol = Roles::where('label', $label)->first();
-        return response()->json($rol);
+        //
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
+     * @param  \App\Models\Roles  $roles
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        try {
-            $updateRol = Roles::findOrFail($id);
-            $updateRol->label = $request->label;
-            $updateRol->value = $request->value;
-            $updateRol->update();
+        $roles = Roles::find($id);
+        $roles->name = $request->name;
+        $roles->update();
 
-            return response()->json('Rol Updated');
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th->errorInfo[2]], 400);
-        }
+        return response()->json(['message'=>'Rol Actualizado']);
     }
 
+    /**
+     * Remove the specified resource from storage.
+     *
+     * @param  \App\Models\Roles  $roles
+     * @return \Illuminate\Http\Response
+     */
     public function destroy($id)
     {
-        try {
-            $sector = Roles::findOrFail($id);
-            $sector->delete();
-
-            return response()->json(['message' => 'Rol Eliminado'], 200);
-        } catch (\Throwable $th) {
-            return response()->json(['message' => $th], 400);
-        }
+        $roles = Roles::find($id);
+        $roles->delete();
+        return response()->json(['message'=>'Rol Eliminado']);
     }
 }

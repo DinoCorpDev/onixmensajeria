@@ -3,17 +3,15 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Laravel\Passport\HasApiTokens;
+use Laravel\Sanctum\HasApiTokens;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Authenticatable
+class User extends Authenticatable implements JWTSubject
 {
     use HasApiTokens, HasFactory, Notifiable;
-
-    //    protected $appends = ['city'];
 
     /**
      * The attributes that are mass assignable.
@@ -21,32 +19,16 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        "name",
-        "lastname",
-        "contact",
-        "email",
-        "password",
-        "nickname",
-        "birthday",
-        "gender",
-        "physical",
-        "competences",
-        "education",
-        "experience",
-        "identification",
-        "address",
-        "city",
-        "profile",
-        "photos",
-        "video",
-        "autorization",
-        "terms_conditions",
-        "roles",
-        "status",
-        "api_token",
-        "provisionalPassword",
-        "firstLogin",
-        "verified",
+        'names',
+        'email',
+        'phone',
+        'password',
+        'provisionalPassword',
+        'id_rol',
+        'dni',
+        'doc_responsable',
+        'is_adult',
+        'policy_privacy',
     ];
 
     /**
@@ -68,43 +50,23 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
-    public function gender()
+    /**
+     * Get the identifier that will be stored in the subject claim of the JWT.
+     *
+     * @return mixed
+     */
+    public function getJWTIdentifier()
     {
-        return $this->hasMany(Genders::class, 'id', 'id_user');
+        return $this->getKey();
     }
 
-    public function contacts()
+    /**
+     * Return a key value array, containing any custom claims to be added to the JWT.
+     *
+     * @return array
+     */
+    public function getJWTCustomClaims()
     {
-        return $this->hasMany(Contacts::class, 'id', 'id_user');
-    }
-
-    public function physical()
-    {
-        return $this->hasOne(Physicals::class, 'id', 'id_user');
-    }
-
-    public function competences()
-    {
-        return $this->hasMany(Competences::class, 'id', 'id_user');
-    }
-
-    public function educations()
-    {
-        return $this->hasMany(Educations::class, 'id', 'id_user');
-    }
-
-    public function experiences()
-    {
-        return $this->hasMany(Experiences::class, 'id', 'id_user');
-    }
-
-    public function sectors()
-    {
-        return $this->hasMany(Sectors::class, 'id', 'id_user');
-    }
-
-    public function roles()
-    {
-        return $this->hasMany(UsersRoles::class, 'id', 'id_user');
+        return [];
     }
 }

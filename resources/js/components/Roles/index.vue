@@ -1,137 +1,300 @@
 <template>
-    <div :class="changeActive === true ? 'container content-large': 'container content-short'">
-        <div class="card">
-            <div class="card-header text-center">
-                <h2><strong>Roles</strong></h2>
-            </div>
-            <div class="card-body">
-                <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear rol</button>
-                <table class="table table-striped table-bordered table-response">
-                    <thead>
-                        <tr>
-                            <th>Nombre</th>
-                            <th>Valor</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="(rol, key) in roles" :key="key">
-                            <td>{{rol.label}}</td>
-                            <td>{{rol.value}}</td>
-                            <td>
-                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal" v-on:click="editRol(rol)">Editar</button>
-                                <button class="btn btn-danger" v-on:click="deleteRol(rol.id)">Eliminar</button>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div> 
-        <!-- Modal -->
-        <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="exampleModalLabel">{{id === null ? 'Creación de Rol' : 'Actualización de Rol'}}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-group">
-                            <label for="label">Nombre</label>
-                            <input type="text" v-model="rol.label" required="required" name="label" class="form-control"/>
-                        </div>
+  <div
+    class="container-convoz"
+    :class="
+      changeActive === true
+        ? 'container content-large'
+        : 'container content-short'
+    "
+  >
+    <h2>Roles</h2>
+    <hr style="color: black;" />
 
-                        <div class="form-group">
-                            <label for="value">Valor</label>
-                            <input type="text" v-model="rol.value" required="required" name="label" class="form-control"/>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                        <button type="button" class="btn btn-primary" v-on:click="saveRol">Guardar Cambios</button>
-                    </div>
-                </div>
-            </div>
-        </div>       
+    <div class="mt-4">
+      <button
+        type="button"
+        class="btn btn-create"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Crear ROL
+      </button>
     </div>
+    <div class="row mt-4">
+      <div class="col-md-6 mb-4" v-for="(rol, key) in roles" :key="key">
+        <div class="row ROL-table">
+          <div class="col-md-12 p-4 border-columm">
+            <div class="row d-flex justify-content-between">
+              <div class="col-md-9">
+                <p class="text-black-50 title-table">Nombre</p>
+                <p class="text-table">{{ rol.name }}</p>
+              </div>
+              <div class="col-md-3 mt-2">
+                <button class="btn btn-edit" v-on:click="() => editRol(rol)">
+                  Editar
+                </button>
+                <button
+                  class="btn btn-deleter"
+                  v-on:click="() => deleteRol(rol.id)"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <b-form @submit.prevent="saveRol">
+            <div class="modal-header">
+              <h4 class="modal-title fw-bold" id="exampleModalLabel">
+                {{ id === null ? 'Creacion de Rol' : 'Actualizacion de Rol' }}
+              </h4>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                v-on:click="cleanData"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="" class="fw-bold">Nombre</label>
+                <input
+                  type="text"
+                  class="form-control"
+                  v-model="rol.name"
+                  required
+                />
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-closer"
+                data-bs-dismiss="modal"
+                v-on:click="cleanData"
+              >
+                Cerrar
+              </button>
+              <button type="submit" class="btn btn-save">
+                {{ id === null ? 'Crear ROL' : 'Guardar cambios' }}
+              </button>
+            </div>
+          </b-form>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 <script>
-import { Modal } from 'bootstrap'
 export default {
-    props:['changeActive'],
-    data() {
-        return{
-            roles:[],
-            rol:{},
-            id: null,
-            myModal:'',
-        }    
-    },
-    mounted(){
-        this.getRoles(); 
-        this.modal = new Modal(document.getElementById('exampleModal'))       
-    },
-    methods:{
-        getRoles(){
-            axios.get('api/getRoles').then((response)=>{
-                this.roles = response.data;
-            }).catch((error)=>{
-                console.log(error);
-            })
-        },
-
-        editRol(data){
-            this.rol = data;
-            this.id = data.id;
-        },
-
-        saveRol(){
-            if(this.id !== null){
-                axios.put(`api/rol/${this.id}`,this.rol).then((response)=>{
-                    this.cleanData();
-                    toastr.success('rol Actualizado');
-                    this.getRoles();                    
-                }).catch((error)=>{
-                    console.log(error);
-                })
-            }else{
-                axios.post('api/rol',this.rol).then((response)=>{  
-                    this.cleanData();
-                    toastr.success('rol Creado');                  
-                    this.getRoles();                    
-                }).catch((error)=>{
-                    console.log(error);
-                });
-            }
-        },
-
-        deleteRol(id){
-            if(window.confirm('Seguro desea Eliminar este dato?')){
-                axios.delete(`api/rol/${id}`).then((response)=>{
-                    toastr.success('rol Eliminado');
-                    this.getRoles();
-                    this.cleanData();
-                }).catch((error)=>{
-                    console.log(error);
-                })
-            }            
-        },
-
-        cleanData(){
-            this.modal.hide();
-            this.rol={},
-            this.id= null
-        }
+  props: ['token', 'changeActive'],
+  data() {
+    return {
+      roles: [],
+      id: null,
+      rol: {},
     }
+  },
+  mounted() {
+    this.getRoles()
+  },
+  methods: {
+    getRoles() {
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
+      axios.get('api/roles', { headers }).then((response) => {
+        this.roles = response.data
+      })
+    },
+    editRol(data) {
+      this.rol = data
+      this.id = data.id
+
+      $('#exampleModal').modal('show')
+    },
+    hideModal() {
+      $('#exampleModal').modal('hide')
+    },
+    saveRol() {
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
+
+      if (this.id === null) {
+        axios
+          .post('api/roles', this.rol, { headers })
+          .then((response) => {
+            toastr.success(response.data.message)
+            this.cleanData()
+            this.getRoles()
+            this.hideModal()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      } else {
+        axios
+          .put(`api/roles/${this.id}`, this.rol, { headers })
+          .then((response) => {
+            toastr.success(response.data.message)
+            this.cleanData()
+            this.getRoles()
+            this.hideModal()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+    },
+    deleteRol(id) {
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
+
+      if (window.confirm('¿Seguro que desea eliminar este rol?')) {
+        axios
+          .delete(`api/roles/${id}`, { headers })
+          .then((response) => {
+            toastr.success(response.data.message)
+            this.getRoles()
+            this.hideModal()
+            this.cleanData()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+    },
+    cleanData() {
+      this.rol = {}
+      this.id = null
+    },
+  },
 }
 </script>
-<style>
-.content-large{
-    margin-left:118px; 
-    transition: 0.5s;
+<style scoped>
+.title-table {
+  font-size: 15px;
 }
-.content-short{
-    margin-left: 19px; 
-    transition: 0.5s;
+
+.text-table {
+  font-size: 14px;
+}
+
+/* .content-large {
+  padding-left: 237px;
+  transition: 0.5s;
+}
+
+.content-short {
+  padding-left: 100px;
+  transition: 0.5s;
+} */
+
+.container-convoz {
+  margin-top: 10px;
+  padding-left: 100px;
+  transition: 0.5s;
+}
+
+@media (min-width: 768px) {
+  .container-convoz {
+    padding-left: 230px;
+  }
+}
+
+.border-columm {
+  border: 1px solid #101a24;
+  border-radius: 5px;
+}
+
+.ROL-table {
+  padding-left: 15px;
+}
+
+.btn-edit {
+  width: 60%;
+  border-radius: 20px;
+  padding: 1px 1px 1px 1px;
+  background: #45f1be;
+  border-color: #45f1be;
+  margin-bottom: 7px;
+  color: #fff;
+}
+.btn-create {
+  background: #101a24;
+  border-color: #101a24;
+  border-radius: 20px;
+  color: #fff;
+}
+.btn-create:hover {
+  border-color: #101a24;
+  color: #101a24;
+  background: #fff;
+}
+.btn-edit:hover {
+  border-color: #45f1be;
+}
+.btn-deleter {
+  width: 60%;
+  border-radius: 20px;
+  padding: 1px 1px 1px 1px;
+  background: #101a24;
+  border-color: #101a24;
+  margin-bottom: 7px;
+  color: #fff;
+}
+
+.btn-deleter:hover {
+  border-color: #101a24;
+}
+
+@media (max-width: 1199px) {
+  .btn-edit {
+    width: 100%;
+  }
+
+  .btn-deleter {
+    width: 100%;
+  }
+}
+
+.btn-save {
+  border-radius: 20px;
+  background: #101a24;
+  border-color: #101a24;
+  color: #fff;
+}
+
+.btn-closer {
+  border-radius: 20px;
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+
+.modal-content {
+  border: 2px solid #101a24;
+  border-radius: 1.3rem;
+}
+
+.form-control {
+  border: 1px solid #101a24;
 }
 </style>

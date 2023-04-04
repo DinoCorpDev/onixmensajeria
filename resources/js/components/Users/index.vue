@@ -1,286 +1,473 @@
 <template>
-  <div :class="changeActive === true ? 'container content-large': 'container content-short'">
-    <div class="card">
-      <div class="card-header text-center">
-        <h2><strong>Usuarios</strong></h2>
-      </div>
-      <div class="card-body">
-        <div class="container">
-          <div class="row">
-            <div class="col">
-              <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#exampleModal">Crear Usuario
-              </button>
-              <button class="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#importModal">Importar
-                Usuarios
-              </button>
-            </div>
-            <div class="col">
-              <input type="text" class="form-control" placeholder="Buscar por Nombre o Apellido o Correo"
-                     v-model="search">
+  <div
+    class="container-convoz"
+    :class="
+      changeActive === true
+        ? 'container content-large'
+        : 'container content-short'
+    "
+  >
+    <h2>Administración de Usuarios</h2>
+    <hr style="color: black;" />
+
+    <div class="mt-4">
+      <button
+        type="button"
+        class="btn btn-create mb-2"
+        data-bs-toggle="modal"
+        data-bs-target="#exampleModal"
+      >
+        Crear Usuario
+      </button>
+    </div>
+    <div class="row mt-4">
+      <div
+        class="col-md-12 mb-4"
+        v-for="(user, key) in filteredRows"
+        :key="key"
+      >
+        <div class="row users-table">
+          <div class="col-md-12 p-4 border-columm">
+            <div class="row d-flex justify-content-between">
+              <div class="col-lg-3">
+                <p class="text-black-50 title-table">Nombres</p>
+                <p class="text-table">{{ user.names }}</p>
+              </div>
+              <div class="col-lg-3" v-if="user.id_rol != 3">
+                <p class="text-black-50 title-table">Correo</p>
+                <p class="text-table overflow-auto">
+                  {{ user.email }}
+                </p>
+              </div>
+              <div class="col-lg-3" v-if="user.id_rol == 3">
+                <p class="text-black-50">Teléfono</p>
+                <p class="text-table">{{ user.phone }}</p>
+              </div>
+              <div class="col-lg-3">
+                <p class="text-black-50 title-table">ROL</p>
+                <p class="text-table">
+                  {{
+                    user.id_rol === 1 || user.is_admin === '1'
+                      ? 'Administrador'
+                      : user.id_rol === 2 || user.is_admin === '2'
+                      ? 'Proveedor'
+                      : user.id_rol === 3 || user.is_admin === '3'
+                      ? 'Cliente'
+                      : ''
+                  }}
+                </p>
+              </div>
+              <div class="col-md-3 mt-2">
+                <button class="btn btn-edit" v-on:click="() => editUser(user)">
+                  Editar
+                </button>
+                <button
+                  class="btn btn-deleter"
+                  v-on:click="() => deleteUser(user.id)"
+                >
+                  Eliminar
+                </button>
+                <template v-if="user.id_rol === 2">
+                  <a :href="user.dni" download class="btn btn-download mb-2">
+                    Descargar DNI
+                  </a>
+                  <a
+                    :href="user.doc_responsable"
+                    download
+                    class="btn btn-download"
+                  >
+                    Descargar ID
+                  </a>
+                </template>
+              </div>
             </div>
           </div>
         </div>
-        <table class="table table-striped table-bordered table-response">
-          <thead>
-          <tr>
-            <th>Nombre</th>
-            <th>Apellido</th>
-            <th>Correo</th>
-            <th>Status</th>
-            <th></th>
-          </tr>
-          </thead>
-          <tbody>
-          <tr v-for="(user, key) in users" :key="key">
-            <td>{{ user.name }}</td>
-            <td>{{ user.lastname }}</td>
-            <td>{{ user.email }}</td>
-            <td>
-              <select class="form-select selectStatus" v-on:change="saveUserStatus(user,$event)">
-                <option value="1" :selected=" user.statusid  == 1 ? 'selected' : ''">Activo</option>
-                <option value="2" :selected=" user.statusid  == 2 ? 'selected' : ''">Pendiente</option>
-                <option value="3" :selected=" user.statusid  == 3 ? 'selected' : ''">Inactivo</option>
-              </select>
-            </td>
-            <td>
-              <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal"
-                      v-on:click="editUser(user)">Editar
-              </button>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-        <nav aria-label="Page navigation example">
-          <ul class="pagination">
-            <li :class="page > 1 ? 'page-item' : 'page-item disabled'"><a class="page-link" v-on:click="lastPage">Anterior</a>
-            </li>
-            <li class="page-item"><a class="page-link">{{ page }}</a></li>
-            <li class="page-item"><a class="page-link" v-on:click="nextPage">Siguiente</a></li>
-          </ul>
-        </nav>
       </div>
     </div>
+
     <!-- Modal -->
-    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div
+      class="modal fade"
+      id="exampleModal"
+      tabindex="-1"
+      aria-labelledby="exampleModalLabel"
+      aria-hidden="true"
+      data-bs-backdrop="static"
+    >
       <div class="modal-dialog">
         <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">
-              {{ id === null ? 'Creación de Usuario' : 'Actialización de usuario' }}</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
-                    v-on:click="cleanData"></button>
-          </div>
-          <div class="modal-body">
-            <div class="form-group">
-              <label for="name">Nombre</label>
-              <input type="text" class="form-control" v-model="user.name" id="name">
+          <b-form @submit.prevent="saveUsers">
+            <div class="modal-header">
+              <h4 class="modal-title fw-bold" id="exampleModalLabel">
+                <!-- prettier-ignore -->
+                {{ id === null ? "Creacion de Usuario" : "Actualizacion de Usuario" }}
+              </h4>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Close"
+                v-on:click="cleanData"
+              ></button>
             </div>
+            <div class="modal-body">
+              <div class="form-group mt-3">
+                <label for="" class="fw-bold">Rol</label>
+                <select class="form-control" v-model="user.id_rol" required>
+                  <option
+                    v-for="(rol, key) in roles"
+                    :key="key"
+                    :value="rol.id"
+                  >
+                    {{ rol.name }}
+                  </option>
+                </select>
+              </div>
 
-            <div class="form-group">
-              <label for="lastname">Apellido</label>
-              <input type="text" class="form-control" v-model="user.lastname" id="lastname">
-            </div>
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="form-group mt-3">
+                    <label for="" class="fw-bold">Nombre</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="user.names"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6" v-if="user.id_rol === 3">
+                  <div class="form-group mt-3">
+                    <label for="" class="fw-bold">Telefono</label>
+                    <input
+                      type="text"
+                      class="form-control"
+                      v-model="user.phone"
+                      required
+                    />
+                  </div>
+                </div>
+                <div class="col-md-6" v-if="user.id_rol != 3">
+                  <div class="form-group mt-3">
+                    <label for="" class="fw-bold">Correo</label>
+                    <input
+                      type="email"
+                      class="form-control"
+                      v-model="user.email"
+                      required
+                    />
+                  </div>
+                </div>
+              </div>
 
-            <div class="form-group" v-if="id !== null">
-              <label for="nickname">Nombre Artistico</label>
-              <input type="text" class="form-control" v-model="user.nickname" id="nickname">
-            </div>
+              <div class="form-group mt-3" v-if="id === null">
+                <label for="" class="fw-bold">Contraseña</label>
+                <input
+                  type="password"
+                  class="form-control"
+                  v-model="user.password"
+                  required
+                />
+              </div>
 
-            <div class="form-group">
-              <label for="phone">Numero de Telefono</label>
-              <input type="number" class="form-control" v-model="user.contact.phone" id="phone">
-            </div>
+              <div class="mt-3" v-if="user.id_rol === 2">
+                <label class="login-text fw-bold" for="dni">DNI</label>
+                <div class="input-group mb-3">
+                  <!-- <img src="img/nube.png" alt="" class="img-nube"> -->
+                  <input
+                    required
+                    v-on:change="(e) => imageToBase64('dni', e.target.files)"
+                    type="file"
+                    class="pt-3 pb-3 form-group form-control"
+                    id="dni"
+                    accept="image/png, image/jpeg, .pdf"
+                  />
+                  <label class="input-group-text" for="dni">Cargar</label>
+                </div>
+              </div>
 
-            <div class="form-group" v-if="id === null">
-              <label for="email">Correo</label>
-              <input type="email" class="form-control" v-model="user.email" id="email">
+              <div class="mt-3" v-if="user.id_rol === 2">
+                <label class="login-text fw-bold" for="docId">ID</label>
+                <div class="input-group mb-3">
+                  <input
+                    required
+                    v-on:change="(e) => imageToBase64('docId', e.target.files)"
+                    type="file"
+                    class="pt-3 pb-3 form-group form-control"
+                    id="doc_responsable"
+                    accept="image/png, image/jpeg, .pdf"
+                  />
+                  <label class="input-group-text" for="doc_responsable">
+                    Cargar
+                  </label>
+                </div>
+              </div>
             </div>
-
-            <div class="form-group" v-if="id === null">
-              <label for="password">Contraseña</label>
-              <input type="password" class="form-control" v-model="user.password" id="password">
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-closer"
+                data-bs-dismiss="modal"
+                v-on:click="cleanData"
+              >
+                Cerrar
+              </button>
+              <button type="submit" class="btn btn-save">
+                <!-- prettier-ignore -->
+                {{ id === null ? "Crear usuario" : "Guardar cambios" }}
+              </button>
             </div>
-
-            <div class="form-group" v-if="id !== null">
-              <label for="address">Dirección</label>
-              <input type="text" class="form-control" v-model="user.address" id="address">
-            </div>
-
-            <div class="form-group" v-if="id !== null">
-              <label for="city">Ciudad</label>
-              <input type="text" class="form-control" v-model="user.city" id="city">
-            </div>
-            <div class="form-group" v-if="id !== null">
-              <label for="city">País</label>
-              <input type="text" class="form-control" v-model="user.country" id="country">
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" v-on:click="cleanData">Cerrar
-            </button>
-            <button type="button" class="btn btn-primary" v-on:click="saveUser">Guardar Cambios</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <div class="modal fade" id="importModal" tabindex="-1" aria-labelledby="importModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h2>Importación de Usuarios</h2>
-          </div>
-          <div class="modal-body">
-            <div class="spinner-border text-secondary" role="status" v-if="loader === true">
-              <span class="visually-hidden">Loading...</span>
-            </div>
-            <div class="form-group">
-              <label for="">Importar</label>
-              <input type="file" class="form-control" v-on:change="(e)=>importFile(e.target.files)"/>
-            </div>
-          </div>
-          <div class="modal-footer" v-if="loader === false">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-            <button type="button" class="btn btn-primary" v-on:click="saveFile">Importar</button>
-          </div>
+          </b-form>
         </div>
       </div>
     </div>
   </div>
 </template>
 <script>
-import {Modal} from 'bootstrap'
-
 export default {
-  props: ['changeActive'],
+  props: ['token', 'changeActive'],
   data() {
     return {
       users: [],
-      user: {
-        contact: {},
-        autorization: true,
-        terms_conditions: true,
-      },
+      roles: [],
       id: null,
-      file: null,
-      loader: false,
-      page: 1,
-      search: '',
+      user: {
+        is_admin: false,
+        dni: null,
+        doc_responsable: null,
+      },
+      filter: '',
     }
   },
-  watch: {
-    search: function (newVal, oldVal) {
-      if (newVal !== '' && newVal !== oldVal) {
-        axios.get(`api/getAllUsers/${newVal}`).then(response => {
-          this.users = response.data.data
-        })
-      } else {
-        this.getUsers();
-      }
-    }
+  computed: {
+    filteredRows() {
+      if (!this.users.filter) return false
+      return this.users.filter((row) => {
+        const names = row.names.toString().toLowerCase()
+        const searchName = this.filter.toLowerCase()
+        return names.includes(searchName)
+      })
+    },
   },
-
   mounted() {
-    this.getUsers();
-    this.modal = new Modal(document.getElementById('exampleModal'));
+    this.getUsers()
+    this.getRoles()
   },
-
   methods: {
-    nextPage() {
-
-      this.page = this.page + 1;
-      this.getUsers();
-
-    },
-    lastPage() {
-      if (this.page > 1) {
-        this.page = this.page - 1;
-        this.getUsers();
-      }
-    },
     getUsers() {
-      axios.get(`api/getAllUsers?page=${this.page}`).then(response => {
-        this.users = response.data.data
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
+      axios.get('api/users', { headers }).then((response) => {
+        console.log(response.data)
+        this.users = response.data
+      })
+    },
+    getRoles() {
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
+      axios.get('api/roles', { headers }).then((response) => {
+        this.roles = response.data
       })
     },
     editUser(data) {
-      this.user = data;
-      this.id = data.id;
+      this.user = data
+      this.id = data.id
+      $('#exampleModal').modal('show')
     },
-    saveUser() {
+    hideModal() {
+      $('#exampleModal').modal('hide')
+    },
+    saveUsers() {
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
       if (this.id === null) {
-        console.log(this.user);
-        axios.post('api/adminRegisterUser', this.user).then((response) => {
-          console.log(response.data);
-          toastr.success('Usuario Creado');
-          this.cleanData();
-          this.getUsers();
-        }).catch((error) => {
-          toastr.error('Intenta de nuevo mas Tarde');
-          console.log(error);
-        })
+        axios
+          .post('api/userCreate', this.user, { headers })
+          .then((response) => {
+            toastr.success(response.data)
+            this.getUsers()
+            this.hideModal()
+            this.cleanData()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       } else {
-        console.log(this.user);
-        axios.patch(`api/updateUserInAdmin/${this.id}`, this.user).then((response) => {
-          console.log(response.data);
-          toastr.success('Usuario Actualizado');
-          this.cleanData();
-          this.getUsers();
-        }).catch((error) => {
-          toastr.error('Intenta de nuevo mas Tarde');
-          console.log(error);
-        })
+        axios
+          .put(`api/userUpdate/${this.id}`, this.user, { headers })
+          .then((response) => {
+            toastr.success(response.data)
+            this.getUsers()
+            this.hideModal()
+            this.cleanData()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
+      }
+    },
+    deleteUser(id) {
+      let headers = {
+        Authorization: `Bearer ${this.token}`,
+      }
+      if (window.confirm('¿Seguro que desea eliminar este usuario?')) {
+        axios
+          .delete(`api/users/${id}`, { headers })
+          .then((response) => {
+            toastr.success(response.data)
+            this.getUsers()
+            this.hideModal()
+            this.cleanData()
+          })
+          .catch((error) => {
+            console.log(error)
+          })
       }
     },
     cleanData() {
-      this.modal.hide();
       this.user = {
-        contact: {},
-        autorization: true,
-        terms_conditions: true,
-      };
-      this.id = null,
-          this.file = null
+        is_admin: false,
+        dni: null,
+        doc_responsable: null,
+      }
+      this.id = null
     },
-    importFile(data) {
-      this.file = data[0];
+    imageToBase64(type, data) {
+      const file = data[0]
+      const reader = new FileReader()
+      let rawImg
+      reader.onloadend = () => {
+        rawImg = reader.result
+        if (type === 'dni') {
+          this.user.dni = rawImg
+        } else if (type === 'docId') {
+          this.user.doc_responsable = rawImg
+        }
+      }
+      reader.readAsDataURL(file)
     },
-
-    saveUserStatus(data,event) {
-      this.loader = true;
-      this.user = data;
-      this.id = data.id;
-      this.status=event.target.value;
-
-      axios.patch(`api/updateStatusUser/${this.id}`, {'status': this.status}).then((response) => {
-        console.log(response.data);
-        toastr.success('Status Actualizado');
-        this.cleanData();
-        this.getUsers();
-      }).catch((error) => {
-        toastr.error('Intenta de nuevo mas Tarde');
-        console.log(error);
-      })
-    },
-
-    saveFile() {
-      this.loader = true;
-      var data = new FormData();
-      data.append('file', this.file);
-      data.append('_method', 'POST');
-      axios.post('api/importUsersCSV', data).then(response => {
-        this.loader = false
-        toastr.success('Usuarios Importados');
-        this.cleanData();
-        this.getUsers();
-      }).catch((error) => {
-        this.loader = false
-        toastr.error('Revisa que los campos estén completos e intenta de nuevo mas tarde');
-        this.cleanData();
-        this.getUsers();
-        console.log(error);
-      })
-    }
-  }
+  },
 }
 </script>
+
+<style scoped>
+.title-table {
+  font-size: 15px;
+}
+.text-table {
+  font-size: 14px;
+  overflow-wrap: break-word;
+}
+/* .content-large {
+    padding-left: 237px;
+    transition: 0.5s;
+  }
+  .content-short {
+    padding-left: 100px;
+    transition: 0.5s;
+  } */
+.container-convoz {
+  margin-top: 10px;
+  padding-left: 100px;
+  transition: 0.5s;
+}
+@media (min-width: 768px) {
+  .container-convoz {
+    padding-left: 230px;
+  }
+}
+.users-table {
+  padding-left: 15px;
+}
+.border-columm {
+  border: 1px solid #101a24;
+  border-radius: 5px;
+}
+.btn-create {
+  background: #101a24;
+  border-color: #101a24;
+  border-radius: 20px;
+  color: #fff;
+}
+.btn-create:hover {
+  border-color: #101a24;
+  color: #101a24;
+  background: #fff;
+}
+.btn-edit {
+  width: 60%;
+  border-radius: 20px;
+  padding: 1px 1px 1px 1px;
+  background: #45f1be;
+  border-color: #45f1be;
+  margin-bottom: 7px;
+  color: #fff;
+}
+.btn-edit:hover {
+  border-color: #45f1be;
+}
+.btn-deleter {
+  width: 60%;
+  border-radius: 20px;
+  padding: 1px 1px 1px 1px;
+  background: #101a24;
+  border-color: #101a24;
+  margin-bottom: 7px;
+  color: #fff;
+}
+.btn-deleter:hover {
+  border-color: #101a24;
+}
+.btn-download {
+  width: 60%;
+  border-radius: 20px;
+  padding: 1px 1px 1px 1px;
+  background: #101a24;
+  border-color: #101a24;
+  color: #fff;
+}
+.btn-download:hover {
+  border-color: #101a24;
+}
+@media (max-width: 991px) {
+  .btn-edit {
+    width: 100%;
+  }
+  .btn-deleter {
+    width: 100%;
+  }
+  .btn-download {
+    width: 100%;
+  }
+}
+.btn-save {
+  border-radius: 20px;
+  background: #101a24;
+  border-color: #101a24;
+  color: #fff;
+}
+.btn-closer {
+  border-radius: 20px;
+  background: #000;
+  border-color: #000;
+  color: #fff;
+}
+.modal-content {
+  border: 2px solid #101a24;
+  border-radius: 1.3rem;
+}
+.form-control {
+  border: 1px solid #101a24;
+}
+/* .img-nube {
+      border-radius: 20px;
+      padding: 0px 10px;
+      border: 1px solid #101a24;
+      color: #fff;
+      z-index: 999;
+  } */
+</style>

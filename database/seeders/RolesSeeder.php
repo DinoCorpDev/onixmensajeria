@@ -2,9 +2,8 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
+use DB;
 
 class RolesSeeder extends Seeder
 {
@@ -16,23 +15,15 @@ class RolesSeeder extends Seeder
     public function run()
     {
         DB::table('roles')->insert([
-            'label' => 'Músico - Cantante ',
-            'value' => 'singer',
+            'name'=>'Admin'
         ]);
 
         DB::table('roles')->insert([
-            'label' => 'Modelo',
-            'value' => 'model'
+            'name'=>'Provider'
         ]);
 
         DB::table('roles')->insert([
-            'label' => 'Presentador(a)',
-            'value' => 'host'
-        ]);
-
-        DB::table('roles')->insert([
-            'label' => 'Actor - Actriz',
-            'value' => 'actor'
+            'name'=>'Client'
         ]);
     }
 }

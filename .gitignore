@@ -13,4 +13,7 @@ npm-debug.log
 yarn-error.log
 /.idea
 /.vscode
-error_log
+
+public/js/app.js
+public/js/app.js.LICENSE.txt
+public/css/app.css

@@ -1,8 +1,14 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoriesController;
+use App\Http\Controllers\ServicesController;
+use App\Http\Controllers\RolesController;
+use App\Http\Controllers\StoresController;
+use App\Http\Controllers\SendEmailController;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -14,79 +20,55 @@ use App\Http\Controllers\AuthController;
 |
 */
 
-/**=================================
- * METODOS MOVIL
- *================================**/
+// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
 
-Route::post('/passport/login', [AuthController::class, 'login']);
-Route::post('register-passport', [\App\Http\Controllers\Auth\RegisterController::class, 'register']);
-
-Route::group(['middleware' => ['auth:api']], function () {
-
-    Route::post('/passport/logout', [AuthController::class, 'logout']);
-
-    //Ruta de crud de eventos
-    Route::get('personalType-passport', [App\Http\Controllers\PersonalTypeController::class, 'index']);
-    Route::resource('convocations-passport', 'App\Http\Controllers\EventsController');
-    Route::resource('postulationEvents-passport', 'App\Http\Controllers\EventsUsersController');
-    Route::post('updatePassword-passport', [App\Http\Controllers\ProfileUserController::class, 'updatePassword']);
-    Route::get('sectors-passport-passport', [App\Http\Controllers\SectorsController::class, 'index']);
-    Route::post('sendPassword-passport', [App\Http\Controllers\ProfileUserController::class, 'sendPassword']);
-    Route::get('showUser-passport', [App\Http\Controllers\ProfileUserController::class, 'index']);
-    Route::put('userUpdate-passport/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateUser']);
-
-
-    Route::get('getRoles-passport', [App\Http\Controllers\RolesController::class, 'index']);
-    Route::get('getCompetences-passport', [App\Http\Controllers\CompetencesController::class, 'index']);
-    Route::patch('updateFirstLogin-passport/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);
+Route::get('/', function () {
+    return view('LoginAdmin');
 });
 
-Auth::routes();
+Route::post('register', [UserController::class, 'register']);
+Route::post('registerWithMovil', [UserController::class, 'registerMovil']);
+Route::post('login', [UserController::class, 'authenticate']);
+Route::post('loginWithMovil', [UserController::class, 'authenticateMovil']);
+Route::post('sendPassword', [UserController::class, 'sendPassword']);
+Route::post('providerCreate', [UserController::class, 'createProvider']);
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+Route::group(['middleware' => ['jwt.verify']], function () {
+    Route::get('getProfile', [UserController::class, 'getAuthenticatedUser']);
+    Route::get('logout', [UserController::class, 'logout']);
+    Route::get('getToken', [UserController::class, 'getAuthenticatedUser']);
+    Route::post('refresh', [UserController::class, 'refresh']);
 
-Route::group(['middleware' => ['auth']], function () {
-    //Ruta de usuarios, actualizacion, muestra y deshabilitacion
-    Route::put('disableUser/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'disableUser']);
-    Route::put('userUpdate/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateUser']);
-    Route::patch('updateUserInAdmin/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateUserInAdmin']);
-    Route::post('adminRegisterUser', [App\Http\Controllers\ProfileUserController::class, 'adminRegisterUser']);
+    Route::get('users', [UserController::class, 'index']);
+    Route::delete('users/{user}', [UserController::class, 'destroy']);
 
-    Route::patch('updateFirstLogin/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateFirstLogin']);
-    Route::patch('updateStatusUser/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateStatusUser']);
-    Route::patch('updateTokenUSer/{user_id}', [App\Http\Controllers\ProfileUserController::class, 'updateTokenUSer']);
+    Route::post('userCreate', [UserController::class, 'createUserInAdmin']);
+    Route::put('userUpdate/{id_user}', [UserController::class, 'updateUserInAdmin']);
+
+    Route::resource('categories', CategoriesController::class);
+
+    Route::get('getServicesName', [ServicesController::class, 'getServicesName']);
+    Route::get('getMyServicesName', [ServicesController::class, 'getMyServicesName']);
+
+    Route::get('getCategoriesName', [CategoriesController::class, 'getCategoriesName']);
+
+    Route::resource('services', ServicesController::class);
+    Route::get('my-services', [ServicesController::class, 'myServices']);
 
 
-    Route::get('showUser', [App\Http\Controllers\ProfileUserController::class, 'index']);
+    Route::resource('roles', RolesController::class);
+    Route::get('getService', [ServicesController::class, 'getService']);
 
-    Route::get('getAllUsers', [App\Http\Controllers\ProfileUserController::class, 'getAllUsers']);
-    Route::post('importUsersCSV', [App\Http\Controllers\ProfileUserController::class, 'importUsersCSV']);
+    Route::resource('stores', StoresController::class);
 
-    //Ruta de crud de eventos
-    Route::resource('convocations', 'App\Http\Controllers\EventsController');
+    Route::post('updatePassword', [UserController::class, 'updatePassword']);
 
-    //Ruta de crud de eventos a los que el usuario se postuló
-    Route::resource('postulationEvents', 'App\Http\Controllers\EventsUsersController');
-
-    Route::post('getPostulations', [App\Http\Controllers\EventsUsersController::class, 'getPostulations']);
-    Route::get('getAllConvocations', [App\Http\Controllers\EventsUsersController::class, 'getAllConvocations']);
+    Route::get('getAllStores', [StoresController::class, 'getAllStores']);
+    Route::get('getMyStores', [StoresController::class, 'getMyStores']);
 });
 
-Route::resource('gender', App\Http\Controllers\GenderController::class);
-Route::get('sectors', [App\Http\Controllers\SectorsController::class, 'index']);
-// Route::get('competences',[App\Http\Controllers\CompetencesController::class,'index']);
-Route::get('personalType', [App\Http\Controllers\PersonalTypeController::class, 'index']);
-//Ruta de crud de roles
-//Route::get('roles', [App\Http\Controllers\RolesController::class,'index']);
-
-Route::get('getRoles', [App\Http\Controllers\RolesController::class, 'index']);
-Route::get('getCompetences', [App\Http\Controllers\CompetencesController::class, 'index']);
-
-Route::post('sendPassword', [App\Http\Controllers\ProfileUserController::class, 'sendPassword']);
-Route::post('updatePassword', [App\Http\Controllers\ProfileUserController::class, 'updatePassword']);
-Route::get('getMyUser', [App\Http\Controllers\ProfileUserController::class, 'getMyUser']);
-
-Route::resource('competences', 'App\Http\Controllers\CompetencesController');
-Route::resource('sector', 'App\Http\Controllers\SectorsController');
-Route::resource('rol', 'App\Http\Controllers\RolesController');
-Route::get('getAllUsers/{name}', [App\Http\Controllers\ProfileUserController::class, 'show']);
+Route::get('/viewServices', function () {
+    return view('services');
+});

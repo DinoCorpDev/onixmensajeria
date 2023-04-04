@@ -23,7 +23,7 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                return response()->json(['status' => 400,'statusText' => 'Sesión Activa'], 400);
+                return redirect(RouteServiceProvider::HOME);
             }
         }
 

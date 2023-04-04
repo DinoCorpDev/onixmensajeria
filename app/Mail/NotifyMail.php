@@ -30,6 +30,6 @@ class NotifyMail extends Mailable
      */
     public function build()
     {
-        return $this->view('emails.demoMail')->with('data', $this->data)->subject('Cambio de Contraseña ITalentt');
+        return $this->view('emails.demoMail')->with('data', $this->data)->subject('Cambio de Contraseña Convoz App');
     }
 }
