@@ -1,7 +1,7 @@
 // Header styles
 
 .header {
-    background: #101A24;
+    background: #101a24;
     color: #fff;
 }
 
@@ -18,7 +18,7 @@
         display: block;
         width: 95%;
         height: 1px;
-        background: #101A24;
+        background: #101a24;
         left: 10px;
         bottom: 10px;
         position: absolute;
@@ -31,8 +31,15 @@
 }
 
 .btn-danger {
-    background: #45F1BE;
+    background: #45f1be;
     font-size: 16px !important;
 }
 
+.form-select {
+    border: 1px solid !important;
+    height: 60px;
+}
 
+.table.b-table > thead > tr > th .sr-only {
+    display: none;
+}
