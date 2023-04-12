@@ -35,11 +35,32 @@
     font-size: 16px !important;
 }
 
+.btn-priamry {
+    font-weight: 500;
+}
+
 .form-select {
     border: 1px solid !important;
-    height: 60px;
+}
+
+.modal {
+    .form-select {
+        height: 60px;
+    }
+}
+
+.custom-checkbox {
+    input {
+        margin-right: 6px;
+    }
 }
 
 .table.b-table > thead > tr > th .sr-only {
     display: none;
+}
+
+.table.b-table > tbody > .table-active,
+.table.b-table > tbody > .table-active > th,
+.table.b-table > tbody > .table-active > td {
+    background-color: var(--bs-table-active-bg) !important;
 }

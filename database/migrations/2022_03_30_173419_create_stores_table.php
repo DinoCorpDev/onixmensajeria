@@ -17,11 +17,8 @@ class CreateStoresTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('phone');
-            $table->string('description');
-            $table->string('image');
             $table->string('avatar');
             $table->string('location');
-            $table->json('schedule');
             $table->integer('user_id');
             $table->boolean('state')->default(true);
             $table->json('payment_method');

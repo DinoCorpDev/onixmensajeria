@@ -42,49 +42,93 @@
         </div>
 
         <div class="row mt-4">
-            <b-table striped hover :items="orders" :fields="fields">
-                <template #cell(actions)="row">
-                    <div class="d-inline-flex gap-1">
-                        <b-button
-                            size="sm"
-                            class="btn-edit"
-                            @click="() => editOrder(row.item.id)"
+            <div class="col-12">
+                <div class="d-flex justify-content-end">
+                    <b-dropdown
+                        id="dropdown-1"
+                        text="Asignar a Condutor"
+                        dropleft
+                        :disabled="!orderId ? true : false"
+                        variant="primary"
+                        class="mb-3"
+                    >
+                        <div class="px-3 pb-2">
+                            <input
+                                class="form-control"
+                                id="search-shop"
+                                size="sm"
+                                placeholder="Buscar..."
+                                type="search"
+                            />
+                        </div>
+                        <b-dropdown-item
+                            v-for="driver in drivers"
+                            :key="driver.name"
+                            @click="assignDriver(driver.id)"
                         >
-                            <b-icon icon="pencil-fill"></b-icon>
-                        </b-button>
-                        <b-button
-                            size="sm"
-                            class="btn-deleter"
-                            @click="() => deleteOrder(row.item.id)"
+                            {{ driver.names }}
+                        </b-dropdown-item>
+                    </b-dropdown>
+                </div>
+
+                <b-table
+                    hover
+                    :items="orders"
+                    selectable
+                    select-mode="single"
+                    :fields="fields"
+                    ref="selectableTable"
+                    @row-selected="onRowSelected"
+                >
+                    <template #cell(actions)="row">
+                        <div class="d-inline-flex gap-1">
+                            <b-button
+                                size="sm"
+                                class="btn-edit"
+                                @click="editOrder(row.item.id)"
+                            >
+                                <b-icon
+                                    icon="pencil-fill"
+                                    title="Editar Pedido"
+                                ></b-icon>
+                            </b-button>
+                            <b-button
+                                size="sm"
+                                class="btn-deleter"
+                                @click="deleteOrder(row.item.id)"
+                            >
+                                <b-icon
+                                    icon="trash-fill"
+                                    title="Eliminar"
+                                ></b-icon>
+                            </b-button>
+                        </div>
+                    </template>
+                    <template #cell(status)="data">
+                        <span
+                            v-if="data.item.status == 'Entregado'"
+                            class="badge bg-success"
                         >
-                            <b-icon icon="trash-fill"></b-icon>
-                        </b-button>
-                    </div>
-                </template>
-                <template #cell(status)="data">
-                    <span
-                        v-if="data.item.status == 'Entregado'"
-                        class="badge bg-success"
-                    >
-                        {{ data.item.status }}
-                    </span>
-                    <span
-                        v-if="data.item.status == 'No entregado'"
-                        class="badge bg-danger"
-                    >
-                        {{ data.item.status }}
-                    </span>
-                    <span
-                        v-if="
-                            data.item.status == 'En bodega' ||
-                            data.item.status == 'Recibido'
-                        "
-                        class="badge bg-secondary"
-                    >
-                        {{ data.item.status }}
-                    </span>
-                </template>
-            </b-table>
+                            {{ data.item.status }}
+                        </span>
+                        <span
+                            v-if="data.item.status == 'No entregado'"
+                            class="badge bg-danger"
+                        >
+                            {{ data.item.status }}
+                        </span>
+                        <span
+                            v-if="
+                                data.item.status == 'En bodega' ||
+                                data.item.status == 'Recibido'
+                            "
+                            class="badge bg-secondary"
+                        >
+                            {{ data.item.status }}
+                        </span>
+                    </template>
+                </b-table>
+            </div>
         </div>
 
         <div
@@ -287,8 +331,8 @@ import {
     ref,
     onValue,
     set,
-    push,
     remove,
+    update,
 } from "firebase/database";
 import firebaseApp from "@firebaseConfig";
 
@@ -300,6 +344,8 @@ export default {
     data() {
         return {
             orders: [],
+            shops: [],
+            drivers: [],
             orderData: {
                 client: {
                     name: "",
@@ -348,6 +394,9 @@ export default {
         };
     },
     computed: {
+        headers() {
+            return { headers: { Authorization: `Bearer ${this.token}` } };
+        },
         orderRef() {
             return ref(db, `orders/${this.orderId}`);
         },
@@ -360,18 +409,21 @@ export default {
             return this.orders.length * 8000;
         },
     },
-
     mounted() {
         this.getUser().then((id_rol) => {
             this.id_rol = id_rol;
             if (id_rol == 1) {
                 this.getOrders();
+                this.getDrivers();
             } else if (id_rol == 2) {
                 // this.getMyServices();
             }
         });
     },
     methods: {
+        onRowSelected(items) {
+            this.orderId = items.length > 0 ? items[0].id : null;
+        },
         async getOrders() {
             try {
                 await onValue(ordersRef, (snapshot) => {
@@ -461,6 +513,27 @@ export default {
             });
             this.user = response.data.user;
             return Promise.resolve(response.data.user.id_rol);
+        },
+        getDrivers() {
+            axios
+                .get("api/drivers", this.headers)
+                .then((response) => {
+                    this.drivers = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
+        assignDriver(driverId) {
+            update(this.orderRef, { driver_id: driverId })
+                .then(() => {
+                    toastr.success("Conductor asignado con éxito");
+                    this.cleanData();
+                    this.hideModal();
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
     },
 };

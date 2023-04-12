@@ -2,16 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Stores;
 use App\Models\Categories;
+use App\Models\Stores;
 use App\Models\StoresCategories;
-use App\Models\ServicesStores;
-use Illuminate\Http\Request;
 use Auth;
-use Illuminate\Contracts\Cache\Store;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\File;
 
 class StoresController extends Controller
 {
@@ -22,18 +18,13 @@ class StoresController extends Controller
      */
     public function getAllStores()
     {
-        $stores = Stores::with('services')
-            ->with('categories')
-            ->get();
+        $stores = Stores::with('categories')->get();
         return response()->json($stores);
     }
 
     public function getMyStores()
     {
-        $stores = Stores::where('user_id', auth()->id())
-            ->with('services')
-            ->with('categories')
-            ->get();
+        $stores = Stores::where('user_id', auth()->id())->with('categories')->get();
         return response()->json($stores);
     }
 
@@ -140,76 +131,14 @@ class StoresController extends Controller
             $store->avatar = $avatar;
         }
 
-        if ($request->image !== null) {
-            $image = $this->saveImageB64(
-                $id_user,
-                $request->name . '_banner',
-                $request->image
-            );
-            $store->image = $image;
-        }
-
         $store->name = $request->name;
-        $store->description = $request->description;
         $store->location = ucfirst($request->location);
-        $store->schedule = $request->schedule;
         $store->user_id = $id_user;
         $store->payment_method = $request->payment_method;
         $store->phone = $request->phone;
         $store->save();
+
         $categories = $request->categories;
-        $services = $request->services;
-
-        //        $storeData = Stores::query()
-        //            ->where('user_id', auth()->id())
-        //            ->latest('id')
-        //            ->first();
-
-        //        foreach ($services as $key => $service) {
-        //
-        //            $id = "";
-        //
-        //            if (isset($service['id'])) {
-        //                $id = $service['id'];
-        //            }
-        //
-        //            if (isset($service['id_services'])) {
-        //                $id = $service['id_services'];
-        //            }
-        //
-        //
-        //            ServicesStores::create([
-        //                'stores_id' => $store->id,
-        //                'services_id' => $id,
-        //            ]);
-        //        }
-
-        foreach ($services as $service) {
-            // dd($service);
-            //
-            //            $id = "";
-            //
-            //            if (isset($service['id'])) {
-            //                $id = $service['id'];
-            //            }
-            //
-            //            if (isset($service['id_services'])) {
-            //                $id = $service['id_services'];
-            //            }
-
-            ServicesStores::create([
-                'stores_id' => $store->id,
-                'services_id' => $service,
-            ]);
-        }
-
-        //
-        //        foreach ($categories as $key => $category) {
-        //            StoresCategories::create([
-        //                'stores_id' => $store->id,
-        //                'categories_id' => $category['id_category'],
-        //            ]);
-        //        }
 
         foreach ($categories as $category) {
             StoresCategories::create([
@@ -229,10 +158,7 @@ class StoresController extends Controller
      */
     public function show($id)
     {
-        $services_stores = Stores::where('id', $id)
-            ->with('services')
-            ->get();
-        return response()->json($services_stores);
+        //
     }
 
     /**
@@ -256,68 +182,14 @@ class StoresController extends Controller
             $store->avatar = $avatar;
         }
 
-        if ($request->image !== $store->image) {
-            $image = $this->saveImageB64(
-                $id_user,
-                $request->name . '_banner',
-                $request->image
-            );
-            $store->image = $image;
-        }
-
         $store->name = $request->name;
-        $store->description = $request->description;
         $store->location = $request->location;
-        $store->schedule = $request->schedule;
         $store->payment_method = $request->payment_method;
         $store->phone = $request->phone;
         $store->user_id = $id_user;
         $store->update();
 
         $store->categories()->sync($request->categories);
-
-        /**
-         * Recordar que si se desea guardar una categoria mas,
-         * se debe enviar la nueva categoria en el metodo put
-         */
-
-        //        $categories = $request->categories;
-        //        if ($categories) {
-        //            foreach ($categories as $key => $category) {
-        //                $storeCaregories = StoresCategories::where('stores_id', $id)->where('categories_id',
-        //                    $category['id_category'])->first();
-        //                if ($storeCaregories) {
-        //                    $storeCaregories->stores_id = $id;
-        //                    $storeCaregories->categories_id = $category['id_category'];
-        //                    $storeCaregories->save();
-        //                } else {
-        //                    StoresCategories::create([
-        //                        'stores_id' => $id,
-        //                        'categories_id' => $category['id_category'],
-        //                    ]);
-        //                }
-        //            }
-        //        }
-
-        $store->services()->sync($request->services);
-
-        //        $services = $request->services;
-        //        if ($categories) {
-        //            foreach ($services as $key => $service) {
-        //                $storeServices = ServicesStores::where('stores_id', $id)->where('services_id',
-        //                    $service['id_services'])->first();
-        //                if ($storeServices) {
-        //                    $storeServices->stores_id = $id;
-        //                    $storeServices->services_id = $service['id_services'];
-        //                    $storeServices->save();
-        //                } else {
-        //                    ServicesStores::create([
-        //                        'stores_id' => $id,
-        //                        'services_id' => $service['id_services'],
-        //                    ]);
-        //                }
-        //            }
-        //        }
 
         return response()->json(['message' => 'Tienda Actualizado']);
     }
@@ -333,15 +205,5 @@ class StoresController extends Controller
         $store = Stores::findOrFail($id);
         $store->delete();
         return response()->json('Tienda eliminada correctamente');
-
-        //        if ($store->state === 1) {
-        //            $store->state = 0;
-        //            $store->save();
-        //            return response()->json(['message' => 'Local Desactivado']);
-        //        } else {
-        //            $store->state = 1;
-        //            $store->save();
-        //            return response()->json(['message' => 'Local Activado']);
-        //        }
     }
 }

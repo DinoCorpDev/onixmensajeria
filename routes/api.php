@@ -44,6 +44,8 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('users', [UserController::class, 'index']);
     Route::delete('users/{user}', [UserController::class, 'destroy']);
 
+    Route::get('drivers', [UserController::class, 'drivers']);
+
     Route::post('userCreate', [UserController::class, 'createUserInAdmin']);
     Route::put('userUpdate/{id_user}', [UserController::class, 'updateUserInAdmin']);
 

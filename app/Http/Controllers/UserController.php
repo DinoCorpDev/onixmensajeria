@@ -36,6 +36,12 @@ class UserController extends Controller
         return response()->json($users);
     }
 
+    public function drivers()
+    {
+        $drivers = User::where('id_rol', 4)->get();
+        return response()->json($drivers);
+    }
+
     public function authenticate(Request $request)
     {
         $credentials = $request->only('email', 'password');

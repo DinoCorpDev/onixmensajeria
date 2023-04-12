@@ -9,3 +9,10 @@ $line-height-base: 1.6;
 
 $navbar-dark-color: rgba(#ffffff, 0.8);
 $navbar-dark-hover-color: rgba(#ffffff, 0.9);
+
+$aqua: #45f1be;
+
+$primary: $aqua;
+
+$table-hover-bg: rgba($aqua, 0.075);
+$table-active-bg: rgba($aqua, 0.1);
