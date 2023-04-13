@@ -50,6 +50,8 @@ class User extends Authenticatable implements JWTSubject
         'email_verified_at' => 'datetime',
     ];
 
+    protected $appends = ['store_id'];
+
     /**
      * Get the identifier that will be stored in the subject claim of the JWT.
      *
@@ -68,5 +70,20 @@ class User extends Authenticatable implements JWTSubject
     public function getJWTCustomClaims()
     {
         return [];
+    }
+
+    public function roles()
+    {
+        return $this->hasMany(Roles::class, 'id', 'id_rol');
+    }
+
+    public function stores()
+    {
+        return $this->hasMany(Stores::class, 'user_id', 'id');
+    }
+
+    public function getStoreIdAttribute()
+    {
+        return $this->id_rol === 2 ? $this->stores()->first()->id : null;
     }
 }

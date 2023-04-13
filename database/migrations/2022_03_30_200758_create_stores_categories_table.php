@@ -20,6 +20,7 @@ class CreateStoresCategoriesTable extends Migration
 
             $table->foreign('stores_id')->references('id')->on('stores')->cascadeOnDelete();
             $table->foreign('categories_id')->references('id')->on('categories')->cascadeOnDelete();
+
             $table->timestamps();
         });
     }

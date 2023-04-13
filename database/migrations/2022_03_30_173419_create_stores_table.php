@@ -19,7 +19,10 @@ class CreateStoresTable extends Migration
             $table->string('phone');
             $table->string('avatar');
             $table->string('location');
-            $table->integer('user_id');
+
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->foreign('user_id')->references('id')->on('users');
+
             $table->boolean('state')->default(true);
             $table->json('payment_method');
             $table->timestamps();

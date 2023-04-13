@@ -12,7 +12,9 @@
 
         <div class="mt-4">
             <button
-                v-if="id_rol == 1 || (id_rol == 2 && shops.length < 1)"
+                v-if="
+                    user.id_rol == 1 || (user.id_rol == 2 && shops.length < 1)
+                "
                 type="button"
                 class="btn btn-create"
                 data-bs-toggle="modal"
@@ -246,7 +248,7 @@ import Multiselect from "vue-multiselect";
 
 export default {
     components: { Multiselect },
-    props: ["token", "changeActive"],
+    props: ["token", "changeActive", "user"],
     data() {
         return {
             shops: [],
@@ -259,9 +261,7 @@ export default {
             },
             categories: [],
             categoriesSelected: [],
-            user: {},
             canCreateStore: true,
-            id_rol: "",
             options: [
                 { text: "Orange", value: "orange" },
                 { text: "Apple", value: "apple" },
@@ -272,14 +272,7 @@ export default {
     },
     mounted() {
         this.getCategories();
-        this.getUser().then((id_rol) => {
-            this.id_rol = id_rol;
-            if (id_rol == 1) {
-                this.getShops();
-            } else if (id_rol == 2) {
-                this.getMyShops();
-            }
-        });
+        this.getShops();
     },
     methods: {
         convertformat12h(fecha) {
@@ -302,15 +295,6 @@ export default {
                 Authorization: `Bearer ${this.token}`,
             };
             axios.get("api/getAllStores", { headers }).then((response) => {
-                this.shops = response.data;
-            });
-        },
-        getMyShops() {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
-            axios.get("api/getMyStores", { headers }).then((response) => {
-                console.log(response.data);
                 this.shops = response.data;
             });
         },
@@ -349,11 +333,7 @@ export default {
                     .post("api/stores", this.shop, { headers })
                     .then((response) => {
                         toastr.success("Tienda creada con exito");
-                        if (this.id_rol == 1) {
-                            this.getShops();
-                        } else if (this.id_rol == 2) {
-                            this.getMyShops();
-                        }
+                        this.getMyShops();
                         this.cleanData();
                         this.hideModal();
                     })
@@ -365,11 +345,7 @@ export default {
                     .put(`api/stores/${this.id}`, this.shop, { headers })
                     .then((response) => {
                         toastr.success("Tienda actualizada con exito");
-                        if (this.id_rol == 1) {
-                            this.getShops();
-                        } else if (this.id_rol == 2) {
-                            this.getMyShops();
-                        }
+                        this.getShops();
                         this.cleanData();
                         this.hideModal();
                     })
@@ -387,11 +363,7 @@ export default {
                     .delete(`api/stores/${id}`, { headers })
                     .then((response) => {
                         toastr.success(response.data);
-                        if (this.id_rol == 1) {
-                            this.getShops();
-                        } else if (this.id_rol == 2) {
-                            this.getMyShops();
-                        }
+                        this.getShops();
                         this.hideModal();
                         this.cleanData();
                     })
@@ -409,13 +381,6 @@ export default {
                 payment_method: [],
                 phone: "",
             };
-        },
-        async getUser() {
-            const response = await axios.get("api/getToken", {
-                headers: { Authorization: `Bearer ${this.token}` },
-            });
-            this.user = response.data.user;
-            return Promise.resolve(response.data.user.id_rol);
         },
     },
 };

@@ -1,13 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoriesController;
 use App\Http\Controllers\ServicesController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\StoresController;
-use App\Http\Controllers\SendEmailController;
 
 /*
 |--------------------------------------------------------------------------
@@ -68,7 +66,6 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('updatePassword', [UserController::class, 'updatePassword']);
 
     Route::get('getAllStores', [StoresController::class, 'getAllStores']);
-    Route::get('getMyStores', [StoresController::class, 'getMyStores']);
 });
 
 Route::get('/viewServices', function () {

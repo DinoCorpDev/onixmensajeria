@@ -12,7 +12,7 @@
 
         <div class="mt-4">
             <button
-                v-if="id_rol == 1 || (id_rol == 2 && orders.length < 1)"
+                v-if="user.id_rol == 1 || user.id_rol == 2"
                 type="button"
                 class="btn btn-create"
                 data-bs-toggle="modal"
@@ -27,15 +27,17 @@
                 <ul class="list-group">
                     <li class="list-group-item">
                         <span>Dinero recaudado:</span>
-                        <span>{{ totalAmount }}</span>
+                        <span>{{ formatterAmount(totalAmount) }}</span>
                     </li>
                     <li class="list-group-item">
                         <span>Domicilios:</span>
-                        <span>{{ deliveryAmount }}</span>
+                        <span>{{ formatterAmount(deliveryAmount) }}</span>
                     </li>
                     <li class="list-group-item">
                         <span>Dinero a enviar:</span>
-                        <span>{{ totalAmount - deliveryAmount }} </span>
+                        <span>
+                            {{ formatterAmount(totalAmount - deliveryAmount) }}
+                        </span>
                     </li>
                 </ul>
             </div>
@@ -43,21 +45,23 @@
 
         <div class="row mt-4">
             <div class="col-12">
-                <div class="d-flex justify-content-end">
+                <div
+                    v-if="user.id_rol === 1"
+                    class="d-flex justify-content-end"
+                >
                     <b-dropdown
-                        id="dropdown-1"
-                        text="Asignar a Condutor"
-                        dropleft
                         :disabled="!orderId ? true : false"
-                        variant="primary"
                         class="mb-3"
+                        dropleft
+                        text="Asignar a Condutor"
+                        variant="primary"
                     >
                         <div class="px-3 pb-2">
                             <input
                                 class="form-control"
-                                id="search-shop"
-                                size="sm"
+                                id="search-driver"
                                 placeholder="Buscar..."
+                                size="sm"
                                 type="search"
                             />
                         </div>
@@ -74,7 +78,7 @@
                 <b-table
                     hover
                     :items="orders"
-                    selectable
+                    :selectable="user.id_rol === 1 ? true : false"
                     select-mode="single"
                     :fields="fields"
                     ref="selectableTable"
@@ -139,7 +143,7 @@
             aria-hidden="true"
             data-bs-backdrop="static"
         >
-            <div class="modal-dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <b-form @submit.prevent="createOrder()">
                         <div class="modal-header">
@@ -189,7 +193,7 @@
                             </b-row>
 
                             <b-row>
-                                <b-col cols="12">
+                                <b-col cols="6">
                                     <b-form-group
                                         class="mb-3"
                                         label="Dirección:"
@@ -202,10 +206,7 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                            </b-row>
-
-                            <b-row>
-                                <b-col cols="6">
+                                <b-col cols="4">
                                     <b-form-group
                                         class="mb-3"
                                         label="Barrio:"
@@ -218,7 +219,7 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col cols="6">
+                                <b-col cols="2">
                                     <b-form-group
                                         class="mb-3"
                                         label="Zona:"
@@ -248,7 +249,7 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col cols="6">
+                                <b-col :cols="orderId ? 3 : 6">
                                     <b-form-group
                                         class="mb-3"
                                         label="Recaudo:"
@@ -261,6 +262,24 @@
                                             type="number"
                                             min="1"
                                         ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="3" v-if="orderId">
+                                    <b-form-group
+                                        label="Estado:"
+                                        label-for="status"
+                                    >
+                                        <b-form-select
+                                            class="form-select"
+                                            v-model="orderData.status"
+                                            :options="[
+                                                'En bodega',
+                                                'Recibido',
+                                                'Entregado',
+                                                'No entregado',
+                                            ]"
+                                            required
+                                        ></b-form-select>
                                     </b-form-group>
                                 </b-col>
                             </b-row>
@@ -277,28 +296,6 @@
                                             rows="3"
                                             max-rows="6"
                                         ></b-form-textarea>
-                                    </b-form-group>
-                                </b-col>
-                            </b-row>
-
-                            <b-row v-if="orderId">
-                                <b-col cols="12">
-                                    <b-form-group
-                                        class="mt-3"
-                                        label="Estado:"
-                                        label-for="status"
-                                    >
-                                        <b-form-select
-                                            class="form-select"
-                                            v-model="orderData.status"
-                                            :options="[
-                                                'En bodega',
-                                                'Recibido',
-                                                'Entregado',
-                                                'No entregado',
-                                            ]"
-                                            required
-                                        ></b-form-select>
                                     </b-form-group>
                                 </b-col>
                             </b-row>
@@ -333,6 +330,9 @@ import {
     set,
     remove,
     update,
+    equalTo,
+    query,
+    orderByChild,
 } from "firebase/database";
 import firebaseApp from "@firebaseConfig";
 
@@ -340,13 +340,13 @@ const db = getDatabase(firebaseApp);
 const ordersRef = ref(db, "orders");
 
 export default {
-    props: ["token", "changeActive"],
+    props: ["token", "changeActive", "user"],
     data() {
         return {
             orders: [],
-            shops: [],
             drivers: [],
             orderData: {
+                store_id: "",
                 client: {
                     name: "",
                     lastname: "",
@@ -361,8 +361,6 @@ export default {
                 comments: "",
             },
             orderId: null,
-            user: {},
-            id_rol: "",
             fields: [
                 {
                     key: "id",
@@ -383,6 +381,12 @@ export default {
                     sortable: true,
                 },
                 { key: "zone", label: "Zona", sortable: true },
+                {
+                    key: "amount",
+                    label: "Recaudo",
+                    formatter: (value) => this.formatterAmount(value),
+                    sortable: true,
+                },
                 { key: "status", label: "Estado", sortable: true },
                 {
                     key: "created_at",
@@ -410,15 +414,8 @@ export default {
         },
     },
     mounted() {
-        this.getUser().then((id_rol) => {
-            this.id_rol = id_rol;
-            if (id_rol == 1) {
-                this.getOrders();
-                this.getDrivers();
-            } else if (id_rol == 2) {
-                // this.getMyServices();
-            }
-        });
+        this.getOrders();
+        this.getDrivers();
     },
     methods: {
         onRowSelected(items) {
@@ -426,16 +423,37 @@ export default {
         },
         async getOrders() {
             try {
-                await onValue(ordersRef, (snapshot) => {
-                    const data = [];
-                    snapshot.forEach((childSnapshot) => {
-                        data.push({
-                            id: childSnapshot.key,
-                            ...childSnapshot.val(),
+                if (!this.user.store_id) {
+                    await onValue(ordersRef, (snapshot) => {
+                        const data = [];
+                        snapshot.forEach((childSnapshot) => {
+                            data.push({
+                                id: childSnapshot.key,
+                                ...childSnapshot.val(),
+                            });
                         });
+
+                        this.orders = data.sort((a, b) => b.id - a.id);
                     });
-                    this.orders = data.sort((a, b) => b.id - a.id);
-                });
+                } else {
+                    const q = query(
+                        ordersRef,
+                        orderByChild("store_id"),
+                        equalTo(this.user.store_id)
+                    );
+
+                    await onValue(q, (snapshot) => {
+                        const data = [];
+                        snapshot.forEach((childSnapshot) => {
+                            data.push({
+                                id: childSnapshot.key,
+                                ...childSnapshot.val(),
+                            });
+                        });
+
+                        this.orders = data.sort((a, b) => b.id - a.id);
+                    });
+                }
             } catch (error) {
                 console.log(error);
             }
@@ -443,6 +461,7 @@ export default {
         createOrder() {
             if (!this.orderId) {
                 const newOrderRef = ref(db, `orders/${this.getOrderLastId()}`);
+                this.orderData.store_id = this.user.store_id;
                 this.orderData.created_at = new Date().toLocaleString();
 
                 set(newOrderRef, this.orderData)
@@ -468,7 +487,8 @@ export default {
         },
         editOrder(orderId) {
             this.orderId = orderId;
-            this.orderData = this.orders.find((order) => order.id === orderId);
+            // prettier-ignore
+            this.orderData = JSON.parse(JSON.stringify(this.orders.find(order => order.id === orderId)));
             $("#exampleModal").modal("show");
         },
         deleteOrder(orderId) {
@@ -502,17 +522,10 @@ export default {
                 neighborhood: "",
                 zone: "",
                 amount: 0,
-                status: "En Bodega",
+                status: "En bodega",
                 created_at: "",
                 comments: "",
             };
-        },
-        async getUser() {
-            const response = await axios.get("api/getToken", {
-                headers: { Authorization: `Bearer ${this.token}` },
-            });
-            this.user = response.data.user;
-            return Promise.resolve(response.data.user.id_rol);
         },
         getDrivers() {
             axios
@@ -534,6 +547,13 @@ export default {
                 .catch((error) => {
                     console.log(error);
                 });
+        },
+        formatterAmount(value) {
+            return new Intl.NumberFormat("es-CO", {
+                style: "currency",
+                currency: "COP",
+                minimumFractionDigits: 0,
+            }).format(value);
         },
     },
 };

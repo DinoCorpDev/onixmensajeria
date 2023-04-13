@@ -18,13 +18,14 @@ class StoresController extends Controller
      */
     public function getAllStores()
     {
-        $stores = Stores::with('categories')->get();
-        return response()->json($stores);
-    }
+        $user = Auth::user();
 
-    public function getMyStores()
-    {
-        $stores = Stores::where('user_id', auth()->id())->with('categories')->get();
+        if ($user->role === 'Admin') {
+            $stores = Stores::with('categories')->get();
+        } else if ($user->role === 'Client') {
+            $stores = Stores::where('user_id', auth()->id())->with('categories')->get();
+        }
+
         return response()->json($stores);
     }
 

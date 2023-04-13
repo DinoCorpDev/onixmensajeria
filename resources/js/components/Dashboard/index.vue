@@ -21,7 +21,7 @@
                 />
             </div>
             <!--      <img src="/img/Header/logo.png" alt="logo" class="logo">&ndash;&gt;-->
-            <div class="w-100">
+            <div class="w-100" v-if="user">
                 <div class="avatar mb-5 mt-5">
                     <span class="icon mb-2">
                         <i class="bi bi-person-circle"></i>
@@ -45,7 +45,7 @@
                                     Pedidos
                                 </template>
                                 <template v-if="user.id_rol == 2">
-                                    Mis Pedidos
+                                    Mis pedidos
                                 </template>
                             </span>
                         </a>
@@ -110,17 +110,19 @@
                 Cerrar Sesión
             </button>
         </div>
-        <div class="row" v-if="token">
+        <div class="row" v-if="token && user">
             <div v-if="showServices" class="col">
                 <servicesComponent
                     :token="token"
                     :changeActive="changeActive"
+                    :user="user"
                 ></servicesComponent>
             </div>
             <div v-if="showStores" class="col">
                 <shopsComponent
                     :token="token"
                     :changeActive="changeActive"
+                    :user="user"
                 ></shopsComponent>
             </div>
             <div v-if="showCategories" class="col">
@@ -178,7 +180,7 @@ export default {
             showStores: false,
             showCategories: false,
             showUsers: false,
-            user: {},
+            user: null,
         };
     },
     created() {
@@ -216,8 +218,11 @@ export default {
         },
         activeLink(section) {
             const url = new URL(window.location.href);
-            url.searchParams.set("section", section);
-            window.history.pushState({}, "", url);
+
+            if (section != null) {
+                url.searchParams.set("section", section);
+                window.history.pushState({}, "", url);
+            }
 
             switch (section) {
                 case "services":

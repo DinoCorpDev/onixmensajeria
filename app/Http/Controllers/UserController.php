@@ -38,7 +38,7 @@ class UserController extends Controller
 
     public function drivers()
     {
-        $drivers = User::where('id_rol', 4)->get();
+        $drivers = User::where('id_rol', 3)->get();
         return response()->json($drivers);
     }
 

@@ -21,7 +21,10 @@ class CreateUsersTable extends Migration
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('provisionalPassword')->default(false);
             $table->string('password');
-            $table->integer('id_rol')->default(3);
+
+            $table->unsignedBigInteger('id_rol')->nullable()->default(3);
+            $table->foreign('id_rol')->references('id')->on('roles');
+
             $table->string('dni')->nullable();
             $table->string('doc_responsable')->nullable();
             $table->boolean('is_adult')->default(false);
