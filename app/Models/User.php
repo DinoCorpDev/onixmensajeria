@@ -84,6 +84,10 @@ class User extends Authenticatable implements JWTSubject
 
     public function getStoreIdAttribute()
     {
-        return $this->id_rol === 2 ? $this->stores()->first()->id : null;
+        if ($this->id_rol === 2) {
+            if (count($this->stores) > 0) {
+                return $this->stores()->first()->id;
+            }
+        }
     }
 }
