@@ -722,7 +722,8 @@ export default {
             return utcDate.toISOString();
         },
         getStoreName(storeId) {
-            return this.stores.find((store) => store.id == storeId).name;
+            const store = this.stores.find((store) => store.id == storeId);
+            return store ? store.name : "Sin asignar";
         },
         getDriverName(driverId) {
             const driver = this.drivers.find((driver) => driver.id == driverId);
