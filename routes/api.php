@@ -66,6 +66,7 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('updatePassword', [UserController::class, 'updatePassword']);
 
     Route::get('getAllStores', [StoresController::class, 'getAllStores']);
+    Route::get('getDriversByStore/{storeId}', [StoresController::class, 'getDriversByStore']);
 });
 
 Route::get('/viewServices', function () {

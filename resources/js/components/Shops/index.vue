@@ -67,7 +67,7 @@
                                         <p>{{ categories.name }}</p>
                                     </div>
                                 </div>
-                                <div class="col-md-4 mt-5">
+                                <div class="col-md-4">
                                     <button
                                         class="btn btn-edit"
                                         @click="editShops(getShops)"
@@ -220,6 +220,18 @@
                                             />
                                         </div>
                                     </b-form-group>
+                                    <div v-if="user.id_rol === 1" class="mt-3">
+                                        <label class="fw-bold">
+                                            Conductor
+                                        </label>
+                                        <multiselect
+                                            v-model="selectedDriver"
+                                            :options="drivers"
+                                            :searchable="true"
+                                            label="names"
+                                            track-by="id"
+                                        ></multiselect>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -246,11 +258,17 @@
 <script>
 import Multiselect from "vue-multiselect";
 
+import { getDatabase, ref } from "firebase/database";
+import firebaseApp from "@firebaseConfig";
+
+const db = getDatabase(firebaseApp);
+
 export default {
     components: { Multiselect },
     props: ["token", "changeActive", "user"],
     data() {
         return {
+            drivers: [],
             shops: [],
             id: null,
             shop: {
@@ -268,11 +286,18 @@ export default {
                 { text: "Pineapple", value: "pineapple" },
                 { text: "Grape", value: "grape" },
             ],
+            selectedDriver: null,
         };
     },
     mounted() {
         this.getCategories();
         this.getShops();
+        this.getDrivers();
+    },
+    computed: {
+        headers() {
+            return { headers: { Authorization: `Bearer ${this.token}` } };
+        },
     },
     methods: {
         convertformat12h(fecha) {
@@ -290,21 +315,27 @@ export default {
                 return fecha[0] + fecha[1] - 12 + fecha.slice(2, 5) + " pm";
             }
         },
+        getDrivers() {
+            axios
+                .get("api/drivers", this.headers)
+                .then((response) => {
+                    this.drivers = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
+        },
         getShops() {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
-            axios.get("api/getAllStores", { headers }).then((response) => {
+            axios.get("api/getAllStores", this.headers).then((response) => {
                 this.shops = response.data;
             });
         },
         getCategories() {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
-            axios.get("api/getCategoriesName", { headers }).then((response) => {
-                this.categories = response.data;
-            });
+            axios
+                .get("api/getCategoriesName", this.headers)
+                .then((response) => {
+                    this.categories = response.data;
+                });
         },
         imageToBase64(type, data) {
             const file = data[0];
@@ -318,6 +349,9 @@ export default {
         },
         editShops(data) {
             this.categoriesSelected = data.categories.map((item) => item.id);
+            this.selectedDriver = this.drivers.find(
+                (item) => item.id === data.driver_id
+            );
             this.shop = data;
             this.id = data.id;
             $("#exampleModal").modal("show");
@@ -327,13 +361,14 @@ export default {
         },
         saveShops() {
             this.shop.categories = this.categoriesSelected;
-            let headers = { Authorization: `Bearer ${this.token}` };
+            this.shop.driver_id = this.selectedDriver.id;
+
             if (this.id === null) {
                 axios
-                    .post("api/stores", this.shop, { headers })
+                    .post("api/stores", this.shop, this.headers)
                     .then((response) => {
                         toastr.success("Tienda creada con exito");
-                        this.getMyShops();
+                        this.getShops();
                         this.cleanData();
                         this.hideModal();
                     })
@@ -342,7 +377,7 @@ export default {
                     });
             } else {
                 axios
-                    .put(`api/stores/${this.id}`, this.shop, { headers })
+                    .put(`api/stores/${this.id}`, this.shop, this.headers)
                     .then((response) => {
                         toastr.success("Tienda actualizada con exito");
                         this.getShops();
@@ -355,12 +390,9 @@ export default {
             }
         },
         deleteShop(id) {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
             if (window.confirm("¿Seguro que desea eliminar esta tienda?")) {
                 axios
-                    .delete(`api/stores/${id}`, { headers })
+                    .delete(`api/stores/${id}`, this.headers)
                     .then((response) => {
                         toastr.success(response.data);
                         this.getShops();
@@ -374,6 +406,7 @@ export default {
         },
         cleanData() {
             this.categoriesSelected = [];
+            this.selectedDriver = null;
             this.id = null;
             this.shop = {
                 name: "",

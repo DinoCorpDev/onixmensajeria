@@ -23,6 +23,9 @@ class CreateStoresTable extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
 
+            $table->unsignedBigInteger('driver_id')->nullable();
+            $table->foreign('driver_id')->references('id')->on('users');
+
             $table->boolean('state')->default(true);
             $table->json('payment_method');
             $table->timestamps();

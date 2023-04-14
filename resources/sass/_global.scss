@@ -64,3 +64,8 @@
 .table.b-table > tbody > .table-active > td {
     background-color: var(--bs-table-active-bg) !important;
 }
+
+.multiselect {
+    border: 1px solid;
+    border-radius: 5px;
+}

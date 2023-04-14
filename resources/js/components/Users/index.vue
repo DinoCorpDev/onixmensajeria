@@ -51,15 +51,11 @@
                                 <p class="text-black-50 title-table">Nombres</p>
                                 <p class="text-table">{{ user.names }}</p>
                             </div>
-                            <div class="col-lg-3" v-if="user.id_rol != 3">
+                            <div class="col-lg-3">
                                 <p class="text-black-50 title-table">Correo</p>
                                 <p class="text-table overflow-auto">
                                     {{ user.email }}
                                 </p>
-                            </div>
-                            <div class="col-lg-3" v-if="user.id_rol == 3">
-                                <p class="text-black-50">Teléfono</p>
-                                <p class="text-table">{{ user.phone }}</p>
                             </div>
                             <div class="col-lg-3">
                                 <p class="text-black-50 title-table">ROL</p>
@@ -69,10 +65,8 @@
                                         user.is_admin === "1"
                                             ? "Administrador"
                                             : user.id_rol === 2
-                                            ? "Proveedor"
-                                            : user.id_rol === 3
                                             ? "Cliente"
-                                            : user.id_rol === 4
+                                            : user.id_rol === 3
                                             ? "Conductor"
                                             : ""
                                     }}
@@ -174,20 +168,7 @@
                                         />
                                     </div>
                                 </div>
-                                <div class="col-md-6" v-if="user.id_rol === 3">
-                                    <div class="form-group mt-3">
-                                        <label for="" class="fw-bold">
-                                            Telefono
-                                        </label>
-                                        <input
-                                            type="text"
-                                            class="form-control"
-                                            v-model="user.phone"
-                                            required
-                                        />
-                                    </div>
-                                </div>
-                                <div class="col-md-6" v-if="user.id_rol != 3">
+                                <div class="col-md-6">
                                     <div class="form-group mt-3">
                                         <label for="" class="fw-bold">
                                             Correo

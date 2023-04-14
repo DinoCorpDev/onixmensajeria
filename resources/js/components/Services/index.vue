@@ -12,17 +12,18 @@
 
         <div class="mt-4">
             <button
-                v-if="user.id_rol == 1 || user.id_rol == 2"
+                v-if="user.id_rol === 1 || user.id_rol === 2"
                 type="button"
                 class="btn btn-create"
                 data-bs-toggle="modal"
                 data-bs-target="#exampleModal"
+                :disabled="!checkCurrentDate()"
             >
                 Crear Pedido
             </button>
         </div>
 
-        <div class="row mt-4 justify-content-end">
+        <div v-if="user.id_rol !== 3" class="row mt-4 justify-content-end">
             <div class="col-4">
                 <ul class="list-group">
                     <li class="list-group-item">
@@ -43,95 +44,140 @@
             </div>
         </div>
 
-        <div class="row mt-4">
-            <div class="col-12">
+        <div class="row align-items-end">
+            <div class="col-6">
+                <label for="selected-date"> Filtrar por Fecha </label>
+                <b-form-datepicker
+                    id="selected-date"
+                    v-model="selectedDate"
+                    @input="getOrders()"
+                    locale="es-CO"
+                />
+            </div>
+            <div class="col-6">
                 <div
-                    v-if="user.id_rol === 1"
+                    v-if="user.id_rol === 1 || user.id_rol === 3"
                     class="d-flex justify-content-end"
                 >
                     <b-dropdown
-                        :disabled="!orderId ? true : false"
-                        class="mb-3"
+                        v-if="user.id_rol === 1"
+                        :disabled="!selectedStore ? true : false"
                         dropleft
                         text="Asignar a Condutor"
                         variant="primary"
                     >
-                        <div class="px-3 pb-2">
-                            <input
-                                class="form-control"
-                                id="search-driver"
-                                placeholder="Buscar..."
-                                size="sm"
-                                type="search"
-                            />
-                        </div>
                         <b-dropdown-item
-                            v-for="driver in drivers"
+                            v-for="driver in driversByStore"
                             :key="driver.name"
                             @click="assignDriver(driver.id)"
                         >
                             {{ driver.names }}
                         </b-dropdown-item>
                     </b-dropdown>
-                </div>
 
-                <b-table
-                    hover
-                    :items="orders"
-                    :selectable="user.id_rol === 1 ? true : false"
-                    select-mode="single"
-                    :fields="fields"
-                    ref="selectableTable"
-                    @row-selected="onRowSelected"
+                    <b-dropdown
+                        v-if="user.id_rol === 3"
+                        :disabled="!orderId ? true : false"
+                        dropleft
+                        text="Cambiar Estado"
+                        variant="primary"
+                    >
+                        <b-dropdown-item
+                            v-for="status in status"
+                            :key="status"
+                            @click="assignStatus(status)"
+                        >
+                            {{ status }}
+                        </b-dropdown-item>
+                    </b-dropdown>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="ordersByShop" class="row mt-4">
+            <div class="col-12">
+                <div
+                    v-for="shop in ordersByShop"
+                    :key="`store-table-${shop.store_id}`"
                 >
-                    <template #cell(actions)="row">
-                        <div class="d-inline-flex gap-1">
-                            <b-button
-                                size="sm"
-                                class="btn-edit"
-                                @click="editOrder(row.item.id)"
+                    <div class="d-flex aligns-items-center">
+                        <template v-if="user.id_rol === 1">
+                            <b-form-checkbox
+                                :id="`checkbox-${shop.store_id}`"
+                                v-model="selectedStore"
+                                :name="`checkbox-${shop.store_id}`"
+                                :value="shop.store_id"
+                                :unchecked-value="null"
                             >
-                                <b-icon
-                                    icon="pencil-fill"
-                                    title="Editar Pedido"
-                                ></b-icon>
-                            </b-button>
-                            <b-button
-                                size="sm"
-                                class="btn-deleter"
-                                @click="deleteOrder(row.item.id)"
+                                <h5 class="fw-bold">
+                                    {{ shop.name }}
+                                </h5>
+                            </b-form-checkbox>
+                        </template>
+                        <template v-else-if="user.id_rol === 3">
+                            <h5 class="fw-bold">
+                                {{ shop.name }}
+                            </h5>
+                        </template>
+                    </div>
+                    <b-table
+                        hover
+                        :items="shop.orders"
+                        :selectable="user.id_rol === 3 ? true : false"
+                        select-mode="single"
+                        :fields="fields"
+                        ref="selectableTable"
+                        @row-selected="onRowSelected"
+                    >
+                        <template v-if="user.id_rol !== 3" #cell(actions)="row">
+                            <div class="d-inline-flex gap-1">
+                                <b-button
+                                    size="sm"
+                                    class="btn-edit"
+                                    @click="editOrder(row.item.id)"
+                                >
+                                    <b-icon
+                                        icon="pencil-fill"
+                                        title="Editar Pedido"
+                                    ></b-icon>
+                                </b-button>
+                                <b-button
+                                    size="sm"
+                                    class="btn-deleter"
+                                    @click="deleteOrder(row.item.id)"
+                                >
+                                    <b-icon
+                                        icon="trash-fill"
+                                        title="Eliminar"
+                                    ></b-icon>
+                                </b-button>
+                            </div>
+                        </template>
+                        <template #cell(status)="data">
+                            <span
+                                v-if="data.item.status == 'Entregado'"
+                                class="badge bg-success"
                             >
-                                <b-icon
-                                    icon="trash-fill"
-                                    title="Eliminar"
-                                ></b-icon>
-                            </b-button>
-                        </div>
-                    </template>
-                    <template #cell(status)="data">
-                        <span
-                            v-if="data.item.status == 'Entregado'"
-                            class="badge bg-success"
-                        >
-                            {{ data.item.status }}
-                        </span>
-                        <span
-                            v-if="data.item.status == 'No entregado'"
-                            class="badge bg-danger"
-                        >
-                            {{ data.item.status }}
-                        </span>
-                        <span
-                            v-if="
-                                data.item.status == 'En bodega' ||
-                                data.item.status == 'Recibido'
-                            "
-                            class="badge bg-secondary"
-                        >
-                            {{ data.item.status }}
-                        </span>
-                    </template>
-                </b-table>
+                                {{ data.item.status }}
+                            </span>
+                            <span
+                                v-if="data.item.status == 'No entregado'"
+                                class="badge bg-danger"
+                            >
+                                {{ data.item.status }}
+                            </span>
+                            <span
+                                v-if="
+                                    data.item.status == 'En bodega' ||
+                                    data.item.status == 'Recibido'
+                                "
+                                class="badge bg-secondary"
+                            >
+                                {{ data.item.status }}
+                            </span>
+                        </template>
+                    </b-table>
+                </div>
             </div>
         </div>
 
@@ -330,9 +376,12 @@ import {
     set,
     remove,
     update,
-    equalTo,
     query,
     orderByChild,
+    orderByKey,
+    limitToLast,
+    startAt,
+    endAt,
 } from "firebase/database";
 import firebaseApp from "@firebaseConfig";
 
@@ -344,7 +393,10 @@ export default {
     data() {
         return {
             orders: [],
+            ordersByShop: null,
             drivers: [],
+            driversByStore: [],
+            stores: null,
             orderData: {
                 store_id: "",
                 client: {
@@ -357,10 +409,14 @@ export default {
                 zone: "",
                 amount: 0,
                 status: "En bodega",
-                created_at: "",
+                date: "",
                 comments: "",
             },
+            status: ["En bodega", "Recibido", "Entregado", "No entregado"],
+            selectedDate: this.formatCurrentDate(),
+            selectedStore: null,
             orderId: null,
+            ordersLastId: 0,
             fields: [
                 {
                     key: "id",
@@ -387,13 +443,24 @@ export default {
                     formatter: (value) => this.formatterAmount(value),
                     sortable: true,
                 },
-                { key: "status", label: "Estado", sortable: true },
                 {
-                    key: "created_at",
-                    label: "Fecha de Creación",
+                    key: "driver_id",
+                    label: "Conductor",
+                    formatter: (value) => this.getDriverName(value),
                     sortable: true,
                 },
-                { key: "actions", label: "Acciones" },
+                { key: "status", label: "Estado", sortable: true },
+                {
+                    key: "date",
+                    label: "Fecha",
+                    formatter: (value) => this.formatterDate(value),
+                    sortable: true,
+                },
+                {
+                    key: "actions",
+                    label: "Acciones",
+                    class: this.user.id_rol === 3 ? "d-none" : "",
+                },
             ],
         };
     },
@@ -413,9 +480,24 @@ export default {
             return this.orders.length * 8000;
         },
     },
-    mounted() {
-        this.getOrders();
-        this.getDrivers();
+    async mounted() {
+        await this.getDrivers();
+        this.getStores().then(() => {
+            this.getOrders();
+            this.getOrderLastId();
+        });
+    },
+    watch: {
+        selectedStore: function () {
+            if (this.selectedStore) {
+                this.getDriversByStore();
+            }
+        },
+        selectedDate: function () {
+            if (!this.user.store_id) {
+                this.selectedStore = null;
+            }
+        },
     },
     methods: {
         onRowSelected(items) {
@@ -423,46 +505,72 @@ export default {
         },
         async getOrders() {
             try {
-                if (!this.user.store_id) {
-                    await onValue(ordersRef, (snapshot) => {
-                        const data = [];
-                        snapshot.forEach((childSnapshot) => {
-                            data.push({
-                                id: childSnapshot.key,
-                                ...childSnapshot.val(),
-                            });
+                const dateISO = new Date(this.selectedDate)
+                    .toISOString()
+                    .split("T")[0];
+
+                const q = query(
+                    ordersRef,
+                    orderByChild("date"),
+                    startAt(dateISO),
+                    endAt(`${dateISO}\uf8ff`)
+                );
+
+                await onValue(q, (snapshot) => {
+                    const data = [];
+                    snapshot.forEach((childSnapshot) => {
+                        data.push({
+                            id: childSnapshot.key,
+                            ...childSnapshot.val(),
                         });
-
-                        this.orders = data.sort((a, b) => b.id - a.id);
                     });
-                } else {
-                    const q = query(
-                        ordersRef,
-                        orderByChild("store_id"),
-                        equalTo(this.user.store_id)
-                    );
 
-                    await onValue(q, (snapshot) => {
-                        const data = [];
-                        snapshot.forEach((childSnapshot) => {
-                            data.push({
-                                id: childSnapshot.key,
-                                ...childSnapshot.val(),
-                            });
-                        });
+                    this.orders = data.sort((a, b) => b.id - a.id);
 
-                        this.orders = data.sort((a, b) => b.id - a.id);
-                    });
-                }
+                    // Single shop
+                    if (this.user.store_id) {
+                        this.orders = this.orders.filter(
+                            (order) => order.store_id === this.user.store_id
+                        );
+                    }
+
+                    if (this.user.id_rol === 3) {
+                        this.orders = this.orders.filter((order) =>
+                            this.stores.some(
+                                (store) => store.id === order.store_id
+                            )
+                        );
+                    }
+
+                    // multiple shops
+                    this.ordersByShop = this.orders.reduce((acc, order) => {
+                        if (!acc[order.store_id]) {
+                            acc[order.store_id] = {
+                                store_id: null,
+                                name: "",
+                                orders: [],
+                            };
+                        }
+
+                        acc[order.store_id].store_id = order.store_id;
+                        // prettier-ignore
+                        acc[order.store_id].name = this.getStoreName(order.store_id);
+                        acc[order.store_id].orders.push(order);
+
+                        return acc;
+                    }, {});
+                });
             } catch (error) {
                 console.log(error);
             }
         },
         createOrder() {
             if (!this.orderId) {
-                const newOrderRef = ref(db, `orders/${this.getOrderLastId()}`);
+                // prettier-ignore
+                const newOrderRef = ref(db, `orders/${this.ordersLastId + 1}`);
+
                 this.orderData.store_id = this.user.store_id;
-                this.orderData.created_at = new Date().toLocaleString();
+                this.orderData.date = this.dateUTCtoISO(new Date());
 
                 set(newOrderRef, this.orderData)
                     .then(() => {
@@ -523,9 +631,23 @@ export default {
                 zone: "",
                 amount: 0,
                 status: "En bodega",
-                created_at: "",
+                date: "",
                 comments: "",
             };
+        },
+        getStores() {
+            return new Promise((resolve, reject) => {
+                axios
+                    .get("api/getAllStores", this.headers)
+                    .then((response) => {
+                        this.stores = response.data;
+                        resolve();
+                    })
+                    .catch((error) => {
+                        console.log(error);
+                        reject();
+                    });
+            });
         },
         getDrivers() {
             axios
@@ -538,11 +660,29 @@ export default {
                 });
         },
         assignDriver(driverId) {
-            update(this.orderRef, { driver_id: driverId })
+            try {
+                this.orders.forEach((order) => {
+                    if (!order.driver_id) {
+                        update(ref(db, `orders/${order.id}`), {
+                            driver_id: driverId,
+                        }).catch((error) => {
+                            console.log(error);
+                        });
+                    }
+                });
+
+                toastr.success("Conductor asignado con éxito");
+                this.selectedStore = null;
+                this.cleanData();
+            } catch (error) {
+                console.log(error);
+            }
+        },
+        assignStatus(status) {
+            update(this.orderRef, { status: status })
                 .then(() => {
-                    toastr.success("Conductor asignado con éxito");
+                    toastr.success("Cambio de estado con éxito");
                     this.cleanData();
-                    this.hideModal();
                 })
                 .catch((error) => {
                     console.log(error);
@@ -554,6 +694,61 @@ export default {
                 currency: "COP",
                 minimumFractionDigits: 0,
             }).format(value);
+        },
+        formatterDate(value) {
+            const date = new Date(value);
+            date.setHours(date.getHours() + 5);
+
+            return new Intl.DateTimeFormat("es-CO", {
+                year: "numeric",
+                month: "2-digit",
+                day: "2-digit",
+                hour: "numeric",
+                minute: "numeric",
+            }).format(date);
+        },
+        formatCurrentDate() {
+            const date = new Date();
+            const year = date.getFullYear();
+            const month = date.getMonth() + 1;
+            const day = date.getDate();
+            return `${year}-${month.toString().padStart(2, "0")}-${day
+                .toString()
+                .padStart(2, "0")}`;
+        },
+        dateUTCtoISO(date) {
+            const utcDate = new Date(date.toUTCString());
+            utcDate.setHours(utcDate.getHours() - 5);
+            return utcDate.toISOString();
+        },
+        getStoreName(storeId) {
+            return this.stores.find((store) => store.id == storeId).name;
+        },
+        getDriverName(driverId) {
+            const driver = this.drivers.find((driver) => driver.id == driverId);
+            return driver ? driver.names : "--";
+        },
+        getDriversByStore() {
+            const driverId = this.stores.find(
+                (store) => store.id == this.selectedStore
+            ).driver_id;
+
+            this.driversByStore = this.drivers.filter(
+                (driver) => driver.id == driverId
+            );
+        },
+        checkCurrentDate() {
+            return this.selectedDate === this.formatCurrentDate();
+        },
+        getOrderLastId() {
+            const orderRef = ref(db, "orders");
+            const q = query(orderRef, orderByKey(), limitToLast(1));
+
+            onValue(q, (snapshot) => {
+                snapshot.forEach((childSnapshot) => {
+                    this.ordersLastId = Number(childSnapshot.key);
+                });
+            });
         },
     },
 };

@@ -44,13 +44,16 @@
                                 <template v-if="user.id_rol == 1">
                                     Pedidos
                                 </template>
-                                <template v-if="user.id_rol == 2">
+                                <template
+                                    v-if="user.id_rol == 2 || user.id_rol == 3"
+                                >
                                     Mis pedidos
                                 </template>
                             </span>
                         </a>
                     </li>
                     <li
+                        v-if="user.id_rol !== 3"
                         :class="shopsActive ? 'list active' : 'list'"
                         style="--clr: #000"
                     >
@@ -65,7 +68,7 @@
                         </a>
                     </li>
                     <li
-                        v-if="user.id_rol == 1"
+                        v-if="user.id_rol === 1"
                         :class="categoriesActive ? 'list active' : 'list'"
                         style="--clr: #000"
                     >

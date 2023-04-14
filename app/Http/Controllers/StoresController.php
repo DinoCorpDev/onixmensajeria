@@ -20,13 +20,21 @@ class StoresController extends Controller
     {
         $user = Auth::user();
 
-        if ($user->role === 'Admin') {
+        if ($user->id_rol === 1) {
             $stores = Stores::with('categories')->get();
-        } else if ($user->role === 'Client') {
+        } else if ($user->id_rol === 2) {
             $stores = Stores::where('user_id', auth()->id())->with('categories')->get();
+        } else if ($user->id_rol === 3) {
+            $stores = Stores::where('driver_id', auth()->id())->with('categories')->get();
         }
 
         return response()->json($stores);
+    }
+
+    public function getDriversByStore($storeId)
+    {
+        $drivers = Stores::find($storeId)->drivers()->get();
+        return response()->json($drivers);
     }
 
     public function index(Request $request)
@@ -135,6 +143,7 @@ class StoresController extends Controller
         $store->name = $request->name;
         $store->location = ucfirst($request->location);
         $store->user_id = $id_user;
+        $store->driver_id = $request->driver_id;
         $store->payment_method = $request->payment_method;
         $store->phone = $request->phone;
         $store->save();
@@ -188,6 +197,7 @@ class StoresController extends Controller
         $store->payment_method = $request->payment_method;
         $store->phone = $request->phone;
         $store->user_id = $id_user;
+        $store->driver_id = $request->driver_id;
         $store->update();
 
         $store->categories()->sync($request->categories);

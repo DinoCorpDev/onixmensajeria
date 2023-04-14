@@ -15,7 +15,7 @@ class Stores extends Model
         'name',
         'phone',
         'location',
-        'id_user',
+        'user_id',
         'state',
         'avatar',
     ];
@@ -25,5 +25,10 @@ class Stores extends Model
     public function categories()
     {
         return $this->belongsToMany(Categories::class);
+    }
+
+    public function drivers()
+    {
+        return $this->belongsTo(User::class, 'driver_id');
     }
 }
