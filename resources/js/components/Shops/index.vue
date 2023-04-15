@@ -361,7 +361,9 @@ export default {
         },
         saveShops() {
             this.shop.categories = this.categoriesSelected;
-            this.shop.driver_id = this.selectedDriver.id;
+            this.shop.driver_id = this.selectedDriver
+                ? this.selectedDriver.id
+                : null;
 
             if (this.id === null) {
                 axios
