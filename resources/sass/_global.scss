@@ -11,22 +11,9 @@
 }
 
 .form-group {
-    position: relative;
-
-    &::after {
-        content: "";
-        display: block;
-        width: 95%;
-        height: 1px;
-        background: #101a24;
-        left: 10px;
-        bottom: 10px;
-        position: absolute;
-    }
-
     input.form-control {
-        padding-top: 1rem;
-        padding-bottom: 1.2rem;
+        padding-top: 5px;
+        padding-bottom: 5px;
     }
 }
 
@@ -42,13 +29,9 @@
 .form-select {
     border: 1px solid !important;
 }
-
-.modal {
-    .form-select {
-        height: 60px;
-    }
+.modal-dialog {
+    margin-top: 50px !important;
 }
-
 .custom-checkbox {
     input {
         margin-right: 6px;
