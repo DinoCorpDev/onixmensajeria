@@ -7,9 +7,9 @@
                 token ? 'navigation-login' : '',
             ]"
         >
-            <div class="menuToggle">
+            <!-- <div class="menuToggle">
                 <img
-                    width="70px"
+                    width="50px"
                     src="/img/logo_onix500x500.png"
                     alt="logo"
                     class="d-md-none h-100"
@@ -19,16 +19,16 @@
                     alt="logo"
                     class="d-none d-md-block logo"
                 />
-            </div>
+            </div> -->
             <!--      <img src="/img/Header/logo.png" alt="logo" class="logo">&ndash;&gt;-->
             <div class="w-100" v-if="user">
-                <div class="avatar mb-5 mt-5">
+                <div class="avatar mb-5 mt-4">
                     <span class="icon mb-2">
-                        <i class="bi bi-person-circle"></i>
+                        <i class="bi bi-person-check"></i>
                     </span>
                     <span class="text-white">{{ user.names }}</span>
                 </div>
-                <ul class="ps-2 mb-5 ul-responsive">
+                <ul class="ps-2 mb-3 ul-responsive">
                     <!--              <li :class="servicesActive ? 'list active' : 'list' " style="&#45;&#45;clr:#000">-->
                     <!--                <img src="/img/Header/logo.png" alt="logo" class="logo">-->
                     <!--              </li>-->
@@ -38,7 +38,7 @@
                     >
                         <a href="#" @click.prevent="activeLink('services')">
                             <span class="icon">
-                                <i class="bi bi-app-indicator"></i>
+                                <i class="bi bi-boxes"></i>
                             </span>
                             <span class="text">
                                 <template v-if="idRol === 1">
@@ -96,7 +96,7 @@
                     >
                         <a href="#" @click.prevent="activeLink('roles')">
                             <span class="icon">
-                                <i class="bi bi-people"></i>
+                                <i class="bi bi-diagram-3"></i>
                             </span>
                             <span class="text">Roles</span>
                         </a>
@@ -108,7 +108,8 @@
                 class="btn btn-closesesion"
                 @click="activeLink('sesion')"
             >
-                Cerrar Sesión
+                <span class="d-none d-md-block">Cerrar Sesión</span>
+                <i class="bi bi-box-arrow-in-left d-md-none"></i>
             </button>
         </div>
         <div class="row" v-if="token && user">
@@ -301,26 +302,46 @@ export default {
     align-items: center;
     height: 100%;
     padding: 2rem 1rem;
-    min-width: 100px;
+    min-width: 80px;
 }
+
+@media (min-width: 767px) {
+    .navigation {
+        position: fixed;
+        inset: 55px 0 20px 0;
+        width: 75px;
+        background: #101a24;
+        transition: 0.5s;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: 100%;
+        padding: 2rem 1rem;
+        min-width: 90px;
+    }
+}
+
 .btn-closesesion {
     background: #fff;
-    border-radius: 15px;
+    border-radius: 25%;
     color: #101a24;
 }
+
 .btn-closesesion:hover {
     background: #101a24 !important;
     border: 1px solid #fff !important;
-    border-radius: 15px;
+    border-radius: 25%;
     color: #fff !important;
 }
+
 @media (max-width: 575px) {
     .navigation {
         margin-right: 250px;
     }
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
     .navigation.open {
         width: 250px;
     }
@@ -333,7 +354,7 @@ export default {
 
 @media (max-width: 767px) {
     .ul-responsive {
-        margin-left: -15px;
+        margin-left: -10px;
     }
 }
 
@@ -417,20 +438,20 @@ export default {
 .navigation ul li a .icon {
     position: relative;
     display: block;
-    min-width: 50px;
-    height: 50px;
-    line-height: 52px;
+    min-width: 40px;
+    height: 40px;
+    line-height: 40px;
     transition: 0.5s;
-    border-radius: 100%;
+    border-radius: 25%;
     border: 2px solid #ffffff;
-    font-size: 1.75em;
+    font-size: 1.35em;
     color: #ffffff;
 }
 
 .navigation ul li.active a .icon {
     color: #101a24;
     background: #ffffff;
-    border-radius: 100%;
+    border-radius: 25%;
 }
 
 .avatar {
@@ -446,9 +467,69 @@ export default {
         justify-content: center;
         min-width: 50px;
         height: 50px;
-        border-radius: 100%;
+        border-radius: 45%;
         border: 2px solid #ffffff;
         font-size: 1.75em;
+        color: #ffffff;
+    }
+}
+
+@media (max-width: 420px) {
+    .avatar {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        .icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 40px;
+            height: 40px;
+            border-radius: 45%;
+            border: 2px solid #ffffff;
+            font-size: 1.35em;
+            color: #ffffff;
+        }
+    }
+}
+
+@media (min-width: 768px) {
+    .avatar {
+        display: flex;
+        align-items: center;
+        flex-direction: column;
+        justify-content: center;
+
+        .icon {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 45px;
+            height: 45px;
+            border-radius: 45%;
+            border: 2px solid #ffffff;
+            font-size: 1.45em;
+            color: #ffffff;
+        }
+    }
+    .logo {
+        width: 70px;
+        margin-right: 0;
+    }
+    .navigation ul li a .icon {
+        position: relative;
+        display: block;
+        min-width: 45px;
+        height: 45px;
+        line-height: 45px;
+        transition: 0.5s;
+        border-radius: 45%;
+        border: 2px solid #ffffff;
+        font-size: 1.55em;
         color: #ffffff;
     }
 }

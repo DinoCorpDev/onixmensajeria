@@ -1,16 +1,12 @@
 <template>
     <div
         class="container-convoz"
-        :class="
-            changeActive === true
-                ? 'container content-large'
-                : 'container content-short'
-        "
+        :class="changeActive === true ? 'content-large' : 'content-short'"
     >
         <h2>Pedidos</h2>
         <hr style="color: black" />
 
-        <div class="mt-4">
+        <div class="mt-4 btn-block">
             <button
                 v-if="idRol === 1 || idRol === 2"
                 type="button"
@@ -23,38 +19,18 @@
             </button>
         </div>
 
-        <div v-if="idRol !== 3" class="row mt-4 justify-content-end">
-            <div class="col-4">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <span>Dinero recaudado:</span>
-                        <span>{{ formatterAmount(totalAmount) }}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <span>Domicilios:</span>
-                        <span>{{ formatterAmount(deliveryAmount) }}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <span>Dinero a enviar:</span>
-                        <span>
-                            {{ formatterAmount(totalAmount - deliveryAmount) }}
-                        </span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-
-        <div class="row align-items-end">
-            <div class="col-6">
-                <label for="selected-date"> Filtrar por Fecha </label>
+        <!--Botones desktop-->
+        <b-row class="row align-items-end container-desk">
+            <b-col cols="12" sm="6">
+                <label for="selected-date">Filtrar por Fecha</label>
                 <b-form-datepicker
                     id="selected-date"
                     v-model="selectedDate"
                     @input="getOrders()"
                     locale="es-CO"
                 />
-            </div>
-            <div class="col-6">
+            </b-col>
+            <b-col cols="12" sm="6">
                 <div
                     v-if="idRol === 1 || idRol === 3"
                     class="d-flex justify-content-end"
@@ -91,10 +67,62 @@
                         </b-dropdown-item>
                     </b-dropdown>
                 </div>
-            </div>
-        </div>
+            </b-col>
+        </b-row>
 
-        <div v-if="ordersByShop" class="row mt-4">
+        <!--Botones responsive-->
+        <b-row class="row align-items-end container-res">
+            <b-col cols="12" sm="6" class="my-4">
+                <div
+                    v-if="idRol === 1 || idRol === 3"
+                    class="d-flex justify-content-end"
+                >
+                    <b-dropdown
+                        v-if="idRol === 1"
+                        :disabled="!selectedStore ? true : false"
+                        dropleft
+                        text="Asignar a Condutor"
+                        variant="primary"
+                    >
+                        <b-dropdown-item
+                            v-for="driver in driversByStore"
+                            :key="driver.name"
+                            @click="assignDriver(driver.id)"
+                        >
+                            {{ driver.names }}
+                        </b-dropdown-item>
+                    </b-dropdown>
+
+                    <b-dropdown
+                        v-if="idRol === 3"
+                        :disabled="!orderId ? true : false"
+                        dropleft
+                        text="Cambiar Estado"
+                        variant="primary"
+                    >
+                        <b-dropdown-item
+                            v-for="status in status"
+                            :key="status"
+                            @click="assignStatus(status)"
+                        >
+                            {{ status }}
+                        </b-dropdown-item>
+                    </b-dropdown>
+                </div>
+            </b-col>
+            <b-col cols="12" sm="6">
+                <label for="selected-date">Filtrar por Fecha</label>
+                <b-form-datepicker
+                    id="selected-date"
+                    v-model="selectedDate"
+                    @input="getOrders()"
+                    locale="es-CO"
+                />
+            </b-col>
+        </b-row>
+
+        <!--Tabla desktop-->
+        <div v-if="ordersByShop" class="row mt-4 container-desk">
             <div class="col-12">
                 <div
                     v-for="shop in ordersByShop"
@@ -121,6 +149,7 @@
                         </template>
                     </div>
                     <b-table
+                        responsive
                         hover
                         :items="shop.orders"
                         :selectable="idRol === 3 ? true : false"
@@ -131,6 +160,16 @@
                     >
                         <template v-if="idRol !== 3" #cell(actions)="row">
                             <div class="d-inline-flex gap-1">
+                                <b-button
+                                    size="sm"
+                                    class="btn-view"
+                                    @click="viewOrder(row.item.id)"
+                                >
+                                    <b-icon
+                                        icon="eye"
+                                        title="Ver Pedido"
+                                    ></b-icon>
+                                </b-button>
                                 <b-button
                                     size="sm"
                                     class="btn-edit"
@@ -181,6 +220,129 @@
             </div>
         </div>
 
+        <!--Tabla responsive-->
+        <div v-if="ordersByShop" class="row mt-4 container-res">
+            <div class="col-12">
+                <div
+                    v-for="shop in ordersByShop"
+                    :key="`store-table-${shop.store_id}`"
+                >
+                    <div class="d-flex aligns-items-center">
+                        <template v-if="idRol === 1">
+                            <b-form-checkbox
+                                :id="`checkbox-${shop.store_id}`"
+                                v-model="selectedStore"
+                                :name="`checkbox-${shop.store_id}`"
+                                :value="shop.store_id"
+                                :unchecked-value="null"
+                            >
+                                <h5 class="fw-bold">
+                                    {{ shop.name }}
+                                </h5>
+                            </b-form-checkbox>
+                        </template>
+                        <template v-else-if="idRol === 3">
+                            <h5 class="fw-bold">
+                                {{ shop.name }}
+                            </h5>
+                        </template>
+                    </div>
+                    <b-table
+                        responsive
+                        striped
+                        hover
+                        :items="shop.orders"
+                        :selectable="idRol === 3 ? true : false"
+                        select-mode="single"
+                        :fields="fields2"
+                        ref="selectableTable"
+                        @row-selected="onRowSelected"
+                    >
+                        <template v-if="idRol !== 3" #cell(actions)="row">
+                            <div class="d-inline-flex gap-1">
+                                <b-button
+                                    size="sm"
+                                    class="btn-view"
+                                    @click="viewOrder(row.item.id)"
+                                >
+                                    <b-icon
+                                        icon="eye"
+                                        title="Ver Pedido"
+                                    ></b-icon>
+                                </b-button>
+                                <b-button
+                                    size="sm"
+                                    class="btn-edit"
+                                    @click="editOrder(row.item.id)"
+                                >
+                                    <b-icon
+                                        icon="pencil-fill"
+                                        title="Editar Pedido"
+                                    ></b-icon>
+                                </b-button>
+                                <b-button
+                                    size="sm"
+                                    class="btn-deleter"
+                                    @click="deleteOrder(row.item.id)"
+                                >
+                                    <b-icon
+                                        icon="trash-fill"
+                                        title="Eliminar"
+                                    ></b-icon>
+                                </b-button>
+                            </div>
+                        </template>
+                        <template #cell(status)="data">
+                            <span
+                                v-if="data.item.status == 'Entregado'"
+                                class="badge bg-success"
+                            >
+                                {{ data.item.status }}
+                            </span>
+                            <span
+                                v-if="data.item.status == 'No entregado'"
+                                class="badge bg-danger"
+                            >
+                                {{ data.item.status }}
+                            </span>
+                            <span
+                                v-if="
+                                    data.item.status == 'En bodega' ||
+                                    data.item.status == 'Recibido'
+                                "
+                                class="badge bg-secondary"
+                            >
+                                {{ data.item.status }}
+                            </span>
+                        </template>
+                    </b-table>
+                </div>
+            </div>
+        </div>
+
+        <!--Cajon dinero reaudado-->
+        <b-row v-if="idRol !== 3" class="row mt-2 mb-4 justify-content-end">
+            <b-col cols="12" sm="4">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span>Dinero recaudado:</span>
+                        <span>{{ formatterAmount(totalAmount) }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span>Domicilios:</span>
+                        <span>{{ formatterAmount(deliveryAmount) }}</span>
+                    </li>
+                    <li class="list-group-item envio-box">
+                        <span>Dinero a enviar:</span>
+                        <span>
+                            {{ formatterAmount(totalAmount - deliveryAmount) }}
+                        </span>
+                    </li>
+                </ul>
+            </b-col>
+        </b-row>
+
+        <!--Modal editar-->
         <div
             class="modal fade"
             id="exampleModal"
@@ -198,7 +360,7 @@
                                 id="exampleModalLabel"
                             >
                                 <!-- prettier-ignore -->
-                                {{ orderId === null ? "Creación de Pedido" : "Actualización de Pedido" }}
+                                {{ orderId === null ? "Crear de Pedido" : "Editar de Pedido" }}
                             </h4>
                             <button
                                 type="button"
@@ -252,7 +414,7 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col cols="4">
+                                <b-col cols="6">
                                     <b-form-group
                                         class="mb-3"
                                         label="Barrio:"
@@ -265,7 +427,23 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col cols="2">
+                            </b-row>
+
+                            <b-row>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Teléfono:"
+                                        label-for="phone"
+                                    >
+                                        <b-form-input
+                                            id="phone"
+                                            v-model="orderData.phone"
+                                            required
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="6">
                                     <b-form-group
                                         class="mb-3"
                                         label="Zona:"
@@ -285,19 +463,6 @@
                                 <b-col cols="6">
                                     <b-form-group
                                         class="mb-3"
-                                        label="Teléfono:"
-                                        label-for="phone"
-                                    >
-                                        <b-form-input
-                                            id="phone"
-                                            v-model="orderData.phone"
-                                            required
-                                        ></b-form-input>
-                                    </b-form-group>
-                                </b-col>
-                                <b-col :cols="orderId ? 3 : 6">
-                                    <b-form-group
-                                        class="mb-3"
                                         label="Recaudo:"
                                         label-for="amount"
                                     >
@@ -310,7 +475,7 @@
                                         ></b-form-input>
                                     </b-form-group>
                                 </b-col>
-                                <b-col cols="3" v-if="orderId">
+                                <b-col v-if="orderId" cols="6">
                                     <b-form-group
                                         label="Estado:"
                                         label-for="status"
@@ -359,6 +524,199 @@
                             <button type="submit" class="btn btn-save">
                                 <!-- prettier-ignore -->
                                 {{ orderId === null ? "Crear servicio" : "Guardar cambios" }}
+                            </button>
+                        </div>
+                    </b-form>
+                </div>
+            </div>
+        </div>
+
+        <!--Modal ver-->
+        <div
+            class="modal fade"
+            id="viewModal"
+            tabindex="-1"
+            aria-labelledby="exampleModalLabel"
+            aria-hidden="true"
+            data-bs-backdrop="static"
+        >
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <b-form @submit.prevent="createOrder()">
+                        <div class="modal-header">
+                            <h4
+                                class="modal-title fw-bold"
+                                id="exampleModalLabel"
+                            >
+                                <!-- prettier-ignore -->
+                                Pedido
+                            </h4>
+                            <button
+                                type="button"
+                                class="btn-close"
+                                data-bs-dismiss="modal"
+                                aria-label="Close"
+                                @click="cleanData"
+                            ></button>
+                        </div>
+                        <div class="modal-body">
+                            <b-row>
+                                <b-col v-if="orderId" cols="6">
+                                    <b-form-group
+                                        label=""
+                                        label-for="status"
+                                        class="mb-3"
+                                    >
+                                        <b-form-select
+                                            class="badge bg-success"
+                                            v-model="orderData.status"
+                                            :options="[
+                                                'En bodega',
+                                                'Recibido',
+                                                'Entregado',
+                                                'No entregado',
+                                            ]"
+                                            required
+                                            disabled
+                                        ></b-form-select>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3 zone-btn"
+                                        label=""
+                                        label-for="zone"
+                                    >
+                                        <b-form-select
+                                            class="badge bg-secondary"
+                                            v-model="orderData.zone"
+                                            :options="['Norte', 'Sur']"
+                                            required
+                                            disabled
+                                        ></b-form-select>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Nombre:"
+                                        label-for="name"
+                                    >
+                                        <b-form-input
+                                            id="name"
+                                            v-model="orderData.client.name"
+                                            required
+                                            disabled
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Apellido:"
+                                        label-for="lastname"
+                                    >
+                                        <b-form-input
+                                            id="lastname"
+                                            v-model="orderData.client.lastname"
+                                            required
+                                            disabled
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+
+                            <b-row>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Dirección:"
+                                        label-for="address"
+                                    >
+                                        <b-form-input
+                                            id="address"
+                                            v-model="orderData.address"
+                                            required
+                                            disabled
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Barrio:"
+                                        label-for="neighborhood"
+                                    >
+                                        <b-form-input
+                                            id="neighborhood"
+                                            v-model="orderData.neighborhood"
+                                            required
+                                            disabled
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+
+                            <b-row>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Teléfono:"
+                                        label-for="phone"
+                                    >
+                                        <b-form-input
+                                            id="phone"
+                                            v-model="orderData.phone"
+                                            required
+                                            disabled
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                                <b-col cols="6">
+                                    <b-form-group
+                                        class="mb-3"
+                                        label="Recaudo:"
+                                        label-for="amount"
+                                    >
+                                        <b-form-input
+                                            id="amount"
+                                            v-model.number="orderData.amount"
+                                            required
+                                            disabled
+                                            type="number"
+                                            min="1"
+                                        ></b-form-input>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+                            <b-row>
+                                <b-col cols="12">
+                                    <b-form-group
+                                        label="Comentarios:"
+                                        label-for="comments"
+                                    >
+                                        <b-form-textarea
+                                            id="comments"
+                                            v-model="orderData.comments"
+                                            rows="3"
+                                            max-rows="6"
+                                            disabled
+                                        ></b-form-textarea>
+                                    </b-form-group>
+                                </b-col>
+                            </b-row>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button
+                                type="button"
+                                class="btn btn-closer"
+                                data-bs-dismiss="modal"
+                                @click="cleanData()"
+                            >
+                                Cerrar
                             </button>
                         </div>
                     </b-form>
@@ -422,20 +780,20 @@ export default {
             fields: [
                 {
                     key: "id",
-                    label: "# Pedido",
+                    label: "#",
                     formatter: (value) => {
-                        return value.toString().padStart(5, "0");
+                        return value.toString().padStart(2, "0");
                     },
                     sortable: true,
                 },
                 {
                     key: "client.name",
-                    label: "Nombre de Cliente",
+                    label: "Nombre",
                     sortable: true,
                 },
                 {
                     key: "client.lastname",
-                    label: "Apellido de Cliente",
+                    label: "Apellido",
                     sortable: true,
                 },
                 { key: "zone", label: "Zona", sortable: true },
@@ -460,7 +818,34 @@ export default {
                 },
                 {
                     key: "actions",
-                    label: "Acciones",
+                    label: "",
+                    class: this.idRol === 3 ? "d-none" : "",
+                },
+            ],
+            fields2: [
+                {
+                    key: "id",
+                    label: "#",
+                    formatter: (value) => {
+                        return value.toString().padStart(2, "0");
+                    },
+                    sortable: true,
+                },
+                {
+                    key: "client.name",
+                    label: "Cliente",
+                    sortable: true,
+                },
+                {
+                    key: "amount",
+                    label: "Recaudo",
+                    formatter: (value) => this.formatterAmount(value),
+                    sortable: true,
+                },
+                { key: "status", label: "Estado", sortable: true },
+                {
+                    key: "actions",
+                    label: "",
                     class: this.idRol === 3 ? "d-none" : "",
                 },
             ],
@@ -605,6 +990,12 @@ export default {
             // prettier-ignore
             this.orderData = JSON.parse(JSON.stringify(this.orders.find(order => order.id === orderId)));
             $("#exampleModal").modal("show");
+        },
+        viewOrder(orderId) {
+            this.orderId = orderId;
+            // prettier-ignore
+            this.orderData = JSON.parse(JSON.stringify(this.orders.find(order => order.id === orderId)));
+            $("#viewModal").modal("show");
         },
         deleteOrder(orderId) {
             this.orderId = orderId;
@@ -763,16 +1154,86 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.container-desk {
+    display: flex;
+}
+
+@media (max-width: 550px) {
+    .container-desk {
+        display: none;
+    }
+}
+
+.container-res {
+    display: none;
+}
+
+@media (max-width: 550px) {
+    .container-res {
+        display: block;
+    }
+}
+
 .container-convoz {
     margin-top: 10px;
-    padding-left: 100px;
+    padding-left: 65px;
+    margin-left: 15px;
     transition: 0.5s;
+    margin-right: 0;
+}
+
+@media (min-width: 1024px) {
+    .container-convoz {
+        padding-left: 20% !important;
+        margin-right: 15px;
+    }
+}
+
+@media (min-width: 1390px) {
+    .container-convoz {
+        padding-left: 20% !important;
+        margin-right: 15px;
+    }
 }
 
 @media (min-width: 768px) {
     .container-convoz {
-        padding-left: 230px;
+        padding-left: 80px;
+        padding-right: 0;
+        margin-right: 10px;
     }
+}
+
+.envio-box {
+    background: #101a24;
+    color: #fff;
+}
+
+.list-group {
+    --bs-list-group-border-color: #101a24;
+    --bs-list-group-border-width: 1px;
+    font-weight: 600;
+}
+
+@media (max-width: 550px) {
+    .list-group {
+        font-size: 13px;
+    }
+}
+
+@media (min-width: 768px) {
+    .list-group {
+        font-size: 12px;
+    }
+}
+
+.zone-btn {
+    text-align: end;
+}
+
+.btn-block {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .btn-create {
@@ -794,8 +1255,22 @@ export default {
     color: #fff;
 }
 
+.btn-view {
+    background: #fff;
+    border-color: #101a24;
+    color: #101a24;
+}
+
 .btn-edit:hover {
+    background: #fff;
     border-color: #45f1be;
+    color: #45f1be;
+}
+
+.btn-view:hover {
+    background: #101a24;
+    border-color: #101a24;
+    color: #fff;
 }
 
 .btn-deleter {
@@ -805,7 +1280,9 @@ export default {
 }
 
 .btn-deleter:hover {
+    background: #fff;
     border-color: #101a24;
+    color: #101a24;
 }
 
 .btn-save {
