@@ -61,12 +61,11 @@
                                 <p class="text-black-50 title-table">ROL</p>
                                 <p class="text-table">
                                     {{
-                                        user.id_rol === 1 ||
-                                        user.is_admin === "1"
+                                        idRol === 1 || user.is_admin === "1"
                                             ? "Administrador"
-                                            : user.id_rol === 2
+                                            : idRol === 2
                                             ? "Cliente"
-                                            : user.id_rol === 3
+                                            : idRol === 3
                                             ? "Conductor"
                                             : ""
                                     }}
@@ -85,7 +84,7 @@
                                 >
                                     Eliminar
                                 </button>
-                                <template v-if="user.id_rol === 2">
+                                <template v-if="idRol === 2">
                                     <a
                                         :href="user.dni"
                                         download
@@ -193,7 +192,7 @@
                                 />
                             </div>
 
-                            <div class="mt-3" v-if="user.id_rol === 2">
+                            <div v-if="idRol === 2" class="mt-3">
                                 <label class="login-text fw-bold" for="dni">
                                     DNI
                                 </label>
@@ -219,7 +218,7 @@
                                 </div>
                             </div>
 
-                            <div class="mt-3" v-if="user.id_rol === 2">
+                            <div v-if="idRol === 2" class="mt-3">
                                 <label class="login-text fw-bold" for="docId">
                                     ID
                                 </label>
@@ -269,8 +268,10 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+
 export default {
-    props: ["token", "changeActive"],
+    props: ["changeActive"],
     data() {
         return {
             users: [],
@@ -280,11 +281,13 @@ export default {
                 is_admin: false,
                 dni: null,
                 doc_responsable: null,
+                id_rol: null,
             },
             filterRol: null,
         };
     },
     computed: {
+        ...mapGetters(["headers", "idRol"]),
         filteredUsers() {
             if (!this.filterRol) return this.users;
             return this.users.filter((user) => {
@@ -298,19 +301,17 @@ export default {
     },
     methods: {
         getUsers() {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
-            axios.get("api/users", { headers }).then((response) => {
-                console.log(response.data);
-                this.users = response.data;
-            });
+            axios
+                .get("api/users", this.headers)
+                .then((response) => {
+                    this.users = response.data;
+                })
+                .catch((error) => {
+                    console.log(error);
+                });
         },
         getRoles() {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
-            axios.get("api/roles", { headers }).then((response) => {
+            axios.get("api/roles", this.headers).then((response) => {
                 this.roles = response.data;
             });
         },
@@ -323,12 +324,9 @@ export default {
             $("#exampleModal").modal("hide");
         },
         saveUsers() {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
             if (this.id === null) {
                 axios
-                    .post("api/userCreate", this.user, { headers })
+                    .post("api/userCreate", this.user, this.headers)
                     .then((response) => {
                         toastr.success(response.data);
                         this.getUsers();
@@ -340,7 +338,7 @@ export default {
                     });
             } else {
                 axios
-                    .put(`api/userUpdate/${this.id}`, this.user, { headers })
+                    .put(`api/userUpdate/${this.id}`, this.user, this.headers)
                     .then((response) => {
                         toastr.success(response.data);
                         this.getUsers();
@@ -353,12 +351,9 @@ export default {
             }
         },
         deleteUser(id) {
-            let headers = {
-                Authorization: `Bearer ${this.token}`,
-            };
             if (window.confirm("¿Seguro que desea eliminar este usuario?")) {
                 axios
-                    .delete(`api/users/${id}`, { headers })
+                    .delete(`api/users/${id}`, this.headers)
                     .then((response) => {
                         toastr.success(response.data);
                         this.getUsers();

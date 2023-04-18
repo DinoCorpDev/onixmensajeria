@@ -12,7 +12,7 @@
 
         <div class="mt-4">
             <button
-                v-if="user.id_rol === 1 || user.id_rol === 2"
+                v-if="idRol === 1 || idRol === 2"
                 type="button"
                 class="btn btn-create"
                 data-bs-toggle="modal"
@@ -23,7 +23,7 @@
             </button>
         </div>
 
-        <div v-if="user.id_rol !== 3" class="row mt-4 justify-content-end">
+        <div v-if="idRol !== 3" class="row mt-4 justify-content-end">
             <div class="col-4">
                 <ul class="list-group">
                     <li class="list-group-item">
@@ -56,11 +56,11 @@
             </div>
             <div class="col-6">
                 <div
-                    v-if="user.id_rol === 1 || user.id_rol === 3"
+                    v-if="idRol === 1 || idRol === 3"
                     class="d-flex justify-content-end"
                 >
                     <b-dropdown
-                        v-if="user.id_rol === 1"
+                        v-if="idRol === 1"
                         :disabled="!selectedStore ? true : false"
                         dropleft
                         text="Asignar a Condutor"
@@ -76,7 +76,7 @@
                     </b-dropdown>
 
                     <b-dropdown
-                        v-if="user.id_rol === 3"
+                        v-if="idRol === 3"
                         :disabled="!orderId ? true : false"
                         dropleft
                         text="Cambiar Estado"
@@ -101,7 +101,7 @@
                     :key="`store-table-${shop.store_id}`"
                 >
                     <div class="d-flex aligns-items-center">
-                        <template v-if="user.id_rol === 1">
+                        <template v-if="idRol === 1">
                             <b-form-checkbox
                                 :id="`checkbox-${shop.store_id}`"
                                 v-model="selectedStore"
@@ -114,7 +114,7 @@
                                 </h5>
                             </b-form-checkbox>
                         </template>
-                        <template v-else-if="user.id_rol === 3">
+                        <template v-else-if="idRol === 3">
                             <h5 class="fw-bold">
                                 {{ shop.name }}
                             </h5>
@@ -123,13 +123,13 @@
                     <b-table
                         hover
                         :items="shop.orders"
-                        :selectable="user.id_rol === 3 ? true : false"
+                        :selectable="idRol === 3 ? true : false"
                         select-mode="single"
                         :fields="fields"
                         ref="selectableTable"
                         @row-selected="onRowSelected"
                     >
-                        <template v-if="user.id_rol !== 3" #cell(actions)="row">
+                        <template v-if="idRol !== 3" #cell(actions)="row">
                             <div class="d-inline-flex gap-1">
                                 <b-button
                                     size="sm"
@@ -369,6 +369,8 @@
 </template>
 
 <script>
+import { mapState, mapGetters } from "vuex";
+
 import {
     getDatabase,
     ref,
@@ -389,7 +391,7 @@ const db = getDatabase(firebaseApp);
 const ordersRef = ref(db, "orders");
 
 export default {
-    props: ["token", "changeActive", "user"],
+    props: ["changeActive"],
     data() {
         return {
             orders: [],
@@ -459,15 +461,14 @@ export default {
                 {
                     key: "actions",
                     label: "Acciones",
-                    class: this.user.id_rol === 3 ? "d-none" : "",
+                    class: this.idRol === 3 ? "d-none" : "",
                 },
             ],
         };
     },
     computed: {
-        headers() {
-            return { headers: { Authorization: `Bearer ${this.token}` } };
-        },
+        ...mapState(["user"]),
+        ...mapGetters(["headers", "idRol"]),
         orderRef() {
             return ref(db, `orders/${this.orderId}`);
         },
@@ -525,16 +526,22 @@ export default {
                         });
                     });
 
+                    // Order by id
                     this.orders = data.sort((a, b) => b.id - a.id);
 
                     // Single shop
-                    if (this.user.store_id) {
-                        this.orders = this.orders.filter(
-                            (order) => order.store_id === this.user.store_id
-                        );
+                    if (this.idRol === 2) {
+                        if (this.user.store_id) {
+                            this.orders = this.orders.filter(
+                                (order) => order.store_id === this.user.store_id
+                            );
+                        } else {
+                            this.orders = [];
+                        }
                     }
 
-                    if (this.user.id_rol === 3) {
+                    // Filter by driver
+                    if (this.idRol === 3) {
                         this.orders = this.orders.filter((order) =>
                             this.stores.some(
                                 (store) => store.id === order.store_id

@@ -41,34 +41,32 @@
                                 <i class="bi bi-app-indicator"></i>
                             </span>
                             <span class="text">
-                                <template v-if="user.id_rol == 1">
+                                <template v-if="idRol === 1">
                                     Pedidos
                                 </template>
-                                <template
-                                    v-if="user.id_rol == 2 || user.id_rol == 3"
-                                >
+                                <template v-if="idRol === 2 || idRol === 3">
                                     Mis pedidos
                                 </template>
                             </span>
                         </a>
                     </li>
                     <li
-                        v-if="user.id_rol !== 3"
+                        v-if="idRol !== 3"
                         :class="shopsActive ? 'list active' : 'list'"
                         style="--clr: #000"
                     >
                         <a href="#" @click.prevent="activeLink('shops')">
                             <span class="icon"><i class="bi bi-shop"></i></span>
-                            <span v-if="user.id_rol == 1" class="text">
+                            <span v-if="idRol === 1" class="text">
                                 Tiendas
                             </span>
-                            <span v-else-if="user.id_rol == 2" class="text">
+                            <span v-else-if="idRol === 2" class="text">
                                 Mi tienda
                             </span>
                         </a>
                     </li>
                     <li
-                        v-if="user.id_rol === 1"
+                        v-if="idRol === 1"
                         :class="categoriesActive ? 'list active' : 'list'"
                         style="--clr: #000"
                     >
@@ -80,7 +78,7 @@
                         </a>
                     </li>
                     <li
-                        v-if="user.id_rol == 1"
+                        v-if="idRol === 1"
                         :class="usersActive ? 'list active' : 'list'"
                         style="--clr: #000"
                     >
@@ -92,7 +90,7 @@
                         </a>
                     </li>
                     <li
-                        v-if="user.id_rol == 1"
+                        v-if="idRol === 1"
                         :class="rolesActive ? 'list active' : 'list'"
                         style="--clr: #000"
                     >
@@ -115,44 +113,29 @@
         </div>
         <div class="row" v-if="token && user">
             <div v-if="showServices" class="col">
-                <servicesComponent
-                    :token="token"
-                    :changeActive="changeActive"
-                    :user="user"
-                ></servicesComponent>
+                <servicesComponent :changeActive="changeActive" />
             </div>
             <div v-if="showStores" class="col">
-                <shopsComponent
-                    :token="token"
-                    :changeActive="changeActive"
-                    :user="user"
-                ></shopsComponent>
+                <shopsComponent :changeActive="changeActive" />
             </div>
             <div v-if="showCategories" class="col">
-                <categoriesComponent
-                    :token="token"
-                    :changeActive="changeActive"
-                ></categoriesComponent>
+                <categoriesComponent :changeActive="changeActive" />
             </div>
 
             <div v-if="showUsers" class="col">
-                <usersComponent
-                    :token="token"
-                    :changeActive="changeActive"
-                ></usersComponent>
+                <usersComponent :changeActive="changeActive" />
             </div>
 
             <div v-if="showRoles" class="col">
-                <rolesComponent
-                    :token="token"
-                    :changeActive="changeActive"
-                ></rolesComponent>
+                <rolesComponent :changeActive="changeActive" />
             </div>
         </div>
     </div>
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
+
 import servicesComponent from "../Services/index.vue";
 import categoriesComponent from "../Categories/index.vue";
 import shopsComponent from "../Shops/index.vue";
@@ -167,7 +150,7 @@ export default {
         usersComponent,
         rolesComponent,
     },
-    props: ["token", "logout"],
+    props: ["logout"],
     data() {
         return {
             changeActive: true,
@@ -183,34 +166,23 @@ export default {
             showStores: false,
             showCategories: false,
             showUsers: false,
-            user: null,
         };
+    },
+    computed: {
+        ...mapState(["token", "user"]),
+        ...mapGetters(["headers", "idRol"]),
     },
     created() {
         this.getUser();
         this.currentLink();
     },
     methods: {
+        ...mapActions(["getUser"]),
         currentLink() {
             const url = new URL(window.location.href);
             const section = url.searchParams.get("section");
 
             this.activeLink(section);
-        },
-        getUser() {
-            axios
-                .get("api/getToken", {
-                    headers: { Authorization: `Bearer ${this.token}` },
-                })
-                .then((response) => {
-                    this.user = response.data.user;
-                    if (!this.user) {
-                        this.logout();
-                    }
-                })
-                .catch((error) => {
-                    this.user = false;
-                });
         },
         activateMenu() {
             if (this.changeActive === false) {

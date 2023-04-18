@@ -89,13 +89,10 @@
             <!--============================
           FORMULARIO DE REGISTRO
       ==============================-->
-            <formRegister @saved="showFormLogin" v-else></formRegister>
+            <formRegister v-else @saved="showFormLogin" />
         </div>
         <div v-else>
-            <dashboardAdminComponent
-                :token="token"
-                :logout="logout"
-            ></dashboardAdminComponent>
+            <dashboardAdminComponent :logout="logout" />
         </div>
     </div>
 </template>
@@ -104,6 +101,8 @@
 import dashboardAdminComponent from "../Dashboard/index";
 import formRegister from "../Register/Index";
 import HorizontalMenu from "../HorizontalMenu.vue";
+
+import { mapState, mapGetters, mapMutations } from "vuex";
 
 export default {
     props: {
@@ -122,13 +121,17 @@ export default {
         return {
             email: "",
             password: "",
-            token: localStorage.getItem("token") || null,
             errorLogged: false,
             unauthorized: false,
             loginView: this.type === "login" ? true : false,
         };
     },
+    computed: {
+        ...mapState(["token", "user"]),
+        ...mapGetters(["headers", "idRol"]),
+    },
     methods: {
+        ...mapMutations(["setToken", "setUser"]),
         validateLogin() {
             const data = {
                 email: this.email,
@@ -138,25 +141,21 @@ export default {
             axios
                 .post("api/login", data)
                 .then((response) => {
-                    this.token = response.data;
+                    this.setToken(response.data);
                     localStorage.setItem("token", this.token);
 
                     const url = new URL(window.location.href);
                     url.searchParams.set("section", "services");
                     window.history.pushState({}, "", url);
 
-                    axios
-                        .get("api/getToken", {
-                            headers: { Authorization: `Bearer ${this.token}` },
-                        })
-                        .then((response) => {
-                            if (response.data.user.id_rol === 1) {
-                                this.unauthorized = false;
-                                this.errorLogged = false;
-                            } else {
-                                this.unauthorized = true;
-                            }
-                        });
+                    axios.get("api/getToken", this.headers).then((response) => {
+                        if (this.idRol === 1) {
+                            this.unauthorized = false;
+                            this.errorLogged = false;
+                        } else {
+                            this.unauthorized = true;
+                        }
+                    });
                 })
                 .catch((error) => {
                     this.errorLogged = true;
@@ -164,13 +163,12 @@ export default {
         },
         logout() {
             axios
-                .get("api/logout", {
-                    headers: { Authorization: `Bearer ${this.token}` },
-                })
+                .get("api/logout", this.headers)
                 .then((response) => {
                     window.location;
                     localStorage.removeItem("token");
-                    this.token = null;
+                    this.setToken(null);
+                    this.setUser(null);
                 })
                 .catch((error) => {
                     console.log(error);

@@ -180,7 +180,7 @@ class StoresController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $id_user = Auth::user()->id;
+        $id_user = $request->user_id ?? Auth::user()->id;
         $store = Stores::findOrFail($id);
 
         if ($request->avatar !== $store->avatar) {

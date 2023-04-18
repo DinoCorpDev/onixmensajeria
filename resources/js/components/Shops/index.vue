@@ -12,9 +12,7 @@
 
         <div class="mt-4">
             <button
-                v-if="
-                    user.id_rol == 1 || (user.id_rol == 2 && shops.length < 1)
-                "
+                v-if="idRol == 1 || (idRol == 2 && shops.length < 1)"
                 type="button"
                 class="btn btn-create"
                 data-bs-toggle="modal"
@@ -220,7 +218,7 @@
                                             />
                                         </div>
                                     </b-form-group>
-                                    <div v-if="user.id_rol === 1" class="mt-3">
+                                    <div v-if="idRol === 1" class="mt-3">
                                         <label class="fw-bold">
                                             Conductor
                                         </label>
@@ -256,16 +254,12 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
 import Multiselect from "vue-multiselect";
-
-import { getDatabase, ref } from "firebase/database";
-import firebaseApp from "@firebaseConfig";
-
-const db = getDatabase(firebaseApp);
 
 export default {
     components: { Multiselect },
-    props: ["token", "changeActive", "user"],
+    props: ["changeActive"],
     data() {
         return {
             drivers: [],
@@ -279,27 +273,19 @@ export default {
             },
             categories: [],
             categoriesSelected: [],
-            canCreateStore: true,
-            options: [
-                { text: "Orange", value: "orange" },
-                { text: "Apple", value: "apple" },
-                { text: "Pineapple", value: "pineapple" },
-                { text: "Grape", value: "grape" },
-            ],
             selectedDriver: null,
         };
+    },
+    computed: {
+        ...mapGetters(["headers", "idRol"]),
     },
     mounted() {
         this.getCategories();
         this.getShops();
         this.getDrivers();
     },
-    computed: {
-        headers() {
-            return { headers: { Authorization: `Bearer ${this.token}` } };
-        },
-    },
     methods: {
+        ...mapActions(["getUser"]),
         convertformat12h(fecha) {
             if (fecha[0] == 0 && fecha[1] == 0) {
                 return "12" + fecha.slice(2, 5) + " am";
@@ -373,6 +359,10 @@ export default {
                         this.getShops();
                         this.cleanData();
                         this.hideModal();
+
+                        if (this.idRol === 2) {
+                            this.getUser();
+                        }
                     })
                     .catch((error) => {
                         console.log(error);
@@ -400,6 +390,10 @@ export default {
                         this.getShops();
                         this.hideModal();
                         this.cleanData();
+
+                        if (this.idRol === 2) {
+                            this.getUser();
+                        }
                     })
                     .catch((error) => {
                         console.log(error);
