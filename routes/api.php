@@ -23,7 +23,7 @@ use App\Http\Controllers\StoresController;
 // });
 
 Route::get('/', function () {
-    return view('LoginAdmin');
+    return view('loginAdmin');
 });
 
 Route::post('register', [UserController::class, 'register']);
@@ -45,18 +45,29 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::get('drivers', [UserController::class, 'drivers']);
 
     Route::post('userCreate', [UserController::class, 'createUserInAdmin']);
-    Route::put('userUpdate/{id_user}', [UserController::class, 'updateUserInAdmin']);
+    Route::put('userUpdate/{id_user}', [
+        UserController::class,
+        'updateUserInAdmin',
+    ]);
 
     Route::resource('categories', CategoriesController::class);
 
-    Route::get('getServicesName', [ServicesController::class, 'getServicesName']);
-    Route::get('getMyServicesName', [ServicesController::class, 'getMyServicesName']);
+    Route::get('getServicesName', [
+        ServicesController::class,
+        'getServicesName',
+    ]);
+    Route::get('getMyServicesName', [
+        ServicesController::class,
+        'getMyServicesName',
+    ]);
 
-    Route::get('getCategoriesName', [CategoriesController::class, 'getCategoriesName']);
+    Route::get('getCategoriesName', [
+        CategoriesController::class,
+        'getCategoriesName',
+    ]);
 
     Route::resource('services', ServicesController::class);
     Route::get('my-services', [ServicesController::class, 'myServices']);
-
 
     Route::resource('roles', RolesController::class);
     Route::get('getService', [ServicesController::class, 'getService']);
@@ -66,7 +77,10 @@ Route::group(['middleware' => ['jwt.verify']], function () {
     Route::post('updatePassword', [UserController::class, 'updatePassword']);
 
     Route::get('getAllStores', [StoresController::class, 'getAllStores']);
-    Route::get('getDriversByStore/{storeId}', [StoresController::class, 'getDriversByStore']);
+    Route::get('getDriversByStore/{storeId}', [
+        StoresController::class,
+        'getDriversByStore',
+    ]);
 });
 
 Route::get('/viewServices', function () {

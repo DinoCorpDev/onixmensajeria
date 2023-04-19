@@ -20,15 +20,15 @@ use App\Http\Controllers\SendEmailController;
 */
 
 Route::get('/', function () {
-    return view('Home');
+    return view('home');
 });
 
 Route::get('/login', function () {
-    return view('LoginAdmin', ['type' => 'login']);
+    return view('loginAdmin', ['type' => 'login']);
 });
 
 Route::get('/register', function () {
-    return view('LoginAdmin', ['type' => 'register']);
+    return view('loginAdmin', ['type' => 'register']);
 });
 
 Route::get('/tests', function () {
