@@ -863,7 +863,7 @@ export default {
                 .reduce((acc, order) => Number(acc) + Number(order.amount), 0);
         },
         deliveryAmount() {
-            return this.orders.length * 8000;
+            return this.orders.length * 9500;
         },
     },
     async mounted() {
