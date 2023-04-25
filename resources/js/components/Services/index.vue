@@ -374,7 +374,7 @@
               </b-row>
 
               <b-row>
-                <b-col cols="6">
+                <b-col cols="12">
                   <b-form-group
                     class="mb-3"
                     label="Dirección:"
@@ -385,6 +385,33 @@
                       v-model="orderData.address"
                       required
                     ></b-form-input>
+                  </b-form-group>
+                </b-col>
+
+                <b-col cols="12">
+                  <b-form-group
+                    class="mb-3"
+                    label="Teléfono:"
+                    label-for="phone"
+                  >
+                    <b-form-input
+                      id="phone"
+                      v-model="orderData.phone"
+                      required
+                    ></b-form-input>
+                  </b-form-group>
+                </b-col>
+              </b-row>
+
+              <b-row>
+                <b-col cols="6">
+                  <b-form-group class="mb-3" label="Zona:" label-for="zone">
+                    <b-form-select
+                      class="form-select"
+                      v-model="orderData.zone"
+                      :options="['Norte', 'Sur']"
+                      required
+                    ></b-form-select>
                   </b-form-group>
                 </b-col>
                 <b-col cols="6">
@@ -398,32 +425,6 @@
                       v-model="orderData.neighborhood"
                       required
                     ></b-form-input>
-                  </b-form-group>
-                </b-col>
-              </b-row>
-
-              <b-row>
-                <b-col cols="6">
-                  <b-form-group
-                    class="mb-3"
-                    label="Teléfono:"
-                    label-for="phone"
-                  >
-                    <b-form-input
-                      id="phone"
-                      v-model="orderData.phone"
-                      required
-                    ></b-form-input>
-                  </b-form-group>
-                </b-col>
-                <b-col cols="6">
-                  <b-form-group class="mb-3" label="Zona:" label-for="zone">
-                    <b-form-select
-                      class="form-select"
-                      v-model="orderData.zone"
-                      :options="['Norte', 'Sur']"
-                      required
-                    ></b-form-select>
                   </b-form-group>
                 </b-col>
               </b-row>
@@ -577,7 +578,7 @@
               </b-row>
 
               <b-row>
-                <b-col cols="6">
+                <b-col cols="12">
                   <b-form-group
                     class="mb-3"
                     label="Dirección:"
@@ -591,15 +592,15 @@
                     ></b-form-input>
                   </b-form-group>
                 </b-col>
-                <b-col cols="6">
+                <b-col cols="12">
                   <b-form-group
                     class="mb-3"
-                    label="Barrio:"
-                    label-for="neighborhood"
+                    label="Teléfono:"
+                    label-for="phone"
                   >
                     <b-form-input
-                      id="neighborhood"
-                      v-model="orderData.neighborhood"
+                      id="phone"
+                      v-model="orderData.phone"
                       required
                       disabled
                     ></b-form-input>
@@ -611,12 +612,12 @@
                 <b-col cols="6">
                   <b-form-group
                     class="mb-3"
-                    label="Teléfono:"
-                    label-for="phone"
+                    label="Barrio:"
+                    label-for="neighborhood"
                   >
                     <b-form-input
-                      id="phone"
-                      v-model="orderData.phone"
+                      id="neighborhood"
+                      v-model="orderData.neighborhood"
                       required
                       disabled
                     ></b-form-input>
