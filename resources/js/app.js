@@ -11,15 +11,12 @@ window.toastr = require("toastr");
 Vue.use(toastr);
 
 Vue.component("home-component", require("./Components/Home/index.vue").default);
-Vue.component(
-    "login-component",
-    require("./Components/Login/index.vue").default
-);
+Vue.component("login-component", require("./Components/Login/index.vue").default);
 
 const store = new Vuex.Store({
     state: {
         token: localStorage.getItem("token") || null,
-        user: null,
+        user: null
     },
     getters: {
         headers(state) {
@@ -27,7 +24,7 @@ const store = new Vuex.Store({
         },
         idRol(state) {
             return state.user ? state.user.id_rol : null;
-        },
+        }
     },
     mutations: {
         setToken(state, token) {
@@ -35,23 +32,40 @@ const store = new Vuex.Store({
         },
         setUser(state, user) {
             state.user = user;
-        },
+        }
     },
     actions: {
-        getUser({ commit, getters }) {
+        getUser({ commit, getters, dispatch, state }) {
             axios
                 .get("api/getToken", getters.headers)
-                .then((response) => {
+                .then(response => {
                     commit("setUser", response.data.user);
+
+                    if (!state.user) {
+                        dispatch("logoutUser");
+                    }
                 })
-                .catch((error) => {
-                    commit("setUser", false);
+                .catch(error => {
+                    console.log(error);
+                    commit("setUser", null);
                 });
         },
-    },
+        logoutUser({ commit, getters }) {
+            axios
+                .get("api/logout", getters.headers)
+                .then(response => {
+                    localStorage.removeItem("token");
+                    commit("setToken", null);
+                    commit("setUser", null);
+                })
+                .catch(error => {
+                    console.log(error);
+                });
+        }
+    }
 });
 
 const app = new Vue({
     el: "#app",
-    store: store,
+    store: store
 });
