@@ -9,7 +9,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
 
-    <title>Onix Mensajeria</title>
+    <title>Feloz</title>
 
     <!-- Scripts -->
     <script src="{{ asset('js/app.js') }}" defer></script>

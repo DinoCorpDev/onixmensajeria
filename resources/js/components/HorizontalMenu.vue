@@ -5,7 +5,7 @@
   <nav class="navbar navbar-expand-lg navbar-dark header">
     <div class="container">
       <a class="navbar-brand me-5" href="/">
-        <img src="/img/logo_onix500x500.png" alt="logo" class="logo" />
+        <img src="/img/FELOZ.png" alt="logo" class="logo" />
       </a>
       <button
         class="navbar-toggler"

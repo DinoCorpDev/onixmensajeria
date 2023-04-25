@@ -1,5 +1,5 @@
 @import url(https://fonts.googleapis.com/css?family=Nunito);
-@charset "UTF-8";.header{background:#101a24;color:#fff}.logo{margin-right:1rem;width:70px}.form-group input.form-control{padding-bottom:5px;padding-top:5px}.btn-danger{background:#45f1be;font-size:16px!important}.btn-priamry{font-weight:500}.form-select{border:1px solid!important}.modal-dialog{margin-top:50px!important}.custom-checkbox input{margin-right:6px}.table.b-table>thead>tr>th .sr-only{display:none}.table.b-table>tbody>.table-active,.table.b-table>tbody>.table-active>td,.table.b-table>tbody>.table-active>th{background-color:var(--bs-table-active-bg)!important}.multiselect{border:1px solid;border-radius:5px}
+@charset "UTF-8";.header{background:#101a24;color:#fff}.logo{margin-right:1rem;width:120px}.form-group input.form-control{padding-bottom:5px;padding-top:5px}.btn-danger{background:#45f1be;font-size:16px!important}.btn-priamry{font-weight:500}.form-select{border:1px solid!important}.modal-dialog{margin-top:50px!important}.custom-checkbox input{margin-right:6px}.table.b-table>thead>tr>th .sr-only{display:none}.table.b-table>tbody>.table-active,.table.b-table>tbody>.table-active>td,.table.b-table>tbody>.table-active>th{background-color:var(--bs-table-active-bg)!important}.multiselect{border:1px solid;border-radius:5px}
 
 /*!
  * Bootstrap  v5.2.1 (https://getbootstrap.com/)

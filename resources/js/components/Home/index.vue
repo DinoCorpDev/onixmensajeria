@@ -3,12 +3,12 @@
     <HorizontalMenu>
       <template v-slot:buttons>
         <a href="/login" class="btn btn-login px-4">Acceder</a>
-        <a
+        <!-- <a
           href="/register"
           class="btn btn-link text-white text-decoration-none px-4"
         >
           Registrarse
-        </a>
+        </a> -->
       </template>
     </HorizontalMenu>
     <div class="container flex-grow-1">
