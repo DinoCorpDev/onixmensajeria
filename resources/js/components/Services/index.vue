@@ -47,7 +47,7 @@
                         text="Cambiar Estado"
                         variant="primary"
                     >
-                        <b-dropdown-item v-for="status in status" :key="status" @click="assignStatus(status)">
+                        <b-dropdown-item v-for="status in statuses" :key="status" @click="assignStatus(status)">
                             {{ status }}
                         </b-dropdown-item>
                     </b-dropdown>
@@ -82,7 +82,7 @@
                         text="Cambiar Estado"
                         variant="primary"
                     >
-                        <b-dropdown-item v-for="status in status" :key="status" @click="assignStatus(status)">
+                        <b-dropdown-item v-for="status in statuses" :key="status" @click="assignStatus(status)">
                             {{ status }}
                         </b-dropdown-item>
                     </b-dropdown>
@@ -95,7 +95,7 @@
         </b-row>
 
         <!--Tabla desktop-->
-        <div v-if="ordersByShop" class="row mt-4 container-desk">
+        <div v-if="ordersByShop" class="row mt-4">
             <div class="col-12">
                 <div v-for="shop in ordersByShop" :key="`store-table-${shop.store_id}`">
                     <div class="d-flex aligns-items-center">
@@ -106,11 +106,11 @@
                                 :name="`checkbox-${shop.store_id}`"
                                 :value="shop.store_id"
                                 :unchecked-value="null"
-                            >
-                                <h5 class="fw-bold">
-                                    {{ shop.name }}
-                                </h5>
-                            </b-form-checkbox>
+                            ></b-form-checkbox>
+                            <h5 class="store-title fw-bold" v-b-toggle="`accordion-store-${shop.store_id}`">
+                                <span class="me-1">{{ shop.name }}</span>
+                                <b-icon icon="chevron-down" title="Expandir" font-scale="0.8" />
+                            </h5>
                         </template>
                         <template v-else-if="idRol === 3">
                             <h5 class="fw-bold">
@@ -118,146 +118,97 @@
                             </h5>
                         </template>
                     </div>
-                    <b-table
-                        responsive
-                        hover
-                        :items="shop.orders"
-                        :selectable="idRol === 3 ? true : false"
-                        select-mode="single"
-                        :fields="fields"
-                        ref="selectableTable"
-                        @row-selected="onRowSelected"
+
+                    <b-collapse
+                        :id="`accordion-store-${shop.store_id}`"
+                        accordion="my-accordion"
+                        role="tabpanel"
+                        visible
                     >
-                        <template #cell(actions)="row">
-                            <div class="d-inline-flex gap-1">
-                                <b-button size="sm" class="btn-view" @click="viewOrder(row.item.id)">
-                                    <b-icon icon="eye" title="Ver Pedido"></b-icon>
-                                </b-button>
-                                <b-button size="sm" class="btn-edit" @click="editOrder(row.item.id)" v-if="idRol !== 3">
-                                    <b-icon icon="pencil-fill" title="Editar Pedido"></b-icon>
-                                </b-button>
-                                <b-button
-                                    size="sm"
-                                    class="btn-deleter"
-                                    @click="deleteOrder(row.item.id)"
-                                    v-if="idRol === 1"
+                        <b-table
+                            responsive
+                            hover
+                            :items="shop.orders"
+                            :selectable="idRol === 3 ? true : false"
+                            select-mode="single"
+                            :fields="fields"
+                            ref="selectableTable"
+                            @row-selected="onRowSelected"
+                        >
+                            <template #cell(id)="row">
+                                {{ row.index + 1 }}
+                            </template>
+                            <template #cell(actions)="row">
+                                <div class="d-inline-flex gap-1">
+                                    <b-button size="sm" class="btn-view" @click="viewOrder(row.item.id)">
+                                        <b-icon icon="eye" title="Ver Pedido"></b-icon>
+                                    </b-button>
+                                    <b-button
+                                        size="sm"
+                                        class="btn-edit"
+                                        @click="editOrder(row.item.id)"
+                                        v-if="idRol !== 3"
+                                    >
+                                        <b-icon icon="pencil-fill" title="Editar Pedido"></b-icon>
+                                    </b-button>
+                                    <b-button
+                                        size="sm"
+                                        class="btn-deleter"
+                                        @click="deleteOrder(row.item.id)"
+                                        v-if="idRol === 1"
+                                    >
+                                        <b-icon icon="trash-fill" title="Eliminar"></b-icon>
+                                    </b-button>
+                                </div>
+                            </template>
+                            <template #cell(status)="data">
+                                <span v-if="data.item.status == 'Entregado'" class="badge bg-success">
+                                    {{ data.item.status }}
+                                </span>
+                                <span
+                                    v-if="data.item.status == 'No entregado' || data.item.status == 'Devolución'"
+                                    class="badge bg-danger"
                                 >
-                                    <b-icon icon="trash-fill" title="Eliminar"></b-icon>
-                                </b-button>
-                            </div>
-                        </template>
-                        <template #cell(status)="data">
-                            <span v-if="data.item.status == 'Entregado'" class="badge bg-success">
-                                {{ data.item.status }}
-                            </span>
-                            <span v-if="data.item.status == 'No entregado'" class="badge bg-danger">
-                                {{ data.item.status }}
-                            </span>
-                            <span
-                                v-if="data.item.status == 'En bodega' || data.item.status == 'Recibido'"
-                                class="badge bg-secondary"
-                            >
-                                {{ data.item.status }}
-                            </span>
-                        </template>
-                    </b-table>
+                                    {{ data.item.status }}
+                                </span>
+                                <span
+                                    v-if="
+                                        data.item.status == 'En bodega' ||
+                                        data.item.status == 'Recibido' ||
+                                        data.item.status == 'Reprogramado'
+                                    "
+                                    class="badge bg-secondary"
+                                >
+                                    {{ data.item.status }}
+                                </span>
+                            </template>
+                        </b-table>
+
+                        <!--Cajon dinero reaudado-->
+                        <b-row v-if="idRol !== 3" class="row mt-2 mb-4 justify-content-end">
+                            <b-col cols="12" sm="4">
+                                <ul class="list-group">
+                                    <li class="list-group-item">
+                                        <span>Dinero recaudado:</span>
+                                        <span>{{ formatterAmount(totalAmount(shop.orders)) }}</span>
+                                    </li>
+                                    <li class="list-group-item">
+                                        <span>Domicilios:</span>
+                                        <span>{{ formatterAmount(deliveryAmount(shop.orders)) }}</span>
+                                    </li>
+                                    <li class="list-group-item envio-box">
+                                        <span>Dinero a enviar:</span>
+                                        <span>
+                                            {{ formatterAmount(finalAmount(shop.orders)) }}
+                                        </span>
+                                    </li>
+                                </ul>
+                            </b-col>
+                        </b-row>
+                    </b-collapse>
                 </div>
             </div>
         </div>
-
-        <!--Tabla responsive-->
-        <div v-if="ordersByShop" class="row mt-4 container-res">
-            <div class="col-12">
-                <div v-for="shop in ordersByShop" :key="`store-table-${shop.store_id}`">
-                    <div class="d-flex aligns-items-center">
-                        <template v-if="idRol === 1">
-                            <b-form-checkbox
-                                :id="`checkbox-${shop.store_id}`"
-                                v-model="selectedStore"
-                                :name="`checkbox-${shop.store_id}`"
-                                :value="shop.store_id"
-                                :unchecked-value="null"
-                            >
-                                <h5 class="fw-bold">
-                                    {{ shop.name }}
-                                </h5>
-                            </b-form-checkbox>
-                        </template>
-                        <template v-else-if="idRol === 3">
-                            <h5 class="fw-bold">
-                                {{ shop.name }}
-                            </h5>
-                        </template>
-                    </div>
-                    <b-table
-                        responsive
-                        striped
-                        hover
-                        :items="shop.orders"
-                        :selectable="idRol === 3 ? true : false"
-                        select-mode="single"
-                        :fields="fields2"
-                        ref="selectableTable"
-                        @row-selected="onRowSelected"
-                    >
-                        <template #cell(actions)="row">
-                            <div class="d-inline-flex gap-1">
-                                <b-button size="sm" class="btn-view" @click="viewOrder(row.item.id)">
-                                    <b-icon icon="eye" title="Ver Pedido"></b-icon>
-                                </b-button>
-                                <b-button size="sm" class="btn-edit" @click="editOrder(row.item.id)" v-if="idRol !== 3">
-                                    <b-icon icon="pencil-fill" title="Editar Pedido"></b-icon>
-                                </b-button>
-                                <b-button
-                                    size="sm"
-                                    class="btn-deleter"
-                                    @click="deleteOrder(row.item.id)"
-                                    v-if="idRol === 1"
-                                >
-                                    <b-icon icon="trash-fill" title="Eliminar"></b-icon>
-                                </b-button>
-                            </div>
-                        </template>
-                        <template #cell(status)="data">
-                            <span v-if="data.item.status == 'Entregado'" class="badge bg-success">
-                                {{ data.item.status }}
-                            </span>
-                            <span v-if="data.item.status == 'No entregado'" class="badge bg-danger">
-                                {{ data.item.status }}
-                            </span>
-                            <span
-                                v-if="data.item.status == 'En bodega' || data.item.status == 'Recibido'"
-                                class="badge bg-secondary"
-                            >
-                                {{ data.item.status }}
-                            </span>
-                        </template>
-                    </b-table>
-                </div>
-            </div>
-        </div>
-
-        <!--Cajon dinero reaudado-->
-        <b-row v-if="idRol !== 3" class="row mt-2 mb-4 justify-content-end">
-            <b-col cols="12" sm="4">
-                <ul class="list-group">
-                    <li class="list-group-item">
-                        <span>Dinero recaudado:</span>
-                        <span>{{ formatterAmount(totalAmount) }}</span>
-                    </li>
-                    <li class="list-group-item">
-                        <span>Domicilios:</span>
-                        <span>{{ formatterAmount(deliveryAmount) }}</span>
-                    </li>
-                    <li class="list-group-item envio-box">
-                        <span>Dinero a enviar:</span>
-                        <span>
-                            {{ formatterAmount(totalAmount - deliveryAmount) }}
-                        </span>
-                    </li>
-                </ul>
-            </b-col>
-        </b-row>
 
         <!--Modal editar-->
         <div
@@ -355,7 +306,7 @@
                                         <b-form-select
                                             class="form-select"
                                             v-model="orderData.status"
-                                            :options="['En bodega', 'Recibido', 'Entregado', 'No entregado']"
+                                            :options="statuses"
                                             required
                                         ></b-form-select>
                                     </b-form-group>
@@ -422,7 +373,7 @@
                                         <b-form-select
                                             class="badge bg-success"
                                             v-model="orderData.status"
-                                            :options="['En bodega', 'Recibido', 'Entregado', 'No entregado']"
+                                            :options="statuses"
                                             required
                                             disabled
                                         ></b-form-select>
@@ -586,7 +537,7 @@ export default {
                 date: "",
                 comments: ""
             },
-            status: ["En bodega", "Recibido", "Entregado", "No entregado"],
+            statuses: ["En bodega", "Recibido", "Entregado", "Reprogramado", "Devolución"],
             selectedDate: this.formatCurrentDate(),
             selectedStore: null,
             orderId: null,
@@ -608,7 +559,8 @@ export default {
                 {
                     key: "client.lastname",
                     label: "Apellido",
-                    sortable: true
+                    sortable: true,
+                    class: "d-none d-md-table-cell"
                 },
                 { key: "zone", label: "Zona", sortable: true },
                 {
@@ -621,46 +573,25 @@ export default {
                     key: "driver_id",
                     label: "Conductor",
                     formatter: value => this.getDriverName(value),
-                    sortable: true
+                    sortable: true,
+                    class: "d-none d-md-table-cell"
                 },
                 { key: "status", label: "Estado", sortable: true },
                 {
                     key: "date",
                     label: "Fecha",
                     formatter: value => this.formatterDate(value),
-                    sortable: true
+                    sortable: true,
+                    class: "d-none d-md-table-cell"
                 },
                 {
                     key: "actions",
-                    label: "",
-                    class: this.idRol === 3 ? "d-none" : ""
-                }
-            ],
-            fields2: [
-                {
-                    key: "id",
-                    label: "#",
-                    formatter: value => {
-                        return value.toString().padStart(2, "0");
-                    },
-                    sortable: true
+                    label: "Acciones",
+                    class: this.idRol === 3 ? "d-none" : "d-none d-md-table-cell"
                 },
-                {
-                    key: "client.name",
-                    label: "Cliente",
-                    sortable: true
-                },
-                {
-                    key: "amount",
-                    label: "Recaudo",
-                    formatter: value => this.formatterAmount(value),
-                    sortable: true
-                },
-                { key: "status", label: "Estado", sortable: true },
                 {
                     key: "actions",
-                    label: "",
-                    class: this.idRol === 3 ? "d-none" : ""
+                    class: this.idRol === 3 ? "d-none" : "d-md-none"
                 }
             ]
         };
@@ -670,14 +601,6 @@ export default {
         ...mapGetters(["headers", "idRol"]),
         orderRef() {
             return ref(db, `orders/${this.orderId}`);
-        },
-        totalAmount() {
-            return this.orders
-                .filter(order => order.status === "Entregado")
-                .reduce((acc, order) => Number(acc) + Number(order.amount), 0);
-        },
-        deliveryAmount() {
-            return this.orders.filter(order => order.status === "Entregado").length * 9500;
         }
     },
     async mounted() {
@@ -945,6 +868,17 @@ export default {
                     this.ordersLastId = Number(childSnapshot.key);
                 });
             });
+        },
+        totalAmount(orders) {
+            return orders
+                .filter(order => order.status === "Entregado" || order.status === "Devolución")
+                .reduce((acc, order) => Number(acc) + Number(order.amount), 0);
+        },
+        deliveryAmount(orders) {
+            return orders.filter(order => order.status === "Entregado" || order.status === "Devolución").length * 9500;
+        },
+        finalAmount(orders) {
+            return this.totalAmount(orders) - this.deliveryAmount(orders);
         }
     }
 };
@@ -1103,5 +1037,17 @@ export default {
 
 .form-control {
     border: 1px solid #101a24;
+}
+
+.store-title {
+    svg {
+        transition: 0.5s;
+    }
+
+    &.not-collapsed {
+        svg {
+            transform: rotate(-90deg);
+        }
+    }
 }
 </style>
