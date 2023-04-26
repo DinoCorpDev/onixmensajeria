@@ -587,11 +587,7 @@ export default {
                 {
                     key: "actions",
                     label: "Acciones",
-                    class: this.idRol === 3 ? "d-none" : "d-none d-md-table-cell"
-                },
-                {
-                    key: "actions",
-                    class: this.idRol === 3 ? "d-none" : "d-md-none"
+                    class: this.idRol === 3 ? "d-none" : "hide-label"
                 }
             ]
         };
@@ -1047,6 +1043,16 @@ export default {
     &.not-collapsed {
         svg {
             transform: rotate(-90deg);
+        }
+    }
+}
+
+::v-deep {
+    .hide-label {
+        > div {
+            @media (max-width: 768px) {
+                display: none;
+            }
         }
     }
 }
